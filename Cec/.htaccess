@@ -1,0 +1,13 @@
+# Configuración mínima para Apache (backup)
+RewriteEngine On
+
+# Routing principal - redirigir todas las rutas al index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]
+
+# Seguridad - Proteger archivos sensibles
+<Files ".env*">
+    Order allow,deny
+    Deny from all
+</Files>
