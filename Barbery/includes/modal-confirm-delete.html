@@ -1,0 +1,84 @@
+<!-- Modal de Confirmación para Eliminar Perfil -->
+<button id="confirmDeleteBtn" type="button" class="btn btn-primary" style="display: none;" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Confirmar Eliminación</button>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none; padding: 1.5rem;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 1.8rem;"></i>
+          </div>
+          <div>
+            <h4 class="modal-title" id="confirmDeleteModalLabel" style="margin: 0; font-weight: 700;">⚠️ Confirmación Requerida</h4>
+            <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">Esta acción es irreversible</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body" style="padding: 2rem;">
+        <div style="text-align: center; padding: 1rem;">
+          <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 15px; padding: 1.5rem; margin-bottom: 1.5rem;">
+            <i class="fas fa-user-slash" style="font-size: 3rem; color: #dc3545; margin-bottom: 1rem;"></i>
+            <h5 style="color: #856404; font-weight: 600; margin-bottom: 0.5rem;">¿Estás completamente seguro?</h5>
+            <p style="color: #856404; margin: 0;">Esta acción eliminará permanentemente tu perfil</p>
+          </div>
+          
+          <div style="text-align: left; background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+            <h6 style="color: #495057; font-weight: 600; margin-bottom: 1rem;">
+              <i class="fas fa-info-circle" style="color: #17a2b8;"></i> Se eliminarán:
+            </h6>
+            <ul style="list-style: none; padding: 0; margin: 0; color: #6c757d;">
+              <li style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+                <i class="fas fa-user" style="color: #dc3545; width: 20px;"></i> Tu información personal
+              </li>
+              <li style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+                <i class="fas fa-calendar-times" style="color: #dc3545; width: 20px;"></i> Tus citas programadas
+              </li>
+              <li style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+                <i class="fas fa-file-invoice" style="color: #dc3545; width: 20px;"></i> Tu historial de compras
+              </li>
+              <li style="padding: 0.5rem 0;">
+                <i class="fas fa-shield-alt" style="color: #dc3545; width: 20px;"></i> Tu acceso al sistema
+              </li>
+            </ul>
+          </div>
+          
+          <p style="color: #dc3545; font-weight: 600; margin-bottom: 0;">
+            <i class="fas fa-ban"></i> Esta acción NO se puede deshacer
+          </p>
+        </div>
+      </div>
+      
+      <div class="modal-footer" style="border: none; padding: 1.5rem; background: #f8f9fa; gap: 1rem;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="flex: 1; padding: 0.75rem; border-radius: 10px; font-weight: 600;">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button type="button" id="confirmDeleteAction" class="btn btn-danger" style="flex: 1; padding: 0.75rem; border-radius: 10px; font-weight: 600; background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); border: none;">
+          <i class="fas fa-trash-alt"></i> Sí, Eliminar Permanentemente
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Script para manejar la confirmación de eliminación
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteForm = document.getElementById('deleteProfileForm');
+    const confirmBtn = document.getElementById('confirmDeleteAction');
+    
+    if (deleteForm && confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            // Cerrar el modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
+            if (modal) {
+                modal.hide();
+            }
+            // Enviar el formulario
+            deleteForm.submit();
+        });
+    }
+});
+</script>

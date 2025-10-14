@@ -1,21 +1,166 @@
-<!-- Modal Button, Diálogo general, muestra distintos mensajes y se queda en el script en el que está. -->
+<!-- Modal Button, Diálogo general, muestra distintos mensajes y cierra la ventana. -->
 <button id="alerta" type="button" class="btn btn-primary" style="visibility: hidden;" data-bs-toggle="modal" data-bs-target="#alertDialog">Diálogo</button>
 
-<!-- Modal -->
+<!-- Modal Moderno y Atractivo -->
 <div class="modal fade" id="alertDialog" tabindex="-1" aria-labelledby="alertDialogLabel" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
   <div class="modal-dialog modal-dialog-centered">
-  <div class="modal-content">
-      <div class="modal-header">
-      <h4 class="modal-title" id="alertDialogLabel">Dialogo de Avisos</h4>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="window.close('_self')"></button>
+    <div class="modal-content modern-modal">
+      <div class="modal-header modern-modal-header">
+        <div class="d-flex align-items-center gap-3 w-100">
+          <div class="modal-icon-container" id="modalIconContainer">
+            <i class="fas fa-info-circle modal-icon" id="modalIcon"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h4 class="modal-title mb-0" id="alertDialogLabel">Notificación</h4>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="window.close('_self')"></button>
+        </div>
       </div>
-      <div class="modal-body">
-          <h4><span id="title"></span></h4>
-          <h5 id="message"></h5>
+      <div class="modal-body modern-modal-body">
+        <div class="toast-title-container">
+          <h4 class="toast-title" id="title"></h4>
+        </div>
+        <div class="toast-message-container">
+          <h5 class="toast-message" id="message"></h5>
+        </div>
       </div>
-      <div class="modal-footer">
-      <button type="button" id="close_dialog" class="btn btn-secondary" data-bs-dismiss="modal" onclick="window.close('_self')">Cerrar</button>
+      <div class="modal-footer modern-modal-footer">
+        <button type="button" id="close_dialog" class="btn btn-modern" data-bs-dismiss="modal" onclick="window.close('_self')">
+          <i class="fas fa-check-circle me-2"></i>Entendido
+        </button>
       </div>
-  </div>
+    </div>
   </div>
 </div>
+
+<style>
+/* Estilos modernos para los modales */
+.modern-modal {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.modern-modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: none;
+  position: relative;
+}
+
+.modal-icon-container {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.modal-icon {
+  font-size: 24px;
+  color: white;
+}
+
+.modern-modal-header.header-success {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modern-modal-header.header-success .modal-icon-container {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modern-modal-header.header-warning {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.modern-modal-header.header-warning .modal-icon-container {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modern-modal-header.header-error {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+}
+
+.modern-modal-header.header-error .modal-icon-container {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modern-modal-body {
+  padding: 2rem;
+  background: #f8f9fa;
+}
+
+.toast-title-container {
+  margin-bottom: 1rem;
+}
+
+.toast-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.toast-message-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.toast-message {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+.modern-modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: none;
+  background: #f8f9fa;
+}
+
+.btn-modern {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  color: white;
+}
+
+.btn-modern:active {
+  transform: translateY(0);
+}
+
+/* Animación de entrada del modal */
+.modal.fade .modal-dialog {
+  transform: scale(0.8);
+  opacity: 0;
+  transition: all 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1);
+  opacity: 1;
+}
+</style>

@@ -1,17 +1,18 @@
 <nav class="navbar fixed-top bg-white" id="mobile">
-    <div class="col-md-8"> <!-- Columnas con el menú de navegación. -->
-      <div class="nav nav-tabs" id="nav-tab" role="tablist" >
+  <div class="container-fluid">
+    <div class="row w-100">
+      <div class="col-8">
         <select class="form-select" id="change" onchange="goThere()">
-          <option value="">Selecciona Tu Opcion</option>
-          <option value="view1">Inicio</option>
-          <option value="view2">Lista de Precios</option>
-          <option value="profile">Perfil de Cliente</option>
-          <option value="contact">Contacto</option>
+            <option value="">Selecciona Tu Opción</option>
+            <option value="view1">Inicio</option>
+            <option value="view2">Lista de Precios</option>
+            <option value="profile">Perfil de Cliente</option>
+            <option value="contact">Contacto</option>
         </select>
       </div>
+      <div class="col-4 text-end">
+        <button onclick="window.open('/Barbery/api/auth/logout.php', '_self')" class="btn btn-danger btn-sm">Cerrar Sesión</button>
+      </div>
     </div>
-    <div class="col-md-4 nav-tabs">
-      <h3>Te damos la Bienvenida: </h3><span><?php echo $_SESSION["name"]; ?></span>
-      <button onclick="window.open('endsession.php', '_self')" class="btn btn-danger">Cerrar Sesión</button>
-    </div>
+  </div>
 </nav>

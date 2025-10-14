@@ -1,9 +1,8 @@
 <?php
-include "includes/conn.php";
-$title = "La Peluquería de Javier Borneo - Página Principal";
-include "includes/header.php";
-include "includes/modal.html";
-include "includes/modal-img.html";
+// Redirección temporal a la nueva ubicación
+header('Location: app/auth/index.php');
+exit;
+?>
 if (isset($_SESSION["client"]))
 {
     include "includes/nav_client.php";
