@@ -1,0 +1,104 @@
+body {
+    background-color: #f8f9fa; /* Light background for light mode */
+    color: #343a40; /* Dark text for light mode */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff; /* Light background for navbar */
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff; /* Primary color */
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    padding: 0;
+}
+
+.nav-menu li {
+    margin: 0 15px;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #343a40; /* Dark text for links */
+    transition: color 0.3s;
+}
+
+.nav-menu a:hover {
+    color: #007bff; /* Primary color on hover */
+}
+
+.user-options {
+    display: flex;
+    align-items: center;
+}
+
+.user-options .login,
+.user-options .register {
+    margin-left: 15px;
+    text-decoration: none;
+    color: #007bff; /* Primary color */
+}
+
+.user-options .user-name {
+    margin-left: 15px;
+    color: #343a40; /* Dark text for logged-in user */
+}
+
+.user-options .user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-left: 10px;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #ffffff; /* Light background for dropdown */
+    min-width: 160px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .nav-menu {
+        flex-direction: column;
+        display: none; /* Hide menu by default */
+    }
+
+    .navbar .menu-toggle {
+        display: block; /* Show toggle button */
+    }
+
+    .navbar .menu-toggle.active + .nav-menu {
+        display: flex; /* Show menu when active */
+    }
+}
+
+@media (min-width: 769px) {
+    .navbar .menu-toggle {
+        display: none; /* Hide toggle button on larger screens */
+    }
+}

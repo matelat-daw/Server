@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteBase /Nueva-WEB/
+
+# Redirect to the frontend index.html
+RewriteRule ^$ frontend/index.html [L]
+
+# Rewrite API requests to the API index.php
+RewriteRule ^api/(.*)$ api/index.php [L]
+
+# Handle 404 errors
+ErrorDocument 404 /frontend/index.html

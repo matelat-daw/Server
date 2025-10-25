@@ -1,0 +1,46 @@
+body {
+    background-color: #f9f9f9;
+    color: #333;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    text-align: center;
+}
+
+.footer {
+    background-color: #e0e0e0;
+    padding: 20px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.footer p {
+    margin: 10px 0;
+}
+
+@media (max-width: 600px) {
+    .footer {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1200px) {
+    .footer {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 1201px) {
+    .footer {
+        font-size: 18px;
+    }
+}

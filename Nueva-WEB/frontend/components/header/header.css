@@ -1,0 +1,81 @@
+body {
+    background-color: #f9f9f9; /* Light background for light mode */
+    color: #333; /* Dark text for light mode */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #ffffff; /* White background for header */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    font-size: 24px;
+    color: #4a4a4a; /* Darker text for title */
+}
+
+.header .logo {
+    max-height: 50px; /* Logo height */
+}
+
+.header .user-menu {
+    display: flex;
+    align-items: center;
+}
+
+.header .user-menu img {
+    border-radius: 50%;
+    width: 40px; /* Avatar size */
+    height: 40px; /* Avatar size */
+    margin-right: 10px;
+}
+
+.header .user-menu .username {
+    font-weight: bold;
+    color: #4a4a4a; /* Darker text for username */
+}
+
+.header .user-menu .dropdown {
+    display: none; /* Initially hidden dropdown */
+}
+
+.header .user-menu:hover .dropdown {
+    display: block; /* Show dropdown on hover */
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header h1 {
+        font-size: 20px;
+    }
+
+    .header .user-menu {
+        margin-top: 10px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a; /* Dark background for dark mode */
+        color: #f9f9f9; /* Light text for dark mode */
+    }
+
+    .header {
+        background-color: #2a2a2a; /* Darker background for header */
+    }
+
+    .header h1,
+    .header .user-menu .username {
+        color: #f9f9f9; /* Light text for title and username */
+    }
+}

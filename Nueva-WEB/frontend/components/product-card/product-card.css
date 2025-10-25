@@ -1,0 +1,48 @@
+body {
+    background-color: #f9f9f9; /* Light background for the card */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: transform 0.2s; /* Smooth scaling effect on hover */
+}
+
+.product-card {
+    padding: 16px; /* Padding inside the card */
+    margin: 16px; /* Margin around the card */
+    text-align: center; /* Center text inside the card */
+}
+
+.product-card:hover {
+    transform: scale(1.05); /* Scale effect on hover */
+}
+
+.product-image {
+    width: 100%; /* Full width for the image */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 8px; /* Rounded corners for the image */
+}
+
+.product-title {
+    font-size: 1.5em; /* Larger font size for the title */
+    color: #333; /* Dark color for contrast */
+    margin: 10px 0; /* Margin above and below the title */
+}
+
+.product-price {
+    font-size: 1.2em; /* Slightly larger font size for the price */
+    color: #e67e22; /* Color for the price */
+    margin: 5px 0; /* Margin above and below the price */
+}
+
+.add-to-cart {
+    background-color: #3498db; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners for the button */
+    padding: 10px 15px; /* Padding inside the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+.add-to-cart:hover {
+    background-color: #2980b9; /* Darker shade on hover */
+}
