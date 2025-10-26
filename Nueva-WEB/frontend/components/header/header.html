@@ -1,35 +1,11 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../styles/global.css">
-    <link rel="stylesheet" href="header.css">
-    <title>Header</title>
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <img src="../assets/logo.png" alt="Logo de la Web">
-            <h1>Título de la Web</h1>
+<header class="header">
+    <div class="header-container">
+        <div class="logo-section">
+            <div class="logo">MT</div>
+            <h1 class="site-title">Mi Tienda Online</h1>
         </div>
-        <nav id="navbar">
-            <ul>
-                <li><a href="../pages/home/home.html">Inicio</a></li>
-                <li><a href="../pages/products/products.html">Productos</a></li>
-                <li><a href="../pages/about/about.html">Sobre Nosotros</a></li>
-                <li><a href="../pages/contact/contact.html">Contacto</a></li>
-                <li id="user-menu">
-                    <a href="#">Usuario</a>
-                    <ul class="dropdown">
-                        <li><a href="#" id="profile-link">Perfil</a></li>
-                        <li><a href="#" id="cart-link">Carrito</a></li>
-                        <li><a href="#" id="logout-link">Cerrar Sesión</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <script src="header.js"></script>
-</body>
-</html>
+        <div class="header-actions">
+            <button id="theme-toggle" class="icon-btn" title="Cambiar tema">🌙</button>
+        </div>
+    </div>
+</header>

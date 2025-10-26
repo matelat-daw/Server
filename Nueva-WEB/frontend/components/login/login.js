@@ -1,38 +1,85 @@
-// frontend/components/login/login.js
-document.addEventListener("DOMContentLoaded", function() {
-    const loginForm = document.getElementById("loginForm");
-    const messageBox = document.getElementById("messageBox");
+var loginComponent = {
+    modal: null,
+    
+    init() {
+        this.createModal();
+    },
 
-    loginForm.addEventListener("submit", function(event) {
-        event.preventDefault();
+    createModal() {
+        var container = document.createElement('div');
+        container.id = 'login-container';
+        document.body.appendChild(container);
         
-        const formData = new FormData(loginForm);
-        const data = {
-            username: formData.get("username"),
-            password: formData.get("password")
-        };
+        fetch('/Nueva-WEB/frontend/components/login/login.html')
+            .then(function(response) { return response.text(); })
+            .then(function(html) {
+                container.innerHTML = html;
+                loginComponent.modal = document.getElementById('login-modal');
+                loginComponent.setupForm();
+                loginComponent.setupClose();
+                loginComponent.setupSwitchToRegister();
+            });
+    },
 
-        fetch("/api/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                messageBox.textContent = "Login successful!";
-                messageBox.style.color = "green";
-                // Redirect or update UI after successful login
-            } else {
-                messageBox.textContent = data.message || "Login failed. Please try again.";
-                messageBox.style.color = "red";
-            }
-        })
-        .catch(error => {
-            messageBox.textContent = "An error occurred. Please try again.";
-            messageBox.style.color = "red";
-        });
-    });
-});
+    setupForm() {
+        var form = document.getElementById('login-form');
+        if (form) {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                var email = document.getElementById('login-email').value;
+                var password = document.getElementById('login-password').value;
+                
+                var result = await AuthService.login(email, password);
+                
+                if (result.success) {
+                    loginComponent.hide();
+                    var event = new CustomEvent('userLoggedIn', { detail: result.user });
+                    document.dispatchEvent(event);
+                } else {
+                    alert(result.message || 'Error al iniciar sesión');
+                }
+            });
+        }
+    },
+
+    setupClose() {
+        var closeBtn = document.getElementById('close-login');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                loginComponent.hide();
+            });
+        }
+        
+        if (this.modal) {
+            this.modal.addEventListener('click', function(e) {
+                if (e.target === loginComponent.modal) {
+                    loginComponent.hide();
+                }
+            });
+        }
+    },
+
+    setupSwitchToRegister() {
+        var switchBtn = document.getElementById('switch-to-register');
+        if (switchBtn) {
+            switchBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginComponent.hide();
+                registerComponent.show();
+            });
+        }
+    },
+
+    show() {
+        if (this.modal) {
+            this.modal.style.display = 'flex';
+        }
+    },
+
+    hide() {
+        if (this.modal) {
+            this.modal.style.display = 'none';
+        }
+    }
+};

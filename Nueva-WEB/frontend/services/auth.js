@@ -1,53 +1,67 @@
-// frontend/services/auth.js
-const API_URL = 'http://localhost/Nueva-WEB/api'; // Adjust the URL as necessary
+const AuthService = {
+    currentUser: null,
+    tokenKey: 'auth_token',
+    userKey: 'user_data',
 
-async function login(username, password) {
-    const response = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-    });
+    async login(email, password) {
+        try {
+            const response = await ApiService.post('/auth/login', { email, password });
+            if (response.success) {
+                this.setToken(response.token);
+                this.setUser(response.user);
+                return { success: true, user: response.user };
+            }
+            return { success: false, message: response.message };
+        } catch (error) {
+            return { success: false, message: 'Error en el login' };
+        }
+    },
 
-    if (!response.ok) {
-        throw new Error('Login failed');
+    async register(userData) {
+        try {
+            const response = await ApiService.post('/auth/register', userData);
+            if (response.success) {
+                this.setToken(response.token);
+                this.setUser(response.user);
+                return { success: true, user: response.user };
+            }
+            return { success: false, message: response.message };
+        } catch (error) {
+            return { success: false, message: 'Error en el registro' };
+        }
+    },
+
+    logout() {
+        localStorage.removeItem(this.tokenKey);
+        localStorage.removeItem(this.userKey);
+        this.currentUser = null;
+        const event = new CustomEvent('userLoggedOut');
+        document.dispatchEvent(event);
+        window.app.navigate('home');
+    },
+
+    setToken(token) {
+        localStorage.setItem(this.tokenKey, token);
+    },
+
+    getToken() {
+        return localStorage.getItem(this.tokenKey);
+    },
+
+    setUser(user) {
+        this.currentUser = user;
+        localStorage.setItem(this.userKey, JSON.stringify(user));
+    },
+
+    getCurrentUser() {
+        if (!this.currentUser) {
+            const userData = localStorage.getItem(this.userKey);
+            this.currentUser = userData ? JSON.parse(userData) : null;
+        }
+        return this.currentUser;
+    },
+
+    isAuthenticated() {
+        return !!this.getToken();
     }
-
-    const data = await response.json();
-    return data;
-}
-
-async function register(username, password, email) {
-    const response = await fetch(`${API_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password, email }),
-    });
-
-    if (!response.ok) {
-        throw new Error('Registration failed');
-    }
-
-    const data = await response.json();
-    return data;
-}
-
-async function logout() {
-    const response = await fetch(`${API_URL}/auth/logout`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
-
-    if (!response.ok) {
-        throw new Error('Logout failed');
-    }
-
-    return true;
-}
-
-export { login, register, logout };
+};

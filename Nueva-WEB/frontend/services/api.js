@@ -1,52 +1,46 @@
-// frontend/services/api.js
-const API_BASE_URL = 'http://localhost/Nueva-WEB/api';
+const ApiService = {
+    baseUrl: '/Nueva-WEB/api',
 
-async function fetchData(endpoint) {
-    const response = await fetch(`${API_BASE_URL}/${endpoint}`);
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
+    async request(endpoint, options = {}) {
+        const url = `${this.baseUrl}${endpoint}`;
+        const token = AuthService.getToken();
+        
+        const config = {
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers,
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            }
+        };
+
+        if (options.body) {
+            config.body = JSON.stringify(options.body);
+        }
+
+        try {
+            const response = await fetch(url, config);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('API Error:', error);
+            return { success: false, message: 'Error de conexión con la API' };
+        }
+    },
+
+    get(endpoint) {
+        return this.request(endpoint, { method: 'GET' });
+    },
+
+    post(endpoint, body) {
+        return this.request(endpoint, { method: 'POST', body });
+    },
+
+    put(endpoint, body) {
+        return this.request(endpoint, { method: 'PUT', body });
+    },
+
+    delete(endpoint) {
+        return this.request(endpoint, { method: 'DELETE' });
     }
-    return response.json();
-}
-
-async function getProducts() {
-    return fetchData('products');
-}
-
-async function getProductById(productId) {
-    return fetchData(`products/${productId}`);
-}
-
-async function loginUser(credentials) {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-    });
-    if (!response.ok) {
-        throw new Error('Login failed');
-    }
-    return response.json();
-}
-
-async function registerUser(userData) {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-    });
-    if (!response.ok) {
-        throw new Error('Registration failed');
-    }
-    return response.json();
-}
-
-async function getUserProfile(userId) {
-    return fetchData(`users/${userId}`);
-}
-
-export { getProducts, getProductById, loginUser, registerUser, getUserProfile };
+};

@@ -1,39 +1,57 @@
-// frontend/components/user-menu/user-menu.js
-document.addEventListener('DOMContentLoaded', function() {
-    const userMenuButton = document.getElementById('user-menu-button');
-    const userMenuDropdown = document.getElementById('user-menu-dropdown');
+var userMenuComponent = {
+    init() {
+        this.setupDropdown();
+        this.setupLogout();
+    },
 
-    userMenuButton.addEventListener('click', function() {
-        userMenuDropdown.classList.toggle('show');
-    });
-
-    window.addEventListener('click', function(event) {
-        if (!event.target.matches('#user-menu-button')) {
-            if (userMenuDropdown.classList.contains('show')) {
-                userMenuDropdown.classList.remove('show');
-            }
+    setupDropdown() {
+        const userButton = document.getElementById('user-button');
+        const userDropdown = document.getElementById('user-dropdown');
+        
+        if (userButton) {
+            userButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('show');
+            });
         }
-    });
 
-    // Function to update user menu with user info
-    function updateUserMenu(user) {
+        document.addEventListener('click', () => {
+            if (userDropdown) {
+                userDropdown.classList.remove('show');
+            }
+        });
+    },
+
+    setupLogout() {
+        const logoutBtn = document.getElementById('logout-btn');
+        
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                AuthService.logout();
+            });
+        }
+    },
+
+    updateUser(user) {
         const userName = document.getElementById('user-name');
         const userAvatar = document.getElementById('user-avatar');
+        
+        if (userName) {
+            userName.textContent = user.first_name || user.username || 'Usuario';
+        }
+        
+        if (userAvatar) {
+            const avatarUrl = user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=FF6B9D&color=fff`;
+            userAvatar.src = avatarUrl;
+        }
+    },
 
-        if (user) {
-            userName.textContent = user.name;
-            userAvatar.src = user.avatar || 'default-avatar.png'; // Default avatar if none provided
-        } else {
-            userName.textContent = 'Guest';
-            userAvatar.src = 'default-avatar.png';
+    updateCartCount(count) {
+        const cartCount = document.getElementById('cart-count');
+        if (cartCount) {
+            cartCount.textContent = count;
+            cartCount.style.display = count > 0 ? 'inline' : 'none';
         }
     }
-
-    // Simulated user data for demonstration
-    const simulatedUser = {
-        name: 'John Doe',
-        avatar: 'path/to/avatar.jpg'
-    };
-
-    updateUserMenu(simulatedUser);
-});
+};

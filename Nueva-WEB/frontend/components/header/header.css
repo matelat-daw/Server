@@ -1,81 +1,92 @@
-body {
-    background-color: #f9f9f9; /* Light background for light mode */
-    color: #333; /* Dark text for light mode */
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+.header {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.header {
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background-color: #ffffff; /* White background for header */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 1.2rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.header h1 {
-    font-size: 24px;
-    color: #4a4a4a; /* Darker text for title */
-}
-
-.header .logo {
-    max-height: 50px; /* Logo height */
-}
-
-.header .user-menu {
+.logo-section {
     display: flex;
     align-items: center;
+    gap: 1rem;
+    animation: slideInLeft 0.5s ease;
 }
 
-.header .user-menu img {
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    width: 40px; /* Avatar size */
-    height: 40px; /* Avatar size */
-    margin-right: 10px;
-}
-
-.header .user-menu .username {
+    background: var(--gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
     font-weight: bold;
-    color: #4a4a4a; /* Darker text for username */
+    font-size: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s;
 }
 
-.header .user-menu .dropdown {
-    display: none; /* Initially hidden dropdown */
+.logo:hover {
+    transform: rotate(10deg) scale(1.05);
 }
 
-.header .user-menu:hover .dropdown {
-    display: block; /* Show dropdown on hover */
+.site-title {
+    font-size: 1.6rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    font-weight: 800;
 }
 
-@media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .header h1 {
-        font-size: 20px;
-    }
-
-    .header .user-menu {
-        margin-top: 10px;
-    }
+.header-actions {
+    display: flex;
+    gap: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #1a1a1a; /* Dark background for dark mode */
-        color: #f9f9f9; /* Light text for dark mode */
-    }
+.icon-btn {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0.6rem;
+    border-radius: 12px;
+    transition: all 0.3s;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    .header {
-        background-color: #2a2a2a; /* Darker background for header */
-    }
-
-    .header h1,
-    .header .user-menu .username {
-        color: #f9f9f9; /* Light text for title and username */
-    }
+.icon-btn:hover {
+    border-color: var(--primary-color);
+    background: var(--gradient);
+    transform: scale(1.1);
+    filter: brightness(1.2);
 }

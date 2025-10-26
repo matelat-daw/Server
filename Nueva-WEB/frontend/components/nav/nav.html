@@ -1,24 +1,27 @@
-<nav>
-    <div class="logo">
-        <h1>Mi Tienda</h1>
-    </div>
-    <ul class="nav-links">
-        <li><a href="#home">Inicio</a></li>
-        <li><a href="#products">Productos</a></li>
-        <li><a href="#about">Sobre Nosotros</a></li>
-        <li><a href="#contact">Contacto</a></li>
-    </ul>
-    <div class="auth-links">
-        <a href="#login" class="login">Login</a>
-        <a href="#register" class="register">Registro</a>
-    </div>
-    <div class="user-menu" style="display: none;">
-        <span class="username">Nombre de Usuario</span>
-        <img src="path/to/avatar.jpg" alt="Avatar" class="avatar">
-        <div class="dropdown">
-            <a href="#profile">Perfil</a>
-            <a href="#cart">Carrito</a>
-            <a href="#logout">Cerrar Sesión</a>
+<nav class="navbar">
+    <div class="nav-container">
+        <button class="menu-toggle" id="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="#" class="nav-link active" data-route="home">Inicio</a></li>
+            <li><a href="#" class="nav-link" data-route="products">Productos</a></li>
+            <li><a href="#" class="nav-link" data-route="about">Sobre Nosotros</a></li>
+            <li><a href="#" class="nav-link" data-route="contact">Contacto</a></li>
+        </ul>
+        
+        <div class="nav-actions">
+            <div id="guest-menu" class="guest-menu">
+                <button id="btn-login" class="btn-primary">Login</button>
+                <button id="btn-register" class="btn-secondary">Registro</button>
+            </div>
+            
+            <div id="user-menu-wrapper" style="display: none;">
+                <!-- User menu component will be loaded here -->
+            </div>
         </div>
     </div>
 </nav>
