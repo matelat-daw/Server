@@ -19,14 +19,14 @@ echo '<!DOCTYPE html>
     <link rel="stylesheet" href="/Nueva-WEB/frontend/components/user-menu/user-menu.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/components/footer/footer.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/components/product-card/product-card.css">
-    <link rel="stylesheet" href="/Nueva-WEB/frontend/components/login/login.css">
-    <link rel="stylesheet" href="/Nueva-WEB/frontend/components/register/register.css">
     
     <!-- Page Styles -->
     <link rel="stylesheet" href="/Nueva-WEB/frontend/pages/home/home.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/pages/products/products.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/pages/about/about.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/pages/contact/contact.css">
+    <link rel="stylesheet" href="/Nueva-WEB/frontend/pages/login/login.css">
+    <link rel="stylesheet" href="/Nueva-WEB/frontend/pages/register/register.css">
 </head>
 <body>
     <div id="app">
@@ -58,8 +58,6 @@ echo '<!DOCTYPE html>
     <script src="/Nueva-WEB/frontend/components/user-menu/user-menu.js"></script>
     <script src="/Nueva-WEB/frontend/components/product-card/product-card.js"></script>
     <script src="/Nueva-WEB/frontend/components/product-list/product-list.js"></script>
-    <script src="/Nueva-WEB/frontend/components/login/login.js"></script>
-    <script src="/Nueva-WEB/frontend/components/register/register.js"></script>
     <script src="/Nueva-WEB/frontend/components/cart/cart.js"></script>
     <script src="/Nueva-WEB/frontend/components/footer/footer.js"></script>
     
@@ -68,6 +66,8 @@ echo '<!DOCTYPE html>
     <script src="/Nueva-WEB/frontend/pages/products/products.js"></script>
     <script src="/Nueva-WEB/frontend/pages/about/about.js"></script>
     <script src="/Nueva-WEB/frontend/pages/contact/contact.js"></script>
+    <script src="/Nueva-WEB/frontend/pages/login/login.js"></script>
+    <script src="/Nueva-WEB/frontend/pages/register/register.js"></script>
     
     <!-- Main App (Load LAST) -->
     <script src="/Nueva-WEB/frontend/app.js"></script>
