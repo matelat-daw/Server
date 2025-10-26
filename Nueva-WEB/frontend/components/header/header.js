@@ -1,33 +1,24 @@
 var headerComponent = {
-    init() {
-        this.setupThemeToggle();
-    },
+    init: function() {
+        var btn = document.getElementById('theme-toggle');
+        var icon = document.getElementById('theme-icon');
+        if (!btn) return;
 
-    setupThemeToggle() {
-        var themeToggle = document.getElementById('theme-toggle');
-        var themeStylesheet = document.getElementById('theme-stylesheet');
-        
-        var savedTheme = localStorage.getItem('theme') || 'light';
-        this.setTheme(savedTheme);
-        
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                var currentTheme = themeStylesheet.getAttribute('href').includes('light') ? 'light' : 'dark';
-                var newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                this.setTheme(newTheme);
-            });
+        // Estado inicial
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            if (icon) icon.textContent = '☀️';
+        } else {
+            document.body.classList.remove('dark-theme');
+            if (icon) icon.textContent = '🌙';
         }
-    },
 
-    setTheme(theme) {
-        var themeStylesheet = document.getElementById('theme-stylesheet');
-        var themeToggle = document.getElementById('theme-toggle');
-        
-        themeStylesheet.setAttribute('href', '/Nueva-WEB/frontend/styles/themes/' + theme + '.css');
-        localStorage.setItem('theme', theme);
-        
-        if (themeToggle) {
-            themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
-        }
+        btn.onclick = function() {
+            document.body.classList.toggle('dark-theme');
+            var isDark = document.body.classList.contains('dark-theme');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+        };
     }
 };
+window.headerComponent = headerComponent;

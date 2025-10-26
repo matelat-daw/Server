@@ -1,67 +1,129 @@
-const AuthService = {
+var AuthService = {
     currentUser: null,
-    tokenKey: 'auth_token',
-    userKey: 'user_data',
+    tokenKey: 'nueva_web_token',
+    userKey: 'nueva_web_user',
 
-    async login(email, password) {
-        try {
-            const response = await ApiService.post('/auth/login', { email, password });
-            if (response.success) {
-                this.setToken(response.token);
-                this.setUser(response.user);
+    login: function(email, password) {
+        var self = this;
+        console.log('Attempting login for:', email);
+        
+        return ApiService.post('/auth/login', { 
+            email: email, 
+            password: password 
+        })
+        .then(function(response) {
+            if (response && response.success) {
+                self.setToken(response.token);
+                self.setUser(response.user);
+                
+                var event = new CustomEvent('userLoggedIn', { detail: response.user });
+                document.dispatchEvent(event);
+                
+                console.log('Login successful for user:', response.user.username);
                 return { success: true, user: response.user };
+            } else {
+                console.log('Login failed:', response ? response.message : 'Unknown error');
+                return { success: false, message: response ? response.message : 'Error de conexión' };
             }
-            return { success: false, message: response.message };
-        } catch (error) {
-            return { success: false, message: 'Error en el login' };
-        }
+        })
+        .catch(function(error) {
+            console.error('Login error:', error);
+            return { success: false, message: 'Error durante el inicio de sesión' };
+        });
     },
 
-    async register(userData) {
-        try {
-            const response = await ApiService.post('/auth/register', userData);
-            if (response.success) {
-                this.setToken(response.token);
-                this.setUser(response.user);
+    register: function(userData) {
+        var self = this;
+        console.log('Attempting registration for:', userData.email);
+        
+        return ApiService.post('/auth/register', userData)
+        .then(function(response) {
+            if (response && response.success) {
+                self.setToken(response.token);
+                self.setUser(response.user);
+                
+                var event = new CustomEvent('userLoggedIn', { detail: response.user });
+                document.dispatchEvent(event);
+                
+                console.log('Registration successful for user:', response.user.username);
                 return { success: true, user: response.user };
+            } else {
+                console.log('Registration failed:', response ? response.message : 'Unknown error');
+                return { success: false, message: response ? response.message : 'Error en el registro' };
             }
-            return { success: false, message: response.message };
-        } catch (error) {
-            return { success: false, message: 'Error en el registro' };
-        }
+        })
+        .catch(function(error) {
+            console.error('Registration error:', error);
+            return { success: false, message: 'Error durante el registro' };
+        });
     },
 
-    logout() {
+    logout: function() {
+        console.log('Logging out user');
         localStorage.removeItem(this.tokenKey);
         localStorage.removeItem(this.userKey);
         this.currentUser = null;
-        const event = new CustomEvent('userLoggedOut');
+        
+        var event = new CustomEvent('userLoggedOut');
         document.dispatchEvent(event);
-        window.app.navigate('home');
+        
+        if (window.app) {
+            window.app.navigate('home');
+        }
     },
 
-    setToken(token) {
-        localStorage.setItem(this.tokenKey, token);
+    setToken: function(token) {
+        if (token) {
+            localStorage.setItem(this.tokenKey, token);
+        }
     },
 
-    getToken() {
+    getToken: function() {
         return localStorage.getItem(this.tokenKey);
     },
 
-    setUser(user) {
-        this.currentUser = user;
-        localStorage.setItem(this.userKey, JSON.stringify(user));
+    setUser: function(user) {
+        if (user) {
+            this.currentUser = user;
+            localStorage.setItem(this.userKey, JSON.stringify(user));
+        }
     },
 
-    getCurrentUser() {
+    getCurrentUser: function() {
         if (!this.currentUser) {
-            const userData = localStorage.getItem(this.userKey);
+            var userData = localStorage.getItem(this.userKey);
             this.currentUser = userData ? JSON.parse(userData) : null;
         }
         return this.currentUser;
     },
 
-    isAuthenticated() {
-        return !!this.getToken();
+    isAuthenticated: function() {
+        return !!this.getToken() && !!this.getCurrentUser();
+    },
+
+    validateToken: function() {
+        var self = this;
+        if (!this.getToken()) {
+            return Promise.resolve(false);
+        }
+
+        return ApiService.get('/auth/validate')
+        .then(function(response) {
+            if (response && response.success) {
+                self.setUser(response.user);
+                return true;
+            } else {
+                self.logout();
+                return false;
+            }
+        })
+        .catch(function(error) {
+            console.error('Token validation error:', error);
+            self.logout();
+            return false;
+        });
     }
 };
+
+// Make it globally available
+window.AuthService = AuthService;

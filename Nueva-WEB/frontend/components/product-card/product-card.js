@@ -3,28 +3,25 @@ var productCardComponent = {
         var card = document.createElement('div');
         card.className = 'product-card';
         
-        var imageUrl = product.image || 'https://via.placeholder.com/300/FF6B9D/FFFFFF?text=' + encodeURIComponent(product.name);
-        var description = product.description || '';
-        var price = typeof product.price === 'number' ? product.price.toFixed(2) : product.price;
-        
         var img = document.createElement('img');
-        img.src = imageUrl;
-        img.alt = product.name;
+        img.src = product.image || 'https://via.placeholder.com/300x200/FF6B9D/FFFFFF?text=Producto';
+        img.alt = product.name || 'Producto';
         img.className = 'product-image';
         img.onerror = function() {
-            this.src = 'https://via.placeholder.com/300/FF6B9D/FFFFFF?text=Producto';
+            this.src = 'https://via.placeholder.com/300x200/FF6B9D/FFFFFF?text=Producto';
         };
         
         var nameEl = document.createElement('h3');
         nameEl.className = 'product-name';
-        nameEl.textContent = product.name;
+        nameEl.textContent = product.name || 'Producto sin nombre';
         
         var descEl = document.createElement('p');
         descEl.className = 'product-description';
-        descEl.textContent = description;
+        descEl.textContent = product.description || '';
         
         var priceEl = document.createElement('p');
         priceEl.className = 'product-price';
+        var price = typeof product.price === 'number' ? product.price.toFixed(2) : product.price;
         priceEl.textContent = price + '€';
         
         var button = document.createElement('button');
@@ -33,7 +30,9 @@ var productCardComponent = {
         button.textContent = 'Añadir al Carrito';
         
         var self = this;
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             self.addToCart(product);
         });
         
@@ -51,3 +50,6 @@ var productCardComponent = {
         alert(product.name + ' añadido al carrito');
     }
 };
+
+// Make it globally available
+window.productCardComponent = productCardComponent;

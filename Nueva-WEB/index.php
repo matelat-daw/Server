@@ -1,4 +1,5 @@
 <?php
+// filepath: c:\Server\html\Nueva-WEB\index.php
 echo '<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -37,14 +38,17 @@ echo '<!DOCTYPE html>
         
         <!-- Main Content -->
         <main id="main-content">
-            <!-- Dynamic content will be loaded here -->
+            <div style="text-align: center; padding: 3rem; color: #718096;">
+                <h2>Iniciando aplicación...</h2>
+                <div style="margin-top: 1rem;">Por favor espera.</div>
+            </div>
         </main>
         
         <!-- Footer Component -->
         <div id="footer-component"></div>
     </div>
 
-    <!-- Services -->
+    <!-- Services (Load FIRST) -->
     <script src="/Nueva-WEB/frontend/services/api.js"></script>
     <script src="/Nueva-WEB/frontend/services/auth.js"></script>
     
@@ -59,14 +63,15 @@ echo '<!DOCTYPE html>
     <script src="/Nueva-WEB/frontend/components/cart/cart.js"></script>
     <script src="/Nueva-WEB/frontend/components/footer/footer.js"></script>
     
-    <!-- Pages Scripts -->
+    <!-- Pages Scripts (Load BEFORE app.js) -->
     <script src="/Nueva-WEB/frontend/pages/home/home.js"></script>
     <script src="/Nueva-WEB/frontend/pages/products/products.js"></script>
     <script src="/Nueva-WEB/frontend/pages/about/about.js"></script>
     <script src="/Nueva-WEB/frontend/pages/contact/contact.js"></script>
     
-    <!-- Main App -->
+    <!-- Main App (Load LAST) -->
     <script src="/Nueva-WEB/frontend/app.js"></script>
+    
 </body>
 </html>';
 ?>
