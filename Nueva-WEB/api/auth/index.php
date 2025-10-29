@@ -1,4 +1,9 @@
 <?php
+// Desactivar la salida de errores en pantalla y activar log de errores
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../logs/php_error.log');
 // filepath: c:\Server\html\Nueva-WEB\api\auth\index.php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -22,7 +27,13 @@ $path = str_replace('/Nueva-WEB/api/auth/', '', $path);
 switch($request_method) {
     case 'POST':
         if ($path === 'register') {
-            $data = $_POST;
+            // Permitir JSON o form-data
+            $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+            if (stripos($contentType, 'application/json') !== false) {
+                $data = json_decode(file_get_contents("php://input"), true);
+            } else {
+                $data = $_POST;
+            }
             $authController->register($data);
         } elseif ($path === 'login') {
             $data = json_decode(file_get_contents("php://input"), true);

@@ -10,8 +10,8 @@ class AuthController {
     private $user;
 
     public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
+        global $conn;
+        $this->db = $conn;
         $this->user = new User($this->db);
     }
 
@@ -47,12 +47,9 @@ class AuthController {
         }
 
         // Crear usuario
-        $this->user->username = $data['username'];
-        $this->user->email = $data['email'];
-        $this->user->password = $data['password'];
-        $this->user->first_name = $data['first_name'] ?? null;
-        $this->user->last_name = $data['last_name'] ?? null;
-        $this->user->profile_image = $profile_image;
+    $this->user->username = $data['username'];
+    $this->user->email = $data['email'];
+    $this->user->password = $data['password'];
 
         if ($this->user->register()) {
             // Obtener roles del usuario
@@ -61,16 +58,12 @@ class AuthController {
             // Generar JWT
             $token = $this->generateToken($this->user->id, $this->user->username, $this->user->email, $roles);
             
-            // Enviar token en cookie HTTP-only segura
-            $this->setAuthCookie($token);
+            // No enviar cookie JWT en registro, solo devolver el token en la respuesta
 
             $userData = [
                 'id' => $this->user->id,
                 'username' => $this->user->username,
                 'email' => $this->user->email,
-                'first_name' => $this->user->first_name,
-                'last_name' => $this->user->last_name,
-                'profile_image' => $profile_image ? '/Nueva-WEB/api/uploads/profiles/' . $profile_image : null,
                 'roles' => $roles
             ];
 
@@ -107,9 +100,6 @@ class AuthController {
                 'id' => $this->user->id,
                 'username' => $this->user->username,
                 'email' => $this->user->email,
-                'first_name' => $this->user->first_name,
-                'last_name' => $this->user->last_name,
-                'profile_image' => $this->user->profile_image ? '/Nueva-WEB/api/uploads/profiles/' . $this->user->profile_image : null,
                 'roles' => $roles
             ];
 

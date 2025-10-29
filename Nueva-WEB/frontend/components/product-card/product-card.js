@@ -4,11 +4,16 @@ var productCardComponent = {
         card.className = 'product-card';
         
         var img = document.createElement('img');
-        img.src = product.image || 'https://via.placeholder.com/300x200/FF6B9D/FFFFFF?text=Producto';
+        img.src = product.image || '/Nueva-WEB/frontend/imgs/producto-generico.png';
         img.alt = product.name || 'Producto';
         img.className = 'product-image';
-        img.onerror = function() {
-            this.src = 'https://via.placeholder.com/300x200/FF6B9D/FFFFFF?text=Producto';
+        img.onerror = function handler() {
+            // Si ya intentó cargar el placeholder, no volver a intentar
+            if (this.src.includes('producto-generico.png')) {
+                this.onerror = null; // No volver a intentar, dejar enlace roto
+            } else {
+                this.src = '/Nueva-WEB/frontend/imgs/producto-generico.png';
+            }
         };
         
         var nameEl = document.createElement('h3');

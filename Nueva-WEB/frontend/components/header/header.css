@@ -1,10 +1,18 @@
 .header {
-    background: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    box-shadow: var(--shadow);
     position: sticky;
     top: 0;
     z-index: 100;
     backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+body.dark-theme .header {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    box-shadow: var(--shadow);
     border-bottom: 1px solid var(--border-color);
 }
 

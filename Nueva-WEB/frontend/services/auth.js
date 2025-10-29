@@ -7,7 +7,7 @@ var AuthService = {
         var self = this;
         console.log('Attempting login for:', email);
         
-        return ApiService.post('/auth/login', { 
+    return ApiService.post('/login', { 
             email: email, 
             password: password 
         })
@@ -36,7 +36,7 @@ var AuthService = {
         var self = this;
         console.log('Attempting registration for:', userData.email);
         
-        return ApiService.post('/auth/register', userData)
+    return ApiService.post('/register', userData)
         .then(function(response) {
             if (response && response.success) {
                 self.setToken(response.token);

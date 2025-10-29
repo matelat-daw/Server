@@ -3,6 +3,10 @@ var navComponent = {
         this.setupMenuToggle();
         this.setupNavLinks();
         this.setupAuthButtons();
+        // Mostrar menú de usuario si ya está autenticado
+        if (window.AuthService && AuthService.isAuthenticated && AuthService.isAuthenticated()) {
+            this.updateForUser(AuthService.getCurrentUser());
+        }
     },
 
     setupMenuToggle() {
@@ -45,7 +49,7 @@ var navComponent = {
         
         if (btnRegister) {
             btnRegister.addEventListener('click', () => {
-                registerComponent.show();
+                window.location.hash = '#register';
             });
         }
     },

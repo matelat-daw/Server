@@ -1,7 +1,15 @@
 .navbar {
-    background: white;
+    background: var(--card-bg);
+    color: var(--text-primary);
     border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow);
+}
+
+body.dark-theme .navbar {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
 }
 
 .nav-container {
@@ -40,13 +48,16 @@
 }
 
 .nav-link {
-    color: var(--text-color);
+    color: var(--text-primary);
     text-decoration: none;
     padding: 0.8rem 1.5rem;
     border-radius: 12px;
     transition: all 0.3s;
     font-weight: 600;
     position: relative;
+}
+body.dark-theme .nav-link {
+    color: var(--text-primary);
 }
 
 .nav-link::after {
@@ -69,7 +80,7 @@
 
 .nav-link:hover,
 .nav-link.active {
-    background: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(199, 125, 255, 0.1) 100%);
+    background: rgba(157, 78, 221, 0.15);
     color: var(--primary-color);
 }
 
@@ -95,7 +106,7 @@
         top: 100%;
         left: 0;
         right: 0;
-        background: white;
+    background: var(--bg-color);
         flex-direction: column;
         padding: 1rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

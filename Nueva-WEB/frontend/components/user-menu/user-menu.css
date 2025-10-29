@@ -1,8 +1,4 @@
-body {
-    background-color: #f9f9f9; /* Light background for light mode */
-    color: #333; /* Dark text for light mode */
-    font-family: Arial, sans-serif;
-}
+
 
 .user-menu {
     position: relative;
@@ -10,8 +6,8 @@ body {
 }
 
 .user-menu .menu-button {
-    background-color: #4CAF50; /* Green background */
-    color: white; /* White text */
+    background-color: var(--primary-color);
+    color: var(--text-primary);
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
@@ -21,45 +17,24 @@ body {
 .user-menu .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9; /* Light background for dropdown */
+    background-color: var(--card-bg);
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
 
 .user-menu .dropdown-content a {
-    color: black; /* Dark text for dropdown items */
+    color: var(--text-primary);
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
 
 .user-menu .dropdown-content a:hover {
-    background-color: #f1f1f1; /* Light grey on hover */
+    background-color: var(--border-color);
 }
 
 .user-menu:hover .dropdown-content {
     display: block; /* Show dropdown on hover */
 }
 
-/* Dark mode styles */
-body.dark-mode {
-    background-color: #333; /* Dark background for dark mode */
-    color: #f9f9f9; /* Light text for dark mode */
-}
-
-body.dark-mode .user-menu .menu-button {
-    background-color: #555; /* Darker background for button in dark mode */
-}
-
-body.dark-mode .user-menu .dropdown-content {
-    background-color: #444; /* Dark background for dropdown in dark mode */
-}
-
-body.dark-mode .user-menu .dropdown-content a {
-    color: #f9f9f9; /* Light text for dropdown items in dark mode */
-}
-
-body.dark-mode .user-menu .dropdown-content a:hover {
-    background-color: #666; /* Darker grey on hover in dark mode */
-}

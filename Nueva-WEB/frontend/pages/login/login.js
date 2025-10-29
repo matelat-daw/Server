@@ -26,18 +26,22 @@ var loginComponent = {
         if (form) {
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                
-                var email = document.getElementById('login-email').value;
-                var password = document.getElementById('login-password').value;
-                
-                var result = await AuthService.login(email, password);
-                
+                // Recoge los datos del formulario
+                var username = document.getElementById('username').value;
+                var password = document.getElementById('password').value;
+                // Llama a AuthService.login pasando un objeto
+                var result = await AuthService.login({ username, password });
                 if (result.success) {
                     loginComponent.hide();
                     var event = new CustomEvent('userLoggedIn', { detail: result.user });
                     document.dispatchEvent(event);
                 } else {
-                    alert(result.message || 'Error al iniciar sesión');
+                    if (typeof showModal === 'function') {
+                        showModal(result.message || 'Credenciales incorrectas', 'error');
+                    } else {
+                        alert(result.message || 'Credenciales incorrectas');
+                    }
+                    // El formulario permanece visible para reintentar
                 }
             });
         }

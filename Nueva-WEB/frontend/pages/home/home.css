@@ -5,13 +5,17 @@
 .hero {
     text-align: center;
     padding: 5rem 2rem;
-    background: linear-gradient(135deg, #FF6B9D 0%, #C77DFF 100%);
+    background: var(--gradient);
     border-radius: 24px;
-    color: white;
+    color: #fff;
     margin-bottom: 4rem;
-    box-shadow: 0 20px 40px rgba(255, 107, 157, 0.3);
+    box-shadow: var(--shadow-lg);
     position: relative;
     overflow: hidden;
+}
+body.dark-theme .hero {
+    background: var(--gradient);
+    color: #fff;
 }
 
 .hero::before {

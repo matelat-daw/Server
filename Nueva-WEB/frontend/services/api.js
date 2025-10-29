@@ -11,7 +11,8 @@ const ApiService = {
                 'Content-Type': 'application/json',
                 ...options.headers,
                 ...(token && { 'Authorization': `Bearer ${token}` })
-            }
+            },
+            credentials: 'include'
         };
 
         if (options.body) {

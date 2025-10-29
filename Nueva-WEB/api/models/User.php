@@ -8,9 +8,6 @@ class User {
     public $username;
     public $email;
     public $password;
-    public $first_name;
-    public $last_name;
-    public $profile_image;
     public $created_at;
     public $updated_at;
 
@@ -22,17 +19,13 @@ class User {
         $query = "INSERT INTO " . $this->table_name . " 
                   SET username=:username, 
                       email=:email, 
-                      password=:password,
-                      first_name=:first_name,
-                      last_name=:last_name,
-                      profile_image=:profile_image";
+                      password=:password
+";
 
         $stmt = $this->conn->prepare($query);
 
         $this->username = htmlspecialchars(strip_tags($this->username));
         $this->email = htmlspecialchars(strip_tags($this->email));
-        $this->first_name = htmlspecialchars(strip_tags($this->first_name));
-        $this->last_name = htmlspecialchars(strip_tags($this->last_name));
         
         // Hash password con bcrypt (cost 12 para alta seguridad)
         $password_hash = password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 12]);
@@ -40,9 +33,6 @@ class User {
         $stmt->bindParam(":username", $this->username);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":password", $password_hash);
-        $stmt->bindParam(":first_name", $this->first_name);
-        $stmt->bindParam(":last_name", $this->last_name);
-        $stmt->bindParam(":profile_image", $this->profile_image);
 
         if ($stmt->execute()) {
             $this->id = $this->conn->lastInsertId();
@@ -72,7 +62,7 @@ class User {
     }
 
     public function emailExists() {
-        $query = "SELECT id, username, email, password, first_name, last_name, profile_image, created_at 
+    $query = "SELECT id, username, email, password, created_at 
                   FROM " . $this->table_name . " 
                   WHERE email = :email 
                   LIMIT 0,1";
@@ -89,9 +79,6 @@ class User {
             $this->username = $row['username'];
             $this->email = $row['email'];
             $this->password = $row['password'];
-            $this->first_name = $row['first_name'];
-            $this->last_name = $row['last_name'];
-            $this->profile_image = $row['profile_image'];
             $this->created_at = $row['created_at'];
             return true;
         }

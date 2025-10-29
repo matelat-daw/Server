@@ -10,7 +10,6 @@ echo '<!DOCTYPE html>
     
     <!-- Global Styles -->
     <link rel="stylesheet" href="/Nueva-WEB/frontend/styles/global.css">
-    <link rel="stylesheet" href="/Nueva-WEB/frontend/styles/themes/light.css" id="theme-stylesheet">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/styles/responsive.css">
     
     <!-- Component Styles -->
