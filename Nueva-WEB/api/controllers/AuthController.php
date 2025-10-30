@@ -37,39 +37,58 @@ class AuthController {
             return $this->sendResponse(409, false, "El email ya está registrado");
         }
 
-        // Manejar subida de imagen de perfil
-        $profile_image = null;
-        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-            $profile_image = $this->uploadProfileImage($_FILES['profile_image']);
-            if (!$profile_image) {
-                return $this->sendResponse(400, false, "Error al subir la imagen de perfil");
-            }
-        }
+        // Manejar subida de imagen de perfil o avatar por género
+        $gender = isset($data['gender']) ? $data['gender'] : 'other';
+        // Determinar avatar por género antes de registrar
+        $avatarFile = 'other.png';
+        if ($gender === 'male') $avatarFile = 'male.png';
+        if ($gender === 'female') $avatarFile = 'female.png';
 
-        // Crear usuario
-    $this->user->username = $data['username'];
-    $this->user->email = $data['email'];
-    $this->user->password = $data['password'];
+        // Asignar una ruta temporal válida (pero con el ID real tras registrar)
+        $this->user->profile_img = 'users/default/profile.png';
+        $this->user->username = $data['username'];
+        $this->user->email = $data['email'];
+        $this->user->password = $data['password'];
 
         if ($this->user->register()) {
+            $userId = $this->user->id;
+            $destDir = __DIR__ . '/../uploads/users/' . $userId . '/';
+            if (!file_exists($destDir)) mkdir($destDir, 0777, true);
+            $profile_img = null;
+            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+                // Usar la extensión original
+                $extension = strtolower(pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION));
+                $dest = $destDir . 'profile.' . $extension;
+                if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $dest)) {
+                    $profile_img = 'users/' . $userId . '/profile.' . $extension;
+                }
+            } else {
+                // Copiar avatar por género
+                $src = __DIR__ . '/../media/' . $avatarFile;
+                $dest = $destDir . 'profile.png';
+                if (file_exists($src)) {
+                    copy($src, $dest);
+                    $profile_img = 'users/' . $userId . '/profile.png';
+                }
+            }
+            if ($profile_img) {
+                $this->user->profile_img = $profile_img;
+                $this->user->update();
+            }
             // Obtener roles del usuario
             $roles = $this->user->getRoles();
-            
             // Generar JWT
             $token = $this->generateToken($this->user->id, $this->user->username, $this->user->email, $roles);
-            
             // No enviar cookie JWT en registro, solo devolver el token en la respuesta
-
             $userData = [
                 'id' => $this->user->id,
                 'username' => $this->user->username,
                 'email' => $this->user->email,
+                'profile_img' => $this->user->profile_img ? '/Nueva-WEB/api/uploads/' . $this->user->profile_img : null,
                 'roles' => $roles
             ];
-
             return $this->sendResponse(201, true, "Usuario registrado exitosamente", $userData, $token);
         }
-
         return $this->sendResponse(500, false, "Error al registrar usuario");
     }
 
@@ -197,33 +216,30 @@ class AuthController {
         // Manejar nueva imagen de perfil
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
             // Eliminar imagen anterior si existe
-            if ($this->user->profile_image) {
-                $oldImagePath = __DIR__ . '/../uploads/profiles/' . $this->user->profile_image;
+            if ($this->user->profile_img) {
+                $oldImagePath = __DIR__ . '/../uploads/' . $this->user->profile_img;
                 if (file_exists($oldImagePath)) {
                     unlink($oldImagePath);
                 }
             }
-            
-            $profile_image = $this->uploadProfileImage($_FILES['profile_image']);
-            if ($profile_image) {
-                $this->user->profile_image = $profile_image;
+            $profile_img = $this->uploadProfileImage($_FILES['profile_image']);
+            if ($profile_img) {
+                $this->user->profile_img = $profile_img;
             }
         }
 
         if ($this->user->update()) {
             $this->user->readOne();
             $roles = $this->user->getRoles();
-            
             $userData = [
                 'id' => $this->user->id,
                 'username' => $this->user->username,
                 'email' => $this->user->email,
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,
-                'profile_image' => $this->user->profile_image ? '/Nueva-WEB/api/uploads/profiles/' . $this->user->profile_image : null,
+                'profile_img' => $this->user->profile_img ? '/Nueva-WEB/api/uploads/' . $this->user->profile_img : null,
                 'roles' => $roles
             ];
-
             return $this->sendResponse(200, true, "Perfil actualizado exitosamente", $userData);
         }
 
@@ -247,8 +263,8 @@ class AuthController {
         $this->user->readOne();
 
         // Eliminar imagen de perfil si existe
-        if ($this->user->profile_image) {
-            $imagePath = __DIR__ . '/../uploads/profiles/' . $this->user->profile_image;
+        if ($this->user->profile_img) {
+            $imagePath = __DIR__ . '/../uploads/' . $this->user->profile_img;
             if (file_exists($imagePath)) {
                 unlink($imagePath);
             }
@@ -276,22 +292,35 @@ class AuthController {
             return false;
         }
 
-        // Crear directorio si no existe
-        $upload_dir = __DIR__ . '/../uploads/profiles/';
+        // Obtener extensión original
+        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+        // Obtener ID de usuario (de la instancia actual)
+        $userId = isset($this->user->id) ? $this->user->id : null;
+        if (!$userId) {
+            // No se puede guardar sin ID de usuario
+            return false;
+        }
+
+        // Crear directorio por usuario si no existe
+        $upload_dir = __DIR__ . '/../uploads/users/' . $userId . '/';
         if (!file_exists($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
 
-        // Obtener extensión original
-        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        
-        // Generar nombre único: profile_userid_timestamp.ext
-        $filename = 'profile_' . uniqid() . '_' . time() . '.' . $extension;
+        // Nombre fijo: profile.ext
+        $filename = 'profile.' . $extension;
         $filepath = $upload_dir . $filename;
+
+        // Si ya existe, eliminarlo
+        if (file_exists($filepath)) {
+            unlink($filepath);
+        }
 
         // Mover archivo
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
-            return $filename;
+            // Devolver la ruta relativa desde uploads/
+            return 'users/' . $userId . '/' . $filename;
         }
 
         return false;
@@ -314,15 +343,21 @@ class AuthController {
     }
 
     private function setAuthCookie($token) {
+        // Modern setcookie with SameSite and Secure attributes
         setcookie(
             'auth_token',
             $token,
-            time() + (60 * 60 * 24 * 7), // 7 días
-            '/',
-            '',
-            false,  // Secure (cambiar a true en producción con HTTPS)
-            true   // HttpOnly (no accesible desde JavaScript)
+            [
+                'expires' => time() + (60 * 60 * 24 * 7), // 7 días
+                'path' => '/',
+                'domain' => '', // default
+                'secure' => true, // Required for SameSite=None
+                'httponly' => true,
+                'samesite' => 'None',
+            ]
         );
+        // Debug header to confirm setcookie was called
+        header('X-Debug-SetAuthCookie: called');
     }
 
     private function getTokenFromCookie() {

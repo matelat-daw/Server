@@ -3,33 +3,36 @@ var AuthService = {
     tokenKey: 'nueva_web_token',
     userKey: 'nueva_web_user',
 
-    login: function(email, password) {
+    login: function(credentials) {
         var self = this;
-        console.log('Attempting login for:', email);
-        
-    return ApiService.post('/login', { 
-            email: email, 
-            password: password 
-        })
-        .then(function(response) {
-            if (response && response.success) {
-                self.setToken(response.token);
-                self.setUser(response.user);
-                
-                var event = new CustomEvent('userLoggedIn', { detail: response.user });
-                document.dispatchEvent(event);
-                
-                console.log('Login successful for user:', response.user.username);
-                return { success: true, user: response.user };
-            } else {
-                console.log('Login failed:', response ? response.message : 'Unknown error');
-                return { success: false, message: response ? response.message : 'Error de conexión' };
-            }
-        })
-        .catch(function(error) {
-            console.error('Login error:', error);
-            return { success: false, message: 'Error durante el inicio de sesión' };
-        });
+        // credentials: { username, password }
+        // El backend espera email, así que si el campo es username, lo usamos como email
+        var payload = {};
+        if (credentials.email) {
+            payload.email = credentials.email;
+        } else if (credentials.username) {
+            payload.email = credentials.username;
+        }
+        payload.password = credentials.password;
+
+        return ApiService.post('/login', payload)
+            .then(function(response) {
+                if (response && response.success) {
+                    self.setToken(response.token);
+                    self.setUser(response.user);
+                    var event = new CustomEvent('userLoggedIn', { detail: response.user });
+                    document.dispatchEvent(event);
+                    console.log('Login successful for user:', response.user.username);
+                    return { success: true, user: response.user };
+                } else {
+                    console.log('Login failed:', response ? response.message : 'Unknown error');
+                    return { success: false, message: response ? response.message : 'Error de conexión' };
+                }
+            })
+            .catch(function(error) {
+                console.error('Login error:', error);
+                return { success: false, message: 'Error durante el inicio de sesión' };
+            });
     },
 
     register: function(userData) {

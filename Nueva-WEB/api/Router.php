@@ -58,9 +58,19 @@ class Router {
                     }
                 }
                 $callback = $route['callback'];
-                // Leer el cuerpo JSON para POST y PUT
+                // Leer datos para POST y PUT
                 if (in_array($method, ['POST', 'PUT'])) {
-                    $input = json_decode(file_get_contents('php://input'), true);
+                    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+                    if (stripos($contentType, 'multipart/form-data') !== false) {
+                        // Formulario con archivos
+                        $input = $_POST;
+                        if (!empty($_FILES)) {
+                            $input['_files'] = $_FILES;
+                        }
+                    } else {
+                        // JSON
+                        $input = json_decode(file_get_contents('php://input'), true);
+                    }
                     array_unshift($matches, $input);
                 }
                 if (is_array($callback) && count($callback) === 2) {

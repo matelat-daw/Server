@@ -3,8 +3,10 @@ class ProductController {
     private $productModel;
 
     public function __construct() {
-        require_once '../models/Product.php';
-        $this->productModel = new Product();
+        require_once __DIR__ . '/../config/database.php';
+        require_once __DIR__ . '/../models/Product.php';
+        global $conn;
+        $this->productModel = new Product($conn);
     }
 
     public function listProducts() {

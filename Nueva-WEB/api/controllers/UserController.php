@@ -3,8 +3,10 @@ class UserController {
     private $userModel;
 
     public function __construct() {
-        require_once '../models/User.php';
-        $this->userModel = new User();
+        require_once __DIR__ . '/../config/database.php';
+        require_once __DIR__ . '/../models/User.php';
+        global $conn;
+        $this->userModel = new User($conn);
     }
 
     public function getUserDetails($userId) {

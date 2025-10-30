@@ -1,3 +1,28 @@
+// Ensure showModal is available (import from register.js if not global)
+if (typeof showModal !== 'function') {
+    window.showModal = function(message, type = 'error') {
+        let modal = document.getElementById('global-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'global-modal';
+            modal.innerHTML = `
+                <div class="modal-backdrop"></div>
+                <div class="modal-content">
+                    <span id="modal-message"></span>
+                    <button id="modal-close">OK</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        modal.querySelector('#modal-message').textContent = message;
+        modal.style.display = 'flex';
+        modal.className = type === 'success' ? 'modal-success' : 'modal-error';
+        modal.querySelector('#modal-close').onclick = function() {
+            modal.style.display = 'none';
+        };
+    };
+}
+
 var loginComponent = {
     modal: null,
     
@@ -26,22 +51,16 @@ var loginComponent = {
         if (form) {
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                // Recoge los datos del formulario
                 var username = document.getElementById('username').value;
                 var password = document.getElementById('password').value;
-                // Llama a AuthService.login pasando un objeto
                 var result = await AuthService.login({ username, password });
                 if (result.success) {
                     loginComponent.hide();
                     var event = new CustomEvent('userLoggedIn', { detail: result.user });
                     document.dispatchEvent(event);
                 } else {
-                    if (typeof showModal === 'function') {
-                        showModal(result.message || 'Credenciales incorrectas', 'error');
-                    } else {
-                        alert(result.message || 'Credenciales incorrectas');
-                    }
-                    // El formulario permanece visible para reintentar
+                    // Stay on login, show modal error
+                    showModal(result.message || 'Credenciales incorrectas', 'error');
                 }
             });
         }

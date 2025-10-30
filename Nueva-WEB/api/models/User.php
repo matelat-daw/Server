@@ -8,6 +8,7 @@ class User {
     public $username;
     public $email;
     public $password;
+    public $profile_img;
     public $created_at;
     public $updated_at;
 
@@ -16,23 +17,25 @@ class User {
     }
 
     public function register() {
-        $query = "INSERT INTO " . $this->table_name . " 
-                  SET username=:username, 
-                      email=:email, 
-                      password=:password
+    $query = "INSERT INTO " . $this->table_name . " 
+          SET username=:username, 
+              email=:email, 
+              password=:password, 
+              profile_img=:profile_img
 ";
 
-        $stmt = $this->conn->prepare($query);
+    $stmt = $this->conn->prepare($query);
 
-        $this->username = htmlspecialchars(strip_tags($this->username));
-        $this->email = htmlspecialchars(strip_tags($this->email));
-        
-        // Hash password con bcrypt (cost 12 para alta seguridad)
-        $password_hash = password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 12]);
+    $this->username = htmlspecialchars(strip_tags($this->username));
+    $this->email = htmlspecialchars(strip_tags($this->email));
+    $profile_img = $this->profile_img ? $this->profile_img : null;
+    // Hash password con bcrypt (cost 12 para alta seguridad)
+    $password_hash = password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 12]);
 
-        $stmt->bindParam(":username", $this->username);
-        $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":password", $password_hash);
+    $stmt->bindParam(":username", $this->username);
+    $stmt->bindParam(":email", $this->email);
+    $stmt->bindParam(":password", $password_hash);
+    $stmt->bindParam(":profile_img", $profile_img);
 
         if ($stmt->execute()) {
             $this->id = $this->conn->lastInsertId();
@@ -97,8 +100,8 @@ class User {
             $query .= ", password=:password";
         }
         
-        if (!empty($this->profile_image)) {
-            $query .= ", profile_image=:profile_image";
+        if (!empty($this->profile_img)) {
+            $query .= ", profile_img=:profile_img";
         }
         
         $query .= " WHERE id=:id";
@@ -122,8 +125,8 @@ class User {
             $stmt->bindParam(":password", $password_hash);
         }
 
-        if (!empty($this->profile_image)) {
-            $stmt->bindParam(":profile_image", $this->profile_image);
+        if (!empty($this->profile_img)) {
+            $stmt->bindParam(":profile_img", $this->profile_img);
         }
 
         if ($stmt->execute()) {
@@ -146,7 +149,7 @@ class User {
     }
 
     public function readOne() {
-        $query = "SELECT id, username, email, first_name, last_name, profile_image, created_at, updated_at 
+    $query = "SELECT id, username, email, first_name, last_name, profile_img, created_at, updated_at 
                   FROM " . $this->table_name . " 
                   WHERE id = :id 
                   LIMIT 0,1";
@@ -162,7 +165,7 @@ class User {
             $this->email = $row['email'];
             $this->first_name = $row['first_name'];
             $this->last_name = $row['last_name'];
-            $this->profile_image = $row['profile_image'];
+            $this->profile_img = $row['profile_img'];
             $this->created_at = $row['created_at'];
             $this->updated_at = $row['updated_at'];
             return true;

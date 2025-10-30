@@ -51,6 +51,7 @@ window.registerPage = {
             var email = document.getElementById('email');
             var password = document.getElementById('password');
             var confirm = document.getElementById('confirm-password');
+            var gender = form.querySelector('input[name="gender"]:checked');
 
             // Remove previous errors
             form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
@@ -69,6 +70,11 @@ window.registerPage = {
                 valid = false;
             } else if (!/^\S+@\S+\.\S+$/.test(email.value)) {
                 showError(email, 'Enter a valid email address');
+                valid = false;
+            }
+            // Gender required
+            if (!gender) {
+                showError(form.querySelector('#gender-group'), 'Selecciona un género');
                 valid = false;
             }
             // Password required
@@ -91,7 +97,12 @@ window.registerPage = {
             if (!valid) return;
 
             // Call backend
-            var result = await AuthService.register({ username: username.value, email: email.value, password: password.value });
+            var result = await AuthService.register({
+                username: username.value,
+                email: email.value,
+                password: password.value,
+                gender: gender ? gender.value : null
+            });
             if (result.success) {
                 showModal('Registration successful! You can now log in.', 'success');
                 setTimeout(() => { window.location.hash = '#login'; }, 1500);
