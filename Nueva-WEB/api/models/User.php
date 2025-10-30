@@ -9,6 +9,8 @@ class User {
     public $email;
     public $password;
     public $profile_img;
+    public $first_name;
+    public $last_name;
     public $created_at;
     public $updated_at;
 

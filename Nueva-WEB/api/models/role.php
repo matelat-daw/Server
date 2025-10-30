@@ -51,7 +51,8 @@ class Role {
 
     // Obtener roles de un usuario
     public function getUserRoles($user_id) {
-        $query = "SELECT r.id, r.name, r.description 
+        // Seleccionar solo columnas que existen de forma segura en la mayoría de esquemas (id, name)
+        $query = "SELECT r.id, r.name 
                   FROM " . $this->table_name . " r
                   INNER JOIN " . $this->user_roles_table . " ur ON r.id = ur.role_id
                   WHERE ur.user_id = :user_id";

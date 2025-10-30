@@ -167,7 +167,7 @@ class AuthController {
                 'email' => $this->user->email,
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,
-                'profile_image' => $this->user->profile_image ? '/Nueva-WEB/api/uploads/profiles/' . $this->user->profile_image : null,
+                'profile_image' => $this->user->profile_img ? '/Nueva-WEB/api/uploads/profiles/' . $this->user->profile_img : null,
                 'roles' => $roles
             ];
 
@@ -343,21 +343,31 @@ class AuthController {
     }
 
     private function setAuthCookie($token) {
-        // Modern setcookie with SameSite and Secure attributes
-        setcookie(
-            'auth_token',
-            $token,
-            [
-                'expires' => time() + (60 * 60 * 24 * 7), // 7 días
-                'path' => '/',
-                'domain' => '', // default
-                'secure' => true, // Required for SameSite=None
+        // Detectar si estamos en HTTPS o HTTP
+        $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+
+        $expires = time() + (60 * 60 * 24 * 7); // 7 días
+
+        // Compatibilidad: usar sintaxis de array (PHP >= 7.3) o parámetros antiguos
+        if (defined('PHP_VERSION_ID') && PHP_VERSION_ID >= 70300) {
+            // No establecer 'domain' para que use el host actual (evita problemas en localhost)
+            setcookie('auth_token', $token, [
+                'expires'  => $expires,
+                'path'     => '/',
+                'secure'   => $isHttps, // true solo bajo HTTPS
                 'httponly' => true,
-                'samesite' => 'None',
-            ]
-        );
-        // Debug header to confirm setcookie was called
+                'samesite' => $isHttps ? 'None' : 'Lax',
+            ]);
+        } else {
+            // Fallback para PHP < 7.3
+            // Nota: SameSite no se puede establecer con esta firma; quedará por defecto (Lax en la mayoría de navegadores)
+            setcookie('auth_token', $token, $expires, '/', '', $isHttps, true);
+        }
+
+        // Cabecera de depuración para confirmar que se intentó setear la cookie
         header('X-Debug-SetAuthCookie: called');
+        // Permitir que el navegador exponga este header y el Set-Cookie (no requerido para almacenar la cookie, pero útil para debug CORS)
+        header('Access-Control-Expose-Headers: X-Debug-SetAuthCookie, Set-Cookie');
     }
 
     private function getTokenFromCookie() {

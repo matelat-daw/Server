@@ -17,7 +17,7 @@ var AuthService = {
 
         return ApiService.post('/login', payload)
             .then(function(response) {
-                if (response && response.success) {
+                if (response && response.success && response.user) {
                     self.setToken(response.token);
                     self.setUser(response.user);
                     var event = new CustomEvent('userLoggedIn', { detail: response.user });
@@ -25,8 +25,9 @@ var AuthService = {
                     console.log('Login successful for user:', response.user.username);
                     return { success: true, user: response.user };
                 } else {
-                    console.log('Login failed:', response ? response.message : 'Unknown error');
-                    return { success: false, message: response ? response.message : 'Error de conexión' };
+                    var message = (response && response.message) ? response.message : 'Error de conexión';
+                    console.log('Login failed:', message);
+                    return { success: false, message: message };
                 }
             })
             .catch(function(error) {

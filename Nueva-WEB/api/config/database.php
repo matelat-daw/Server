@@ -1,17 +1,31 @@
 <?php
+// Conexión mínima, clara y con manejo básico de errores
+session_start();
+
 $host = 'localhost';
-$db_name = 'newapp';
-$username = 'root';
-$password = getenv('MySQL') ?: '';
+$db   = 'newapp';
+$user = 'root';
+
+// Usa tu variable de entorno preferida; de lo contrario, puedes poner la contraseña literal
+$pass = getenv('MySQL');
+if ($pass === false) {
+    $pass = getenv('DB_PASS');
+}
+
+if ($pass === false || $pass === '') {
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => 'Password de BD no configurado']);
+    exit;
+}
 
 try {
-    $conn = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8mb4", $username, $password);
+    $conn = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-} catch(PDOException $exception) {
-    die(json_encode([
-        'success' => false,
-        'message' => 'Error de conexión a la base de datos'
-    ]));
+} catch (PDOException $e) {
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => 'Error de conexión a la base de datos']);
+    exit;
 }
 ?>

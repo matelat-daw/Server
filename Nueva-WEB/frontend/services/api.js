@@ -21,8 +21,31 @@ const ApiService = {
 
         try {
             const response = await fetch(url, config);
-            const data = await response.json();
-            return data;
+            // Intentar parsear JSON si es posible; sino, devolver texto
+            const contentType = response.headers.get('content-type') || '';
+
+            let payload;
+            if (contentType.includes('application/json')) {
+                payload = await response.json();
+            } else {
+                const text = await response.text();
+                // En nuestra API todas las respuestas válidas son JSON;
+                // si llega texto/HTML, trátalo como error para no confundir al caller.
+                payload = { success: false, message: text };
+            }
+
+            // Normalizar respuestas no exitosas o no-JSON para dar mensajes útiles
+            if (!response.ok || !contentType.includes('application/json')) {
+                // Leer cabeceras de depuración si existen
+                const dbError = response.headers.get('X-DB-Error');
+                const statusMessage = payload && payload.message ? payload.message : (
+                    response.status === 401 ? 'Credenciales incorrectas' : 'Error de la API'
+                );
+                const fullMessage = dbError ? `${statusMessage}. Detalle: ${dbError}` : statusMessage;
+                return { success: false, status: response.status, message: fullMessage };
+            }
+
+            return payload;
         } catch (error) {
             console.error('API Error:', error);
             return { success: false, message: 'Error de conexión con la API' };

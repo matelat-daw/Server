@@ -35,11 +35,13 @@ var loginComponent = {
         container.id = 'login-container';
         document.body.appendChild(container);
         
-        fetch('/Nueva-WEB/frontend/components/login/login.html')
+        fetch('/Nueva-WEB/frontend/pages/login/login.html')
             .then(function(response) { return response.text(); })
             .then(function(html) {
                 container.innerHTML = html;
-                loginComponent.modal = document.getElementById('login-modal');
+                // Usar el propio contenedor como modal (no existe login-modal en la plantilla)
+                loginComponent.modal = container;
+                loginComponent.modal.style.display = 'none';
                 loginComponent.setupForm();
                 loginComponent.setupClose();
                 loginComponent.setupSwitchToRegister();
@@ -49,6 +51,7 @@ var loginComponent = {
     setupForm() {
         var form = document.getElementById('login-form');
         if (form) {
+            if (form.dataset.bound === '1') return; // evitar doble binding
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 var username = document.getElementById('username').value;
@@ -63,6 +66,7 @@ var loginComponent = {
                     showModal(result.message || 'Credenciales incorrectas', 'error');
                 }
             });
+            form.dataset.bound = '1';
         }
     },
 
@@ -89,7 +93,11 @@ var loginComponent = {
             switchBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 loginComponent.hide();
-                registerComponent.show();
+                if (window.registerComponent && typeof window.registerComponent.show === 'function') {
+                    window.registerComponent.show();
+                } else {
+                    window.location.hash = '#register';
+                }
             });
         }
     },
@@ -106,3 +114,24 @@ var loginComponent = {
         }
     }
 };
+
+// Controlador de página para app.js (cuando se navega a #login)
+var loginPage = {
+    init: function() {
+        // Asegura que el formulario del DOM de la página tenga el handler
+        loginComponent.setupForm();
+    }
+};
+
+// Defensa adicional: si el script se carga y el formulario ya está en el DOM
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    if (document.getElementById('login-form')) {
+        loginComponent.setupForm();
+    }
+} else {
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('login-form')) {
+            loginComponent.setupForm();
+        }
+    });
+}
