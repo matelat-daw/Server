@@ -57,14 +57,19 @@ var navComponent = {
     updateForUser(user) {
         const guestMenu = document.getElementById('guest-menu');
         const userMenuWrapper = document.getElementById('user-menu-wrapper');
-        
         if (user) {
             guestMenu.style.display = 'none';
             userMenuWrapper.style.display = 'block';
-            userMenuComponent.updateUser(user);
+            // Limpiar y renderizar el menú de usuario siempre
+            if (window.userMenuComponent && typeof userMenuComponent.updateUser === 'function') {
+                userMenuComponent.updateUser(user);
+            } else {
+                userMenuWrapper.innerHTML = `<div style='color:red'>Error: userMenuComponent no disponible</div>`;
+            }
         } else {
             guestMenu.style.display = 'flex';
             userMenuWrapper.style.display = 'none';
+            userMenuWrapper.innerHTML = '';
         }
     }
 };

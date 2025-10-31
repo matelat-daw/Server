@@ -3,14 +3,12 @@ const ApiService = {
 
     async request(endpoint, options = {}) {
         const url = `${this.baseUrl}${endpoint}`;
-        const token = AuthService.getToken();
-        
+        // El token solo está en la cookie, no en localStorage ni en header
         const config = {
             ...options,
             headers: {
                 'Content-Type': 'application/json',
-                ...options.headers,
-                ...(token && { 'Authorization': `Bearer ${token}` })
+                ...options.headers
             },
             credentials: 'include'
         };

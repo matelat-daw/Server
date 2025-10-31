@@ -46,8 +46,17 @@
         
         this.setupRouting();
         
-        if (window.AuthService && AuthService.isAuthenticated && AuthService.isAuthenticated()) {
-            this.updateUIForLoggedInUser();
+        // Validar sesión con el backend tras recarga
+        if (window.AuthService && typeof AuthService.validateToken === 'function') {
+            AuthService.validateToken().then((isValid) => {
+                if (isValid && AuthService.getCurrentUser) {
+                    // Forzar actualización del nav y menú de usuario tras recarga
+                    if (window.navComponent && typeof navComponent.updateForUser === 'function') {
+                        navComponent.updateForUser(AuthService.getCurrentUser());
+                    }
+                    this.updateUIForLoggedInUser();
+                }
+            });
         }
     };
 

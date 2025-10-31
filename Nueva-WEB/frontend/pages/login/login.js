@@ -61,6 +61,12 @@ var loginComponent = {
                     loginComponent.hide();
                     var event = new CustomEvent('userLoggedIn', { detail: result.user });
                     document.dispatchEvent(event);
+                    // Navegar a inicio tras login exitoso
+                    if (window.app && typeof window.app.navigate === 'function') {
+                        window.app.navigate('home');
+                    } else {
+                        window.location.hash = '#home';
+                    }
                 } else {
                     // Stay on login, show modal error
                     showModal(result.message || 'Credenciales incorrectas', 'error');
