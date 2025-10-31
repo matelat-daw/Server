@@ -197,12 +197,6 @@ class AuthController {
         if (isset($data['email'])) {
             $this->user->email = $data['email'];
         }
-        if (isset($data['first_name'])) {
-            $this->user->first_name = $data['first_name'];
-        }
-        if (isset($data['last_name'])) {
-            $this->user->last_name = $data['last_name'];
-        }
         if (isset($data['password']) && !empty($data['password'])) {
             if (strlen($data['password']) < 8) {
                 return $this->sendResponse(400, false, "La contraseña debe tener al menos 8 caracteres");
@@ -232,8 +226,6 @@ class AuthController {
                 'id' => $this->user->id,
                 'username' => $this->user->username,
                 'email' => $this->user->email,
-                'first_name' => $this->user->first_name,
-                'last_name' => $this->user->last_name,
                 'profile_img' => $this->user->profile_img ? '/Nueva-WEB/api/uploads/' . $this->user->profile_img : null,
                 'roles' => $roles
             ];
