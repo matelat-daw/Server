@@ -9,10 +9,7 @@ class User {
     public $email;
     public $password;
     public $profile_img;
-    public $first_name;
-    public $last_name;
     public $created_at;
-    public $updated_at;
 
     public function __construct($db) {
         $this->conn = $db;
@@ -94,32 +91,23 @@ class User {
     public function update() {
         $query = "UPDATE " . $this->table_name . " 
                   SET username=:username, 
-                      email=:email,
-                      first_name=:first_name,
-                      last_name=:last_name";
-        
+                      email=:email";
         if (!empty($this->password)) {
             $query .= ", password=:password";
         }
-        
         if (!empty($this->profile_img)) {
             $query .= ", profile_img=:profile_img";
         }
-        
         $query .= " WHERE id=:id";
 
         $stmt = $this->conn->prepare($query);
 
         $this->username = htmlspecialchars(strip_tags($this->username));
         $this->email = htmlspecialchars(strip_tags($this->email));
-        $this->first_name = htmlspecialchars(strip_tags($this->first_name));
-        $this->last_name = htmlspecialchars(strip_tags($this->last_name));
         $this->id = htmlspecialchars(strip_tags($this->id));
 
         $stmt->bindParam(":username", $this->username);
         $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":first_name", $this->first_name);
-        $stmt->bindParam(":last_name", $this->last_name);
         $stmt->bindParam(":id", $this->id);
 
         if (!empty($this->password)) {
@@ -151,7 +139,7 @@ class User {
     }
 
     public function readOne() {
-    $query = "SELECT id, username, email, first_name, last_name, profile_img, created_at, updated_at 
+    $query = "SELECT id, username, email, profile_img, created_at 
                   FROM " . $this->table_name . " 
                   WHERE id = :id 
                   LIMIT 0,1";
@@ -165,11 +153,8 @@ class User {
         if ($row) {
             $this->username = $row['username'];
             $this->email = $row['email'];
-            $this->first_name = $row['first_name'];
-            $this->last_name = $row['last_name'];
             $this->profile_img = $row['profile_img'];
             $this->created_at = $row['created_at'];
-            $this->updated_at = $row['updated_at'];
             return true;
         }
 

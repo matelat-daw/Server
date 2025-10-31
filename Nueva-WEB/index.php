@@ -31,10 +31,11 @@ echo '<!DOCTYPE html>
     <div id="app">
         <!-- Header Component -->
         <div id="header-component"></div>
-        
+
         <!-- Navigation Component -->
         <div id="nav-component"></div>
-        
+        <div id="navbar" style="display:none;"></div>
+
         <!-- Main Content -->
         <main id="main-content">
             <div style="text-align: center; padding: 3rem; color: #718096;">
@@ -42,7 +43,7 @@ echo '<!DOCTYPE html>
                 <div style="margin-top: 1rem;">Por favor espera.</div>
             </div>
         </main>
-        
+
         <!-- Footer Component -->
         <div id="footer-component"></div>
     </div>

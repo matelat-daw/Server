@@ -1,83 +1,121 @@
+
 var navComponent = {
-    init() {
+    init: function() {
         this.setupMenuToggle();
         this.setupNavLinks();
         this.setupAuthButtons();
-        // Mostrar menú de usuario si ya está autenticado
-        if (window.AuthService && AuthService.isAuthenticated && AuthService.isAuthenticated()) {
-            this.updateForUser(AuthService.getCurrentUser());
-        }
+        var self = this;
+        setTimeout(function() {
+            if (window.AuthService && AuthService.isAuthenticated && AuthService.isAuthenticated()) {
+                self.updateForUser(AuthService.getCurrentUser());
+            }
+        }, 200);
     },
-
-    setupMenuToggle() {
-        const menuToggle = document.getElementById('menu-toggle');
-        const navMenu = document.getElementById('nav-menu');
-        
+    setupMenuToggle: function() {
+        var menuToggle = document.getElementById('menu-toggle');
+        var navMenu = document.getElementById('nav-menu');
         if (menuToggle) {
-            menuToggle.addEventListener('click', () => {
+            menuToggle.addEventListener('click', function() {
                 navMenu.classList.toggle('active');
                 menuToggle.classList.toggle('active');
             });
         }
     },
-
-    setupNavLinks() {
-        const navLinks = document.querySelectorAll('.nav-link');
-        
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                navLinks.forEach(l => l.classList.remove('active'));
+    setupNavLinks: function() {
+        var navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                navLinks.forEach(function(l) { l.classList.remove('active'); });
                 e.target.classList.add('active');
-                
-                const navMenu = document.getElementById('nav-menu');
-                const menuToggle = document.getElementById('menu-toggle');
+                var navMenu = document.getElementById('nav-menu');
+                var menuToggle = document.getElementById('menu-toggle');
                 navMenu.classList.remove('active');
                 menuToggle.classList.remove('active');
             });
         });
     },
-
-    setupAuthButtons() {
-        const btnLogin = document.getElementById('btn-login');
-        const btnRegister = document.getElementById('btn-register');
-        
+    setupAuthButtons: function() {
+        var btnLogin = document.getElementById('btn-login');
+        var btnRegister = document.getElementById('btn-register');
         if (btnLogin) {
-            btnLogin.addEventListener('click', () => {
+            btnLogin.addEventListener('click', function() {
                 loginComponent.show();
             });
         }
-        
         if (btnRegister) {
-            btnRegister.addEventListener('click', () => {
+            btnRegister.addEventListener('click', function() {
                 window.location.hash = '#register';
             });
         }
     },
-
-    updateForUser(user) {
-        const guestMenu = document.getElementById('guest-menu');
-        const userMenuWrapper = document.getElementById('user-menu-wrapper');
+    updateForUser: function(user, attempt) {
+        attempt = attempt || 1;
+        var guestMenu = document.getElementById('guest-menu');
+        var userMenuWrapper = document.getElementById('user-menu-wrapper');
         if (user) {
-            guestMenu.style.display = 'none';
-            userMenuWrapper.style.display = 'block';
-            // Limpiar y renderizar el menú de usuario siempre
-            if (window.userMenuComponent && typeof userMenuComponent.updateUser === 'function') {
-                userMenuComponent.updateUser(user);
+            if (guestMenu) guestMenu.style.display = 'none';
+            if (userMenuWrapper) {
+                userMenuWrapper.style.display = 'block';
+                if (!userMenuWrapper.innerHTML.trim()) {
+                    userMenuWrapper.innerHTML = '<div class="user-menu">\
+                        <div class="user-info">\
+                            <img id="user-avatar" src="/Nueva-WEB/frontend/assets/default-avatar.png" alt="User Avatar" class="avatar">\
+                            <span id="user-name" class="username">Usuario</span>\
+                        </div>\
+                        <div class="menu-options">\
+                            <button id="user-button" class="dropdown-toggle">Opciones <span class="dropdown-caret" style="margin-left:0.4em;font-size:1.1em;">&#9662;</span></button>\
+                            <div id="user-dropdown" class="dropdown-menu">\
+                                <a href="#profile" class="dropdown-item">Perfil</a>\
+                                <a href="#cart" class="dropdown-item">Compras</a>\
+                                <a href="#" id="logout-btn" class="dropdown-item">Cerrar Sesión</a>\
+                            </div>\
+                        </div>\
+                    </div>';
+                }
+                // Activar el desplegable correctamente
+                var userButton = document.getElementById('user-button');
+                var userDropdown = document.getElementById('user-dropdown');
+                if (userButton && userDropdown) {
+                    userButton.onclick = function(e) {
+                        e.stopPropagation();
+                        userDropdown.classList.toggle('show');
+                    };
+                    document.addEventListener('click', function hideDropdown() {
+                        userDropdown.classList.remove('show');
+                    }, { once: true });
+                }
+                if (window.userMenuComponent && typeof userMenuComponent.updateUser === 'function') {
+                    userMenuComponent.updateUser(user);
+                } else {
+                    userMenuWrapper.innerHTML = '<div style="color:red">Error: userMenuComponent no disponible</div>';
+                }
             } else {
-                userMenuWrapper.innerHTML = `<div style='color:red'>Error: userMenuComponent no disponible</div>`;
+                if (attempt < 10) {
+                    setTimeout(function() { navComponent.updateForUser(user, attempt + 1); }, 100);
+                }
             }
         } else {
-            guestMenu.style.display = 'flex';
-            userMenuWrapper.style.display = 'none';
-            userMenuWrapper.innerHTML = '';
+            if (guestMenu) guestMenu.style.display = 'flex';
+            if (userMenuWrapper) {
+                userMenuWrapper.style.display = 'none';
+                userMenuWrapper.innerHTML = '';
+            }
         }
     }
 };
 
-document.addEventListener('userLoggedIn', (e) => {
+// Event listeners fuera del objeto navComponent
+document.addEventListener('userLoggedIn', function(e) {
     navComponent.updateForUser(e.detail);
 });
+document.addEventListener('userLoggedOut', function() {
+    navComponent.updateForUser(null);
+});
 
-document.addEventListener('userLoggedOut', () => {
+// Event listeners fuera del objeto navComponent
+document.addEventListener('userLoggedIn', function(e) {
+    navComponent.updateForUser(e.detail);
+});
+document.addEventListener('userLoggedOut', function() {
     navComponent.updateForUser(null);
 });

@@ -3,12 +3,15 @@ var userMenuComponent = {
     updateUser: function(user) {
         var wrapper = document.getElementById('user-menu-wrapper');
         if (!wrapper) return;
-        // Limpiar wrapper antes de inyectar
-        wrapper.innerHTML = '';
-        // Mostrar nombre amigable
-        var displayName = user.first_name || user.username || user.email || 'Usuario';
-        wrapper.innerHTML = `
-            <div class="user-menu">
+        // Limpiar wrapper antes de inyectar (eliminar comentarios también)
+        while (wrapper.firstChild) {
+            wrapper.removeChild(wrapper.firstChild);
+        }
+        // Mostrar nombre amigable (solo username o email)
+        var displayName = user.username || user.email || 'Usuario';
+        var menuHtml = `
+            <div class="user-menu" style="background: #ffe0e0; border: 2px solid #f00; padding: 10px;">
+                <div style="color: #f00; font-weight: bold;">DEBUG: Renderizado userMenuComponent</div>
                 <button class="user-menu-btn" id="user-menu-btn">
                     <span class="user-menu-name">${displayName}</span>
                     <span class="user-menu-caret">▼</span>
@@ -20,6 +23,8 @@ var userMenuComponent = {
                 </div>
             </div>
         `;
+        wrapper.insertAdjacentHTML('afterbegin', menuHtml);
+        console.log('[userMenu.js] Menú de usuario renderizado en wrapper:', wrapper);
         var btn = document.getElementById('user-menu-btn');
         var dropdown = document.getElementById('user-menu-dropdown');
         if (btn && dropdown) {

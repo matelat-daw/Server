@@ -1,3 +1,59 @@
+/* --- User Menu Styles --- */
+.user-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.user-menu-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+.user-menu-btn:hover {
+    background: rgba(157, 78, 221, 0.15);
+}
+.user-menu-caret {
+    font-size: 0.8em;
+    margin-left: 0.3em;
+}
+.user-menu-dropdown {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background: var(--card-bg);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    border-radius: 10px;
+    min-width: 160px;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    padding: 0.5rem 0;
+}
+.user-menu-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 0.7rem 1.2rem;
+    display: block;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.user-menu-link:hover {
+    background: rgba(157, 78, 221, 0.10);
+    color: var(--primary-color);
+}
 .navbar {
     background: var(--card-bg);
     color: var(--text-primary);

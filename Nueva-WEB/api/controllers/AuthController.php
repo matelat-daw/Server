@@ -160,17 +160,14 @@ class AuthController {
         $this->user->id = $decoded['user_id'];
         if ($this->user->readOne()) {
             $roles = $this->user->getRoles();
-            
             $userData = [
                 'id' => $this->user->id,
                 'username' => $this->user->username,
                 'email' => $this->user->email,
-                'first_name' => $this->user->first_name,
-                'last_name' => $this->user->last_name,
-                'profile_image' => $this->user->profile_img ? '/Nueva-WEB/api/uploads/profiles/' . $this->user->profile_img : null,
+                'profile_img' => $this->user->profile_img ? '/Nueva-WEB/api/uploads/' . $this->user->profile_img : null,
+                'created_at' => $this->user->created_at,
                 'roles' => $roles
             ];
-
             return $this->sendResponse(200, true, "Token válido", $userData);
         }
 

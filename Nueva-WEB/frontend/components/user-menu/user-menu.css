@@ -1,3 +1,91 @@
+/* Modern user menu styles */
+.user-menu {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px #e0a6e6a0;
+    padding: 0.7rem 1.2rem 0.7rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    min-width: 220px;
+    position: relative;
+    font-family: 'Segoe UI', 'Montserrat', Arial, sans-serif;
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+.user-info .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid #ff6b9d;
+    object-fit: cover;
+    background: #ffe0f0;
+}
+.user-info .username {
+    font-weight: 600;
+    color: #d14fa2;
+    font-size: 1.08rem;
+    letter-spacing: 0.01em;
+}
+.menu-options {
+    position: relative;
+}
+.dropdown-toggle {
+    background: #ff6b9d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.45rem 1.1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 1px 4px #ff6b9d22;
+}
+.dropdown-toggle:hover {
+    background: #d14fa2;
+}
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 120%;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px #d14fa233;
+    min-width: 170px;
+    z-index: 100;
+    padding: 0.5rem 0;
+    animation: fadeInMenu 0.18s;
+}
+.dropdown-menu.show {
+    display: block;
+}
+.dropdown-item {
+    display: block;
+    padding: 0.7rem 1.2rem;
+    color: #d14fa2;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    transition: background 0.18s, color 0.18s;
+    cursor: pointer;
+}
+.dropdown-item:hover {
+    background: #ffe0f0;
+    color: #ff6b9d;
+}
+@keyframes fadeInMenu {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 
 .user-menu {

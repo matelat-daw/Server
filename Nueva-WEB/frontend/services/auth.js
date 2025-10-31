@@ -15,47 +15,45 @@ var AuthService = {
             .then(function(response) {
                 if (response && response.success && response.user) {
                     self.currentUser = response.user;
+                    // Guardar usuario en localStorage
+                    localStorage.setItem('currentUser', JSON.stringify(response.user));
                     var event = new CustomEvent('userLoggedIn', { detail: response.user });
                     document.dispatchEvent(event);
-                    console.log('Login successful for user:', response.user.username);
                     return { success: true, user: response.user };
                 } else {
                     var message = (response && response.message) ? response.message : 'Error de conexión';
-                    console.log('Login failed:', message);
                     return { success: false, message: message };
                 }
             })
             .catch(function(error) {
-                console.error('Login error:', error);
                 return { success: false, message: 'Error durante el inicio de sesión' };
             });
     },
 
     register: function(userData) {
         var self = this;
-        console.log('Attempting registration for:', userData.email);
         return ApiService.post('/register', userData)
             .then(function(response) {
                 if (response && response.success) {
                     self.currentUser = response.user;
+                    // Guardar usuario en localStorage
+                    localStorage.setItem('currentUser', JSON.stringify(response.user));
                     var event = new CustomEvent('userLoggedIn', { detail: response.user });
                     document.dispatchEvent(event);
-                    console.log('Registration successful for user:', response.user.username);
                     return { success: true, user: response.user };
                 } else {
-                    console.log('Registration failed:', response ? response.message : 'Unknown error');
                     return { success: false, message: response ? response.message : 'Error en el registro' };
                 }
             })
             .catch(function(error) {
-                console.error('Registration error:', error);
                 return { success: false, message: 'Error durante el registro' };
             });
     },
 
     logout: function() {
-        console.log('Logging out user');
         this.currentUser = null;
+        // Eliminar usuario de localStorage
+        localStorage.removeItem('currentUser');
         var event = new CustomEvent('userLoggedOut');
         document.dispatchEvent(event);
         if (window.app) {
@@ -64,19 +62,34 @@ var AuthService = {
     },
 
     getCurrentUser: function() {
-        return this.currentUser;
+        if (this.currentUser) return this.currentUser;
+        // Intentar restaurar de localStorage
+        try {
+            var userStr = localStorage.getItem('currentUser');
+            if (userStr) {
+                this.currentUser = JSON.parse(userStr);
+                return this.currentUser;
+            }
+        } catch (e) {}
+        return null;
     },
 
     isAuthenticated: function() {
-        return !!this.currentUser;
+        return !!this.getCurrentUser();
     },
 
     validateToken: function() {
         var self = this;
         return ApiService.get('/auth/validate')
             .then(function(response) {
-                if (response && response.success) {
+                if (response && response.success && response.user) {
                     self.currentUser = response.user;
+                    // Guardar usuario en localStorage
+                    localStorage.setItem('currentUser', JSON.stringify(response.user));
+                    // Forzar actualización del nav tras recarga
+                    if (window.navComponent && typeof navComponent.updateForUser === 'function') {
+                        navComponent.updateForUser(self.currentUser);
+                    }
                     return true;
                 } else {
                     self.logout();
@@ -84,7 +97,6 @@ var AuthService = {
                 }
             })
             .catch(function(error) {
-                console.error('Token validation error:', error);
                 self.logout();
                 return false;
             });
