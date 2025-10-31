@@ -104,8 +104,14 @@ window.registerPage = {
                 gender: gender ? gender.value : null
             });
             if (result.success) {
-                showModal('Registration successful! You can now log in.', 'success');
-                setTimeout(() => { window.location.hash = '#login'; }, 1500);
+                showModal('¡Registro exitoso! Ahora puedes iniciar sesión desde Inicio.', 'success');
+                setTimeout(() => {
+                    if (window.app && typeof window.app.navigate === 'function') {
+                        window.app.navigate('home');
+                    } else {
+                        window.location.hash = '#home';
+                    }
+                }, 1200);
             } else {
                 showModal(result.message || 'Registration failed', 'error');
             }

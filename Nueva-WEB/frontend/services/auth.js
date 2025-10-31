@@ -31,16 +31,12 @@ var AuthService = {
     },
 
     register: function(userData) {
-        var self = this;
+        // No iniciar sesión automáticamente tras el registro
         return ApiService.post('/register', userData)
             .then(function(response) {
                 if (response && response.success) {
-                    self.currentUser = response.user;
-                    // Guardar usuario en localStorage
-                    localStorage.setItem('currentUser', JSON.stringify(response.user));
-                    var event = new CustomEvent('userLoggedIn', { detail: response.user });
-                    document.dispatchEvent(event);
-                    return { success: true, user: response.user };
+                    // No guardar usuario ni emitir userLoggedIn
+                    return { success: true, user: response.user, message: response.message };
                 } else {
                     return { success: false, message: response ? response.message : 'Error en el registro' };
                 }
@@ -51,14 +47,31 @@ var AuthService = {
     },
 
     logout: function() {
-        this.currentUser = null;
-        // Eliminar usuario de localStorage
-        localStorage.removeItem('currentUser');
-        var event = new CustomEvent('userLoggedOut');
-        document.dispatchEvent(event);
-        if (window.app) {
-            window.app.navigate('home');
-        }
+        var self = this;
+        // Llamar al backend para eliminar la cookie del servidor
+        return ApiService.post('/logout', {})
+            .then(function(response) {
+                // Limpiar datos locales independientemente de la respuesta del servidor
+                self.currentUser = null;
+                localStorage.removeItem('currentUser');
+                var event = new CustomEvent('userLoggedOut');
+                document.dispatchEvent(event);
+                if (window.app) {
+                    window.app.navigate('home');
+                }
+                return { success: true };
+            })
+            .catch(function(error) {
+                // Aunque falle la petición al servidor, limpiar datos locales
+                self.currentUser = null;
+                localStorage.removeItem('currentUser');
+                var event = new CustomEvent('userLoggedOut');
+                document.dispatchEvent(event);
+                if (window.app) {
+                    window.app.navigate('home');
+                }
+                return { success: false, message: 'Error al cerrar sesión en el servidor' };
+            });
     },
 
     getCurrentUser: function() {

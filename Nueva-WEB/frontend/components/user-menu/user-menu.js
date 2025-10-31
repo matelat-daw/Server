@@ -58,14 +58,17 @@ var userMenuComponent = {
                     }
                     if (ev.target && ev.target.getAttribute('data-logout-action') === 'confirm') {
                         document.body.removeChild(modal);
-                        // Eliminar token de cookie
-                        document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                        // Eliminar usuario de localStorage
-                        localStorage.removeItem('currentUser');
-                        // Llamar a AuthService.logout()
-                        if (window.AuthService) AuthService.logout();
-                        // Redirigir a la página principal
-                        window.location.hash = '#home';
+                        // Llamar a AuthService.logout() que maneja todo el proceso
+                        if (window.AuthService) {
+                            AuthService.logout().then(function(result) {
+                                // El logout ya redirige a home, no necesitamos hacer nada más
+                            }).catch(function(error) {
+                                console.error('Error durante logout:', error);
+                            });
+                        } else {
+                            // Fallback si AuthService no está disponible
+                            window.location.hash = '#home';
+                        }
                     }
                 });
             });

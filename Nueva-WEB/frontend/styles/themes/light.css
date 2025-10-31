@@ -1,0 +1,12 @@
+:root {
+  --bg-color: #ffffff;
+  --text-primary: #1a202c;
+  --card-bg: #ffffff;
+  --border-radius: 8px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-primary);
+}

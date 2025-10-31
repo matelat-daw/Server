@@ -137,6 +137,8 @@
             })
             .then(function(html) {
                 mainContent.innerHTML = html;
+                // Cargar estilos específicos de la página
+                self.setPageStyles(pageName);
                 self.currentPage = pageName;
                 // Dispatch event
                 var event = new CustomEvent('pageChanged', { detail: { page: pageName } });
@@ -183,6 +185,20 @@
             .catch(function(error) { 
                 mainContent.innerHTML = '<div style="text-align:center;padding:2rem;"><h3 style="color:#e53e3e;">❌ Error</h3><p>' + error.message + '</p><p style="font-size:0.9rem;color:#666;">URL: ' + pageUrl + '</p></div>';
             });
+    };
+
+    // Inyecta el CSS de la página actual con ruta absoluta correcta
+    App.prototype.setPageStyles = function(pageName) {
+        var href = this.basePath + 'pages/' + pageName + '/' + pageName + '.css';
+        var linkId = 'page-style';
+        var existing = document.getElementById(linkId);
+        if (!existing) {
+            existing = document.createElement('link');
+            existing.rel = 'stylesheet';
+            existing.id = linkId;
+            document.head.appendChild(existing);
+        }
+        existing.href = href;
     };
 
     App.prototype.loadPage = function(pageName) {

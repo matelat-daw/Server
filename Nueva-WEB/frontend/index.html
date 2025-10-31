@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nueva WEB</title>
-    <link rel="stylesheet" href="frontend/styles/global.css">
-    <link rel="stylesheet" href="frontend/styles/responsive.css">
-    <link rel="stylesheet" href="frontend/styles/themes/light.css" id="theme-link">
-    <script src="app.js" defer></script>
+    <link rel="stylesheet" href="/Nueva-WEB/frontend/styles/global.css">
+    <link rel="stylesheet" href="/Nueva-WEB/frontend/styles/responsive.css">
+    <link rel="stylesheet" href="/Nueva-WEB/frontend/styles/themes/light.css" id="theme-link">
+    <!-- Servicios deben cargarse antes de app.js -->
+    <script src="/Nueva-WEB/frontend/services/api.js" defer></script>
+    <script src="/Nueva-WEB/frontend/services/auth.js" defer></script>
+    <script src="/Nueva-WEB/frontend/app.js" defer></script>
 </head>
 <body>
     <header>
@@ -22,9 +25,9 @@
     <footer>
         <div id="footer"></div>
     </footer>
-    <script src="frontend/components/header/header.js" defer></script>
-    <script src="frontend/components/nav/userMenu.js" defer></script>
-    <script src="frontend/components/nav/nav.js" defer></script>
-    <script src="frontend/components/footer/footer.js" defer></script>
+    <script src="/Nueva-WEB/frontend/components/header/header.js" defer></script>
+    <script src="/Nueva-WEB/frontend/components/nav/userMenu.js" defer></script>
+    <script src="/Nueva-WEB/frontend/components/nav/nav.js" defer></script>
+    <script src="/Nueva-WEB/frontend/components/footer/footer.js" defer></script>
 </body>
 </html>
