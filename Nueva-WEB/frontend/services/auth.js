@@ -99,19 +99,24 @@ var AuthService = {
                     self.currentUser = response.user;
                     // Guardar usuario en localStorage
                     localStorage.setItem('currentUser', JSON.stringify(response.user));
-                    // Forzar actualización del nav tras recarga
-                    if (window.navComponent && typeof navComponent.updateForUser === 'function') {
-                        navComponent.updateForUser(self.currentUser);
-                    }
+                    console.log('✓ Token validado correctamente');
+                    // NO forzar actualización del nav aquí - lo hace app.js
                     return true;
                 } else {
-                    self.logout();
+                    // Token inválido CONFIRMADO por el servidor (401)
+                    console.warn('✗ Token inválido según servidor, cerrando sesión');
+                    self.currentUser = null;
+                    localStorage.removeItem('currentUser');
+                    var event = new CustomEvent('userLoggedOut');
+                    document.dispatchEvent(event);
                     return false;
                 }
             })
             .catch(function(error) {
-                self.logout();
-                return false;
+                // Error de RED o servidor caído: NO cerrar sesión
+                console.warn('⚠ Error al validar token (posible problema de red):', error);
+                // Mantener usuario actual de localStorage
+                return false; // False indica error, pero NO limpia la sesión
             });
     }
 };

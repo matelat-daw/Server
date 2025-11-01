@@ -4,6 +4,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/jwt.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Role.php';
+require_once __DIR__ . '/../services/EmailService.php';
 
 class AuthController {
     private $db;
@@ -37,58 +38,97 @@ class AuthController {
             return $this->sendResponse(409, false, "El email ya está registrado");
         }
 
-        // Manejar subida de imagen de perfil o avatar por género
-        $gender = isset($data['gender']) ? $data['gender'] : 'other';
-        // Determinar avatar por género antes de registrar
-        $avatarFile = 'other.png';
-        if ($gender === 'male') $avatarFile = 'male.png';
-        if ($gender === 'female') $avatarFile = 'female.png';
-
-        // Asignar una ruta temporal válida (pero con el ID real tras registrar)
-        $this->user->profile_img = 'users/default/profile.png';
+        // Asignar datos del usuario
         $this->user->username = $data['username'];
         $this->user->email = $data['email'];
         $this->user->password = $data['password'];
+        $this->user->first_name = isset($data['first_name']) ? $data['first_name'] : null;
+        $this->user->last_name = isset($data['last_name']) ? $data['last_name'] : null;
+        $this->user->gender = isset($data['gender']) ? $data['gender'] : 'other';
+        
+        // Configurar activación por email
+        $this->user->is_active = 0; // No activo hasta confirmar email
+        $this->user->activation_token = EmailService::generateActivationToken();
+        // Token válido por 24 horas
+        $this->user->activation_token_expires = date('Y-m-d H:i:s', strtotime('+24 hours'));
+        
+        // Ruta temporal (se actualizará después del registro)
+        $this->user->profile_img = null;
 
         if ($this->user->register()) {
             $userId = $this->user->id;
-            $destDir = __DIR__ . '/../uploads/users/' . $userId . '/';
-            if (!file_exists($destDir)) mkdir($destDir, 0777, true);
+            
+            // Crear directorio del usuario
+            $userDir = __DIR__ . '/../uploads/users/' . $userId . '/';
+            if (!file_exists($userDir)) {
+                mkdir($userDir, 0777, true);
+            }
+
             $profile_img = null;
+            
+            // Si se subió una imagen personalizada
             if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-                // Usar la extensión original
                 $extension = strtolower(pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION));
-                $dest = $destDir . 'profile.' . $extension;
-                if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $dest)) {
-                    $profile_img = 'users/' . $userId . '/profile.' . $extension;
+                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                
+                if (in_array($extension, $allowedExtensions)) {
+                    $destFile = $userDir . 'profile.' . $extension;
+                    if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $destFile)) {
+                        $profile_img = 'users/' . $userId . '/profile.' . $extension;
+                    }
                 }
             } else {
-                // Copiar avatar por género
-                $src = __DIR__ . '/../media/' . $avatarFile;
-                $dest = $destDir . 'profile.png';
-                if (file_exists($src)) {
-                    copy($src, $dest);
-                    $profile_img = 'users/' . $userId . '/profile.png';
+                // Copiar avatar por género desde media/
+                $gender = $this->user->gender;
+                $avatarFile = 'other.png';
+                
+                if ($gender === 'male') {
+                    $avatarFile = 'male.png';
+                } elseif ($gender === 'female') {
+                    $avatarFile = 'female.png';
+                }
+                
+                $srcAvatar = __DIR__ . '/../../media/' . $avatarFile;
+                $destAvatar = $userDir . 'profile.png';
+                
+                if (file_exists($srcAvatar)) {
+                    if (copy($srcAvatar, $destAvatar)) {
+                        $profile_img = 'users/' . $userId . '/profile.png';
+                    }
                 }
             }
+            
+            // Actualizar perfil con la imagen
             if ($profile_img) {
                 $this->user->profile_img = $profile_img;
                 $this->user->update();
             }
-            // Obtener roles del usuario
-            $roles = $this->user->getRoles();
-            // Generar JWT
-            $token = $this->generateToken($this->user->id, $this->user->username, $this->user->email, $roles);
-            // No enviar cookie JWT en registro, solo devolver el token en la respuesta
+            
+            // Enviar email de activación
+            $emailService = new EmailService();
+            $emailSent = $emailService->sendActivationEmail(
+                $this->user->email,
+                $this->user->username,
+                $this->user->activation_token
+            );
+            
+            if (!$emailSent) {
+                error_log("Error al enviar email de activación a: " . $this->user->email);
+            }
+            
+            // NO generar JWT ni loguear al usuario automáticamente
+            // El usuario debe activar su cuenta primero
+            
             $userData = [
                 'id' => $this->user->id,
                 'username' => $this->user->username,
                 'email' => $this->user->email,
-                'profile_img' => $this->user->profile_img ? '/Nueva-WEB/api/uploads/' . $this->user->profile_img : null,
-                'roles' => $roles
+                'requiresActivation' => true
             ];
-            return $this->sendResponse(201, true, "Usuario registrado exitosamente", $userData, $token);
+            
+            return $this->sendResponse(201, true, "Usuario registrado. Por favor revisa tu email para activar tu cuenta.", $userData);
         }
+        
         return $this->sendResponse(500, false, "Error al registrar usuario");
     }
 
@@ -102,6 +142,11 @@ class AuthController {
         $this->user->email = $data['email'];
         if (!$this->user->emailExists()) {
             return $this->sendResponse(401, false, "Credenciales incorrectas");
+        }
+
+        // Verificar si la cuenta está activada
+        if ($this->user->is_active == 0) {
+            return $this->sendResponse(403, false, "Debes activar tu cuenta antes de iniciar sesión. Revisa tu correo electrónico.");
         }
 
         // Verificar contraseña con bcrypt
@@ -119,6 +164,10 @@ class AuthController {
                 'id' => $this->user->id,
                 'username' => $this->user->username,
                 'email' => $this->user->email,
+                'first_name' => $this->user->first_name,
+                'last_name' => $this->user->last_name,
+                'gender' => $this->user->gender,
+                'profile_img' => $this->user->profile_img ? '/Nueva-WEB/api/uploads/' . $this->user->profile_img : null,
                 'roles' => $roles
             ];
 
@@ -164,6 +213,9 @@ class AuthController {
                 'id' => $this->user->id,
                 'username' => $this->user->username,
                 'email' => $this->user->email,
+                'first_name' => $this->user->first_name,
+                'last_name' => $this->user->last_name,
+                'gender' => $this->user->gender,
                 'profile_img' => $this->user->profile_img ? '/Nueva-WEB/api/uploads/' . $this->user->profile_img : null,
                 'created_at' => $this->user->created_at,
                 'roles' => $roles
@@ -197,6 +249,15 @@ class AuthController {
         if (isset($data['email'])) {
             $this->user->email = $data['email'];
         }
+        if (isset($data['first_name'])) {
+            $this->user->first_name = $data['first_name'];
+        }
+        if (isset($data['last_name'])) {
+            $this->user->last_name = $data['last_name'];
+        }
+        if (isset($data['gender'])) {
+            $this->user->gender = $data['gender'];
+        }
         if (isset($data['password']) && !empty($data['password'])) {
             if (strlen($data['password']) < 8) {
                 return $this->sendResponse(400, false, "La contraseña debe tener al menos 8 caracteres");
@@ -206,15 +267,15 @@ class AuthController {
 
         // Manejar nueva imagen de perfil
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-            // Eliminar imagen anterior si existe
-            if ($this->user->profile_img) {
-                $oldImagePath = __DIR__ . '/../uploads/' . $this->user->profile_img;
-                if (file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
-                }
-            }
             $profile_img = $this->uploadProfileImage($_FILES['profile_image']);
             if ($profile_img) {
+                // Eliminar imagen anterior si existe y no es el default
+                if ($this->user->profile_img && strpos($this->user->profile_img, 'users/' . $this->user->id . '/') !== false) {
+                    $oldImagePath = __DIR__ . '/../uploads/' . $this->user->profile_img;
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
                 $this->user->profile_img = $profile_img;
             }
         }
@@ -226,6 +287,9 @@ class AuthController {
                 'id' => $this->user->id,
                 'username' => $this->user->username,
                 'email' => $this->user->email,
+                'first_name' => $this->user->first_name,
+                'last_name' => $this->user->last_name,
+                'gender' => $this->user->gender,
                 'profile_img' => $this->user->profile_img ? '/Nueva-WEB/api/uploads/' . $this->user->profile_img : null,
                 'roles' => $roles
             ];
@@ -283,27 +347,35 @@ class AuthController {
 
         // Obtener extensión original
         $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        
+        // Normalizar extensión
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        if (!in_array($extension, $allowedExtensions)) {
+            return false;
+        }
 
         // Obtener ID de usuario (de la instancia actual)
         $userId = isset($this->user->id) ? $this->user->id : null;
         if (!$userId) {
-            // No se puede guardar sin ID de usuario
             return false;
         }
 
-        // Crear directorio por usuario si no existe
+        // Crear directorio por usuario si no existe: uploads/users/{ID}/
         $upload_dir = __DIR__ . '/../uploads/users/' . $userId . '/';
         if (!file_exists($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
 
-        // Nombre fijo: profile.ext
+        // Nombre fijo: profile.{extension}
         $filename = 'profile.' . $extension;
         $filepath = $upload_dir . $filename;
 
-        // Si ya existe, eliminarlo
-        if (file_exists($filepath)) {
-            unlink($filepath);
+        // Si ya existe una imagen con diferente extensión, eliminarla
+        foreach ($allowedExtensions as $ext) {
+            $oldFile = $upload_dir . 'profile.' . $ext;
+            if ($ext !== $extension && file_exists($oldFile)) {
+                unlink($oldFile);
+            }
         }
 
         // Mover archivo
@@ -396,6 +468,23 @@ class AuthController {
         header('Content-Type: application/json');
         echo json_encode($response);
         exit;
+    }
+
+    /**
+     * Activar cuenta de usuario
+     */
+    public function activateAccount($data) {
+        if (empty($data['token'])) {
+            return $this->sendResponse(400, false, "Token de activación requerido");
+        }
+
+        $result = $this->user->activateAccount($data['token']);
+
+        if ($result['success']) {
+            return $this->sendResponse(200, true, $result['message']);
+        } else {
+            return $this->sendResponse(400, false, $result['message']);
+        }
     }
 }
 ?>

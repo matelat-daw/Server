@@ -1,18 +1,75 @@
-<section class="contact-section">
-    <h1>Contacto</h1>
-    <form id="contact-form">
-        <div>
-            <label for="name">Nombre:</label>
-            <input type="text" id="name" name="name" required>
+<section class="contact-page">
+    <div class="contact-container">
+        <div class="contact-header">
+            <h1 class="contact-title">Contáctanos</h1>
+            <p class="contact-subtitle">¿Tienes alguna pregunta? Estamos aquí para ayudarte</p>
         </div>
-        <div>
-            <label for="email">Correo Electrónico:</label>
-            <input type="email" id="email" name="email" required>
+        
+        <div class="contact-content">
+            <div class="contact-info">
+                <div class="info-card">
+                    <div class="info-icon">📧</div>
+                    <h3>Email</h3>
+                    <p>info@mitienda.com</p>
+                    <p>soporte@mitienda.com</p>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">📞</div>
+                    <h3>Teléfono</h3>
+                    <p>+34 900 123 456</p>
+                    <p>Lun - Vie: 9:00 - 18:00</p>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">📍</div>
+                    <h3>Ubicación</h3>
+                    <p>Calle Principal 123</p>
+                    <p>28001 Madrid, España</p>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">⏰</div>
+                    <h3>Horario</h3>
+                    <p>Lunes - Viernes: 9:00 - 18:00</p>
+                    <p>Sábados: 10:00 - 14:00</p>
+                </div>
+            </div>
+            
+            <div class="contact-form-wrapper">
+                <form id="contact-form" class="contact-form">
+                    <div class="form-group">
+                        <label for="name">
+                            <span class="label-icon">👤</span>
+                            Nombre Completo
+                        </label>
+                        <input type="text" id="name" name="name" required placeholder="Tu nombre">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">
+                            <span class="label-icon">✉️</span>
+                            Correo Electrónico
+                        </label>
+                        <input type="email" id="email" name="email" required placeholder="tu@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">
+                            <span class="label-icon">💬</span>
+                            Mensaje
+                        </label>
+                        <textarea id="message" name="message" required placeholder="Escribe tu mensaje aquí..." rows="6"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <span>Enviar Mensaje</span>
+                        <span class="btn-icon">📨</span>
+                    </button>
+                </form>
+                
+                <div id="form-message" class="form-message" style="display: none;"></div>
+            </div>
         </div>
-        <div>
-            <label for="message">Mensaje:</label>
-            <textarea id="message" name="message" required></textarea>
-        </div>
-        <button type="submit">Enviar</button>
-    </form>
+    </div>
 </section>

@@ -14,6 +14,7 @@ $apiBase = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 $router->post("$apiBase/login", [AuthController::class, 'login']);
 $router->post("$apiBase/register", [AuthController::class, 'register']);
 $router->post("$apiBase/logout", [AuthController::class, 'logout']);
+$router->post("$apiBase/activate", [AuthController::class, 'activateAccount']);
 // Endpoints de perfil (PUT acepta form-data por imagen)
 $router->get("$apiBase/auth/validate", [AuthController::class, 'validateToken']);
 $router->put("$apiBase/auth/profile", [AuthController::class, 'updateProfile']);

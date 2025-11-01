@@ -1,11 +1,6 @@
-// app.js principal
+// app.js principal - Optimizado
 (function() {
     'use strict';
-
-    // Si ya existe, destruir y recrear
-    if (window.app) {
-        delete window.app;
-    }
 
     var App = function() {
         this.currentPage = null;
@@ -14,103 +9,149 @@
     };
 
     App.prototype.init = function() {
-        if (this.initialized) return;
+        if (this.initialized) {
+            return;
+        }
         this.initialized = true;
+        
         var self = this;
-        // 1. Cargar header y nav primero, luego footer
+        
+        console.log('🚀 Iniciando aplicación...');
+        
+        // Cargar página inicial
         setTimeout(function() { self.loadPageDirect('home'); }, 800);
+        
+        // Cargar componentes estructurales
         setTimeout(function() {
             self.tryLoadComponent('header');
-            // Asegurar nav-container existe
+            
+            // Asegurar que nav-component existe
             var navContainer = document.getElementById('nav-component');
             if (!navContainer) {
                 navContainer = document.createElement('div');
                 navContainer.id = 'nav-component';
-                document.getElementById('app').insertBefore(navContainer, document.getElementById('main-content'));
+                var appElement = document.getElementById('app');
+                var mainContent = document.getElementById('main-content');
+                if (appElement && mainContent) {
+                    appElement.insertBefore(navContainer, mainContent);
+                }
             }
-            // Cargar nav y, tras inicializar, actualizar menú usuario inmediatamente si hay usuario en localStorage
+            
+            // Cargar navegación y manejar menú de usuario
             self.tryLoadComponent('nav');
-            // Refuerzo: esperar a que nav esté en el DOM y navComponent inicializado
-            var ensureUserMenu = function(attempt) {
-                attempt = attempt || 1;
-                var user = null;
-                try {
-                    var userStr = localStorage.getItem('currentUser');
-                    if (userStr) user = JSON.parse(userStr);
-                } catch (e) {}
-                var navReady = window.navComponent && typeof navComponent.updateForUser === 'function';
-                var wrapper = document.getElementById('user-menu-wrapper');
-                if (navReady && wrapper) {
-                    if (user) {
-                        navComponent.updateForUser(user);
-                    } else {
-                        navComponent.updateForUser(null);
+            self.initializeUserMenu();
+            
+            self.tryLoadComponent('footer');
+        }, 200);
+        
+        this.setupRouting();
+    };
+
+    // Inicializar menú de usuario tras cargar nav
+    App.prototype.initializeUserMenu = function() {
+        var self = this;
+        var ensureUserMenu = function(attempt) {
+            attempt = attempt || 1;
+            
+            var user = self.getUserFromStorage();
+            var navReady = window.navComponent && typeof navComponent.updateForUser === 'function';
+            var wrapper = document.getElementById('user-menu-wrapper');
+            
+            if (navReady && wrapper) {
+                // SIEMPRE mostrar menú si hay usuario en localStorage
+                if (user) {
+                    console.log('✓ Usuario en localStorage, mostrando menú inmediatamente');
+                    navComponent.updateForUser(user);
+                    wrapper.style.display = 'block';
+                    
+                    // Actualizar componente de menú si existe
+                    if (window.userMenuComponent && typeof userMenuComponent.updateUser === 'function') {
+                        userMenuComponent.updateUser(user);
                     }
-                    // Validar token después de mostrar menú provisional
-                    if (window.AuthService && typeof AuthService.validateToken === 'function') {
-                        AuthService.validateToken().then((isValid) => {
-                            var validUser = null;
-                            if (isValid && AuthService.getCurrentUser) {
-                                validUser = AuthService.getCurrentUser();
-                            }
+                }
+                
+                // Validar token en segundo plano (pero NO ocultar si falla por red)
+                if (window.AuthService && typeof AuthService.validateToken === 'function') {
+                    AuthService.validateToken().then(function(isValid) {
+                        if (isValid) {
+                            var validUser = AuthService.getCurrentUser();
                             if (validUser) {
+                                // Token válido: actualizar con datos frescos
+                                console.log('✓ Token válido, actualizando datos');
                                 navComponent.updateForUser(validUser);
                                 if (window.userMenuComponent && typeof userMenuComponent.updateUser === 'function') {
                                     userMenuComponent.updateUser(validUser);
-                                    wrapper.style.display = 'block';
                                 }
+                                wrapper.style.display = 'block';
                                 self.updateUIForLoggedInUser();
-                            } else {
-                                // Si el token NO es válido, ocultar el menú y limpiar usuario
-                                localStorage.removeItem('currentUser');
-                                navComponent.updateForUser(null);
                             }
-                        });
-                    }
-                } else if (attempt < 20) {
-                    setTimeout(function() { ensureUserMenu(attempt + 1); }, 100);
+                        } else {
+                            // Token realmente inválido (401 del servidor): ocultar menú
+                            console.warn('✗ Token inválido, cerrando sesión');
+                            localStorage.removeItem('currentUser');
+                            navComponent.updateForUser(null);
+                        }
+                    }).catch(function(error) {
+                        // Error de red u otro: MANTENER menú visible
+                        console.warn('⚠ Error validando token (posible red), manteniendo sesión:', error);
+                        // NO hacer nada - el menú ya está visible con datos de localStorage
+                    });
                 }
-            };
-            setTimeout(function() { ensureUserMenu(1); }, 200);
-            self.tryLoadComponent('footer');
-        }, 200);
-        this.setupRouting();
+            } else if (attempt < 20) {
+                setTimeout(function() { ensureUserMenu(attempt + 1); }, 100);
+            }
+        };
+        
+        setTimeout(function() { ensureUserMenu(1); }, 200);
+    };
+
+    // Obtener usuario de localStorage de forma segura
+    App.prototype.getUserFromStorage = function() {
+        try {
+            var userStr = localStorage.getItem('currentUser');
+            if (userStr) {
+                return JSON.parse(userStr);
+            }
+        } catch (e) {
+            console.error('Error al leer usuario de localStorage:', e);
+        }
+        return null;
     };
 
     App.prototype.tryLoadComponent = function(componentName) {
         var container = document.getElementById(componentName + '-component');
         
         if (!container) {
-            console.warn('❌ Container not found:', componentName + '-component');
+            console.warn('Container no encontrado:', componentName + '-component');
             return;
         }
         
         var basePath = this.basePath;
-    // ...existing code...
+        var componentUrl = basePath + 'components/' + componentName + '/' + componentName + '.html';
         
-        fetch(basePath + 'components/' + componentName + '/' + componentName + '.html')
+        fetch(componentUrl)
             .then(function(response) {
                 if (!response.ok) throw new Error('HTTP ' + response.status);
                 return response.text();
             })
             .then(function(html) {
-                // ...existing code...
                 container.innerHTML = html;
                 
+                // Inicializar componente tras cargar HTML
                 setTimeout(function() {
                     var component = window[componentName + 'Component'];
                     if (component && typeof component.init === 'function') {
                         try {
                             component.init();
-                            // ...existing code...
+                            console.log('✓ Componente inicializado:', componentName);
                         } catch (error) {
-                            console.error('❌ Error initializing:', componentName, error);
+                            console.error('Error al inicializar componente:', componentName, error);
                         }
                     }
                 }, 100);
             })
-            .catch(function(error) { 
-                // ...existing code...
+            .catch(function(error) {
+                console.error('Error al cargar componente:', componentName, error);
                 container.innerHTML = '<div style="padding:0.5rem;background:#ffe;color:#990;font-size:0.8rem;">⚠️ ' + componentName + ' no disponible</div>';
             });
     };
@@ -160,7 +201,10 @@
                     var wrapper = document.getElementById('user-menu-wrapper');
                     if (navReady && wrapper) {
                         if (user) {
+                            // Asegurar que el menú se muestra
                             navComponent.updateForUser(user);
+                            wrapper.style.display = 'block';
+                            console.log('✓ Menú de usuario actualizado tras cambio de página');
                         } else {
                             navComponent.updateForUser(null);
                         }
@@ -245,7 +289,11 @@
         } catch (error) {}
     };
 
-    // Initialize - SIEMPRE crear nueva instancia
+    // Initialize app
+    if (window.app) {
+        delete window.app;
+    }
+    
     window.app = new App();
 
     if (document.readyState === 'loading') {

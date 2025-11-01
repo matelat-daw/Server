@@ -1,4 +1,19 @@
-<h1>Nuestros Productos</h1>
-<div id="product-list">
-    <!-- Aquí se incluirá la lista de productos -->
-</div>
+<section class="products-page">
+    <div class="products-header">
+        <h1 class="products-title">Nuestros Productos</h1>
+        <p class="products-subtitle">Descubre nuestra selección de productos premium de las mejores marcas</p>
+    </div>
+    
+    <div class="products-filters">
+        <div class="filter-group">
+            <input type="text" id="search-products" class="search-input" placeholder="🔍 Buscar productos...">
+        </div>
+    </div>
+    
+    <div id="products-container" class="products-grid">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Cargando productos...</p>
+        </div>
+    </div>
+</section>

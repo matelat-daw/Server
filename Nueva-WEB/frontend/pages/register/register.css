@@ -257,3 +257,174 @@ body.dark-mode {
 .button.dark-mode:hover {
     background-color: #5a6268; /* Darker shade on hover for dark mode */
 }
+
+/* ===================================
+   ACTIVATION MODAL STYLES
+   =================================== */
+
+.activation-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.activation-modal-content {
+    background: white;
+    border-radius: 25px;
+    max-width: 550px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: slideUp 0.4s ease-out;
+}
+
+.activation-modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2.5rem;
+    text-align: center;
+    color: white;
+}
+
+.activation-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: bounce 1s infinite;
+}
+
+.activation-modal-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.activation-modal-body {
+    padding: 2rem 2.5rem;
+}
+
+.activation-email {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.activation-email-address {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #667eea;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    word-break: break-word;
+}
+
+.activation-instructions {
+    font-size: 1rem;
+    color: #444;
+    line-height: 1.6;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.activation-warning {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+}
+
+.warning-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.activation-warning p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #856404;
+    line-height: 1.5;
+}
+
+.activation-modal-footer {
+    padding: 0 2.5rem 2.5rem 2.5rem;
+    text-align: center;
+}
+
+.activation-btn-primary {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.activation-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .activation-modal-content {
+        width: 95%;
+    }
+    
+    .activation-modal-header {
+        padding: 2rem 1.5rem;
+    }
+    
+    .activation-icon {
+        font-size: 3rem;
+    }
+    
+    .activation-modal-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .activation-modal-body {
+        padding: 1.5rem;
+    }
+    
+    .activation-email-address {
+        font-size: 1.1rem;
+    }
+}

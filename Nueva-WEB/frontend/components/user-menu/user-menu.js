@@ -59,15 +59,14 @@ var userMenuComponent = {
                     if (ev.target && ev.target.getAttribute('data-logout-action') === 'confirm') {
                         document.body.removeChild(modal);
                         // Llamar a AuthService.logout() que maneja todo el proceso
-                        if (window.AuthService) {
-                            AuthService.logout().then(function(result) {
-                                // El logout ya redirige a home, no necesitamos hacer nada más
-                            }).catch(function(error) {
-                                console.error('Error durante logout:', error);
-                            });
+                        if (window.AuthService && typeof AuthService.logout === 'function') {
+                            AuthService.logout();
                         } else {
-                            // Fallback si AuthService no está disponible
+                            // Fallback: limpiar manualmente y redirigir
+                            localStorage.removeItem('currentUser');
+                            document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
                             window.location.hash = '#home';
+                            window.location.reload();
                         }
                     }
                 });
@@ -79,10 +78,11 @@ var userMenuComponent = {
         var userName = document.getElementById('user-name');
         var userAvatar = document.getElementById('user-avatar');
         if (userName) {
-            userName.textContent = user.username || 'Usuario';
+            userName.textContent = user.first_name || user.username || 'Usuario';
         }
         if (userAvatar) {
-            var avatarUrl = user.avatar;
+            // Usar profile_img del backend o fallback a default
+            var avatarUrl = user.profile_img || '/Nueva-WEB/media/default.jpg';
             userAvatar.src = avatarUrl;
         }
         // Siempre volver a enganchar el logout tras renderizar

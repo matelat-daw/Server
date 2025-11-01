@@ -26,6 +26,7 @@ echo '<!DOCTYPE html>
     <link rel="stylesheet" href="/Nueva-WEB/frontend/pages/contact/contact.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/pages/login/login.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/pages/register/register.css">
+    <link rel="stylesheet" href="/Nueva-WEB/frontend/pages/activate/activate.css">
 </head>
 <body>
     <div id="app">
@@ -68,6 +69,7 @@ echo '<!DOCTYPE html>
     <script src="/Nueva-WEB/frontend/pages/contact/contact.js"></script>
     <script src="/Nueva-WEB/frontend/pages/login/login.js"></script>
     <script src="/Nueva-WEB/frontend/pages/register/register.js"></script>
+    <script src="/Nueva-WEB/frontend/pages/activate/activate.js"></script>
     
     <!-- Main App (Load LAST) -->
     <script src="/Nueva-WEB/frontend/app.js"></script>
