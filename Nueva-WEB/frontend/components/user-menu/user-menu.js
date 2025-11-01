@@ -79,10 +79,10 @@ var userMenuComponent = {
         var userName = document.getElementById('user-name');
         var userAvatar = document.getElementById('user-avatar');
         if (userName) {
-            userName.textContent = user.first_name || user.username || 'Usuario';
+            userName.textContent = user.username || 'Usuario';
         }
         if (userAvatar) {
-            var avatarUrl = user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=FF6B9D&color=fff`;
+            var avatarUrl = user.avatar;
             userAvatar.src = avatarUrl;
         }
         // Siempre volver a enganchar el logout tras renderizar
