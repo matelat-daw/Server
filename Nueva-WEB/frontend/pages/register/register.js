@@ -36,94 +36,91 @@ function showError(input, message) {
     }
 }
 
-// SPA-compatible page object for register
-window.registerPage = {
-    init: function() {
-        var form = document.getElementById('register-form');
-        if (!form) return;
 
-        // Remove previous listeners to avoid duplicates
-        form.onsubmit = null;
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            // Get fields
-            var username = document.getElementById('username');
-            var email = document.getElementById('email');
-            var password = document.getElementById('password');
-            var confirm = document.getElementById('confirm-password');
-            var gender = form.querySelector('input[name="gender"]:checked');
+// Solo lógica de validación y submit del formulario
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('register-form');
+    if (!form) return;
 
-            // Remove previous errors
-            form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-            form.querySelectorAll('.error-message').forEach(el => el.remove());
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        // Get fields
+        var username = document.getElementById('username');
+        var email = document.getElementById('email');
+        var password = document.getElementById('password');
+        var confirm = document.getElementById('confirm-password');
+        var gender = form.querySelector('input[name="gender"]:checked');
 
-            let valid = true;
+        // Remove previous errors
+        form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+        form.querySelectorAll('.error-message').forEach(el => el.remove());
 
-            // Username required
-            if (!username.value.trim()) {
-                showError(username, 'Username is required');
-                valid = false;
-            }
-            // Email required and valid
-            if (!email.value.trim()) {
-                showError(email, 'Email is required');
-                valid = false;
-            } else if (!/^\S+@\S+\.\S+$/.test(email.value)) {
-                showError(email, 'Enter a valid email address');
-                valid = false;
-            }
-            // Gender required
-            if (!gender) {
-                showError(form.querySelector('#gender-group'), 'Selecciona un género');
-                valid = false;
-            }
-            // Password required
-            if (!password.value) {
-                showError(password, 'Password is required');
-                valid = false;
-            }
-            // Confirm password required
-            if (!confirm.value) {
-                showError(confirm, 'Please confirm your password');
-                valid = false;
-            }
-            // Passwords match
-            if (password.value && confirm.value && password.value !== confirm.value) {
-                showModal('Passwords do not match', 'error');
-                showError(confirm, 'Passwords do not match');
-                valid = false;
-            }
+        let valid = true;
 
-            if (!valid) return;
+        // Username required
+        if (!username.value.trim()) {
+            showError(username, 'Username is required');
+            valid = false;
+        }
+        // Email required and valid
+        if (!email.value.trim()) {
+            showError(email, 'Email is required');
+            valid = false;
+        } else if (!/^\S+@\S+\.\S+$/.test(email.value)) {
+            showError(email, 'Enter a valid email address');
+            valid = false;
+        }
+        // Gender required
+        if (!gender) {
+            showError(form.querySelector('#gender-group'), 'Selecciona un género');
+            valid = false;
+        }
+        // Password required
+        if (!password.value) {
+            showError(password, 'Password is required');
+            valid = false;
+        }
+        // Confirm password required
+        if (!confirm.value) {
+            showError(confirm, 'Please confirm your password');
+            valid = false;
+        }
+        // Passwords match
+        if (password.value && confirm.value && password.value !== confirm.value) {
+            showModal('Passwords do not match', 'error');
+            showError(confirm, 'Passwords do not match');
+            valid = false;
+        }
 
-            // Call backend
-            var result = await AuthService.register({
-                username: username.value,
-                email: email.value,
-                password: password.value,
-                gender: gender ? gender.value : null
-            });
-            if (result.success) {
-                // Mostrar modal de confirmación de email
-                if (result.user && result.user.requiresActivation) {
-                    showActivationModal(result.user.email);
-                } else {
-                    // Legacy: si no requiere activación (usuarios antiguos)
-                    showModal('¡Registro exitoso! Ahora puedes iniciar sesión desde Inicio.', 'success');
-                    setTimeout(() => {
-                        if (window.app && typeof window.app.navigate === 'function') {
-                            window.app.navigate('home');
-                        } else {
-                            window.location.hash = '#home';
-                        }
-                    }, 1200);
-                }
-            } else {
-                showModal(result.message || 'Registration failed', 'error');
-            }
+        if (!valid) return;
+
+        // Call backend
+        var result = await AuthService.register({
+            username: username.value,
+            email: email.value,
+            password: password.value,
+            gender: gender ? gender.value : null
         });
-    }
-};
+        if (result.success) {
+            // Mostrar modal de confirmación de email
+            if (result.user && result.user.requiresActivation) {
+                showActivationModal(result.user.email);
+            } else {
+                // Legacy: si no requiere activación (usuarios antiguos)
+                showModal('¡Registro exitoso! Ahora puedes iniciar sesión desde Inicio.', 'success');
+                setTimeout(() => {
+                    if (window.app && typeof window.app.navigate === 'function') {
+                        window.app.navigate('home');
+                    } else {
+                        window.location.hash = '#home';
+                    }
+                }, 1200);
+            }
+        } else {
+            showModal(result.message || 'Registration failed', 'error');
+        }
+    });
+});
 
 // Modal de activación por email
 function showActivationModal(email) {
