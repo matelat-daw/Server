@@ -49,8 +49,7 @@ var navComponent = {
         var userMenuWrapper = document.getElementById('user-menu-wrapper');
         
         if (user) {
-            console.log('🔹 nav.updateForUser: Mostrando menú para', user.username || user.email);
-            
+
             if (guestMenu) guestMenu.style.display = 'none';
             if (userMenuWrapper) {
                 // Obtener nombre y avatar
@@ -72,9 +71,7 @@ var navComponent = {
                         </div>\
                     </div>\
                 </div>';
-                
-                console.log('✓ HTML del menú inyectado en wrapper');
-                
+
                 // Mostrar el wrapper
                 userMenuWrapper.style.display = 'block';
                 
@@ -95,11 +92,10 @@ var navComponent = {
                 if (window.userMenuComponent && typeof userMenuComponent.setupLogout === 'function') {
                     userMenuComponent.setupLogout();
                 }
-                
-                console.log('✓ Menú de usuario completamente configurado');
+
             } else {
                 if (attempt < 10) {
-                    console.warn('⚠ user-menu-wrapper no encontrado, reintentando...');
+
                     setTimeout(function() { navComponent.updateForUser(user, attempt + 1); }, 100);
                 }
             }

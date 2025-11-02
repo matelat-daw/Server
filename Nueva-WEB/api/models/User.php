@@ -41,7 +41,7 @@ class User {
         $first_name = $this->first_name ? htmlspecialchars(strip_tags($this->first_name)) : null;
         $last_name = $this->last_name ? htmlspecialchars(strip_tags($this->last_name)) : null;
         $gender = $this->gender ? $this->gender : 'other';
-        $profile_img = $this->profile_img ? $this->profile_img : null;
+        $profile_img = $this->profile_img ? $this->profile_img : '/media/default.jpg';
         
         // Hash password con bcrypt (cost 12 para alta seguridad)
         $password_hash = password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 12]);
@@ -244,6 +244,7 @@ class User {
      * Activar cuenta de usuario usando token
      */
     public function activateAccount($token) {
+
         $query = "SELECT id, username, email, activation_token_expires, is_active 
                   FROM " . $this->table_name . " 
                   WHERE activation_token = :token 
@@ -252,12 +253,16 @@ class User {
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":token", $token);
         $stmt->execute();
+        
+        error_log("🔍 [User Model] Filas encontradas: " . $stmt->rowCount());
 
         if ($stmt->rowCount() > 0) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            error_log("🔍 [User Model] Usuario encontrado: " . json_encode($row));
             
             // Verificar si ya está activado
             if ($row['is_active'] == 1) {
+
                 return ['success' => false, 'message' => 'Esta cuenta ya está activada'];
             }
             
@@ -265,7 +270,11 @@ class User {
             $now = new DateTime();
             $expires = new DateTime($row['activation_token_expires']);
             
+            error_log("🔍 [User Model] Fecha actual: " . $now->format('Y-m-d H:i:s'));
+            error_log("🔍 [User Model] Fecha expiración: " . $expires->format('Y-m-d H:i:s'));
+            
             if ($now > $expires) {
+
                 return ['success' => false, 'message' => 'El enlace de activación ha expirado'];
             }
             
@@ -280,13 +289,18 @@ class User {
             $updateStmt->bindParam(":id", $row['id']);
             
             if ($updateStmt->execute()) {
+
                 $this->id = $row['id'];
                 $this->username = $row['username'];
                 $this->email = $row['email'];
                 $this->is_active = 1;
                 
                 return ['success' => true, 'message' => 'Cuenta activada exitosamente'];
+            } else {
+
             }
+        } else {
+
         }
         
         return ['success' => false, 'message' => 'Token de activación inválido'];

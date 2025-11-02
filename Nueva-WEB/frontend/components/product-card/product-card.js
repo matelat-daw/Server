@@ -51,7 +51,7 @@ var productCardComponent = {
     },
 
     addToCart: function(product) {
-        console.log('Adding to cart:', product);
+
         alert(product.name + ' añadido al carrito');
     }
 };

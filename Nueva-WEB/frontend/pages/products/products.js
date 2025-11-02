@@ -31,7 +31,7 @@ var productsPage = {
                 this.showSampleProducts(container);
             }
         } catch (error) {
-            console.error('Error loading products:', error);
+
             this.showSampleProducts(container);
         }
     },

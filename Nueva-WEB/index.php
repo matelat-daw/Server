@@ -49,7 +49,10 @@ echo '<!DOCTYPE html>
         <div id="footer-component"></div>
     </div>
 
-    <!-- Services (Load FIRST) -->
+    <!-- Utilities (Load FIRST) -->
+    <script src="/Nueva-WEB/frontend/utils/modal.js"></script>
+    
+    <!-- Services -->
     <script src="/Nueva-WEB/frontend/services/api.js"></script>
     <script src="/Nueva-WEB/frontend/services/auth.js"></script>
     

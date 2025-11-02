@@ -1,27 +1,5 @@
 // profile.js - Lógica de perfil de usuario
 (function() {
-    function showModal(message, type = 'error') {
-        let modal = document.getElementById('global-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'global-modal';
-            modal.innerHTML = `
-                <div class="modal-backdrop"></div>
-                <div class="modal-content">
-                    <span id="modal-message"></span>
-                    <button id="modal-close">OK</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-        modal.querySelector('#modal-message').textContent = message;
-        modal.style.display = 'flex';
-        modal.className = type === 'success' ? 'modal-success' : 'modal-error';
-        modal.querySelector('#modal-close').onclick = function() {
-            modal.style.display = 'none';
-        };
-    }
-
     function validateProfileForm(form) {
         let valid = true;
         let username = form.username;
@@ -134,3 +112,4 @@
         }
     };
 })();
+

@@ -30,9 +30,7 @@ var contactPage = {
                     
                     // Simulación de envío exitoso
                     await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                    console.log('Contact form submitted:', { name, email, message });
-                    
+
                     // Mostrar mensaje de éxito
                     messageDiv.className = 'form-message success';
                     messageDiv.textContent = '✓ Mensaje enviado correctamente. Nos pondremos en contacto contigo pronto.';
@@ -47,8 +45,7 @@ var contactPage = {
                     }, 5000);
                     
                 } catch (error) {
-                    console.error('Error al enviar formulario:', error);
-                    
+
                     // Mostrar mensaje de error
                     messageDiv.className = 'form-message error';
                     messageDiv.textContent = '✗ Error al enviar el mensaje. Por favor, inténtalo de nuevo.';

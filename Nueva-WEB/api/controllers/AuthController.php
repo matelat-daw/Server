@@ -113,7 +113,7 @@ class AuthController {
             );
             
             if (!$emailSent) {
-                error_log("Error al enviar email de activación a: " . $this->user->email);
+
             }
             
             // NO generar JWT ni loguear al usuario automáticamente
@@ -474,11 +474,17 @@ class AuthController {
      * Activar cuenta de usuario
      */
     public function activateAccount($data) {
+
+        error_log("🔍 [AuthController] Data recibida: " . json_encode($data));
+        
         if (empty($data['token'])) {
+
             return $this->sendResponse(400, false, "Token de activación requerido");
         }
 
         $result = $this->user->activateAccount($data['token']);
+        
+        error_log("📥 [AuthController] Resultado de activación: " . json_encode($result));
 
         if ($result['success']) {
             return $this->sendResponse(200, true, $result['message']);

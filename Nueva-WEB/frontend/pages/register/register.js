@@ -1,27 +1,5 @@
 
-// Modal system
-function showModal(message, type = 'error') {
-    let modal = document.getElementById('global-modal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'global-modal';
-        modal.innerHTML = `
-            <div class="modal-backdrop"></div>
-            <div class="modal-content">
-                <span id="modal-message"></span>
-                <button id="modal-close">OK</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-    modal.querySelector('#modal-message').textContent = message;
-    modal.style.display = 'flex';
-    modal.className = type === 'success' ? 'modal-success' : 'modal-error';
-    modal.querySelector('#modal-close').onclick = function() {
-        modal.style.display = 'none';
-    };
-}
-
+// Utility functions
 function showError(input, message) {
     if (input.classList) input.classList.add('input-error');
     var msg = document.createElement('div');
@@ -36,20 +14,29 @@ function showError(input, message) {
     }
 }
 
-
 // Solo lógica de validación y submit del formulario
-document.addEventListener('DOMContentLoaded', function() {
+function initRegisterForm() {
     var form = document.getElementById('register-form');
     if (!form) return;
+    if (form.dataset.bound === '1') return; // Evitar doble binding
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         // Get fields
+        var firstName = document.getElementById('first-name');
+        var lastName = document.getElementById('last-name');
         var username = document.getElementById('username');
         var email = document.getElementById('email');
         var password = document.getElementById('password');
         var confirm = document.getElementById('confirm-password');
         var gender = form.querySelector('input[name="gender"]:checked');
+
+        // Validar que todos los campos existen
+        if (!firstName || !lastName || !username || !email || !password || !confirm) {
+
+            showModal('Error: El formulario no se cargó correctamente. Por favor, recarga la página.', 'error');
+            return;
+        }
 
         // Remove previous errors
         form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
@@ -57,6 +44,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let valid = true;
 
+        // First name required
+        if (!firstName.value.trim()) {
+            showError(firstName, 'El nombre es requerido');
+            valid = false;
+        }
+        // Last name required
+        if (!lastName.value.trim()) {
+            showError(lastName, 'Los apellidos son requeridos');
+            valid = false;
+        }
         // Username required
         if (!username.value.trim()) {
             showError(username, 'Username is required');
@@ -96,34 +93,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Call backend
         var result = await AuthService.register({
-            username: username.value,
-            email: email.value,
+            first_name: firstName.value.trim(),
+            last_name: lastName.value.trim(),
+            username: username.value.trim(),
+            email: email.value.trim(),
             password: password.value,
-            gender: gender ? gender.value : null
+            gender: gender ? gender.value : 'other'
         });
         if (result.success) {
             // Mostrar modal de confirmación de email
             if (result.user && result.user.requiresActivation) {
-                showActivationModal(result.user.email);
-            } else {
-                // Legacy: si no requiere activación (usuarios antiguos)
-                showModal('¡Registro exitoso! Ahora puedes iniciar sesión desde Inicio.', 'success');
-                setTimeout(() => {
+                showActivationModal(result.user.email, function() {
                     if (window.app && typeof window.app.navigate === 'function') {
                         window.app.navigate('home');
                     } else {
                         window.location.hash = '#home';
                     }
-                }, 1200);
+                });
+            } else {
+                // Legacy: si no requiere activación (usuarios antiguos)
+                showModal('¡Registro exitoso! Ahora puedes iniciar sesión desde Inicio.', 'success', function() {
+                    if (window.app && typeof window.app.navigate === 'function') {
+                        window.app.navigate('home');
+                    } else {
+                        window.location.hash = '#home';
+                    }
+                });
             }
         } else {
             showModal(result.message || 'Registration failed', 'error');
         }
     });
-});
+    form.dataset.bound = '1';
+}
+
+// NO ejecutar init automáticamente al cargar el script
+// Solo cuando se navega a la página de registro (app.js llama a init)
+
+// Exponer como registerPage para compatibilidad con app.js
+window.registerPage = {
+    init: initRegisterForm
+};
 
 // Modal de activación por email
-function showActivationModal(email) {
+function showActivationModal(email, onClose) {
     // Eliminar modal existente si hay
     var existingModal = document.getElementById('activation-modal');
     if (existingModal) {
@@ -152,32 +165,32 @@ function showActivationModal(email) {
                 </div>
             </div>
             <div class="activation-modal-footer">
-                <button class="activation-btn-primary" onclick="closeActivationModal()">Entendido</button>
+                <button class="activation-btn-primary" id="activation-modal-close">Entendido</button>
             </div>
         </div>
     `;
     document.body.appendChild(modal);
     
+    // Cerrar solo al pulsar el botón
+    modal.querySelector('#activation-modal-close').onclick = function() {
+        closeActivationModal(onClose);
+    };
+    
     // Cerrar al hacer clic fuera del modal
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
-            closeActivationModal();
+            closeActivationModal(onClose);
         }
     });
 }
 
-function closeActivationModal() {
+function closeActivationModal(onClose) {
     var modal = document.getElementById('activation-modal');
     if (modal) {
         modal.style.opacity = '0';
         setTimeout(function() {
             modal.remove();
-            // Redirigir a home
-            if (window.app && typeof window.app.navigate === 'function') {
-                window.app.navigate('home');
-            } else {
-                window.location.hash = '#home';
-            }
+            if (typeof onClose === 'function') onClose();
         }, 300);
     }
 }

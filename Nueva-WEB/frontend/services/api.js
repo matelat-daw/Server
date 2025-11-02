@@ -45,7 +45,7 @@ const ApiService = {
 
             return payload;
         } catch (error) {
-            console.error('API Error:', error);
+
             return { success: false, message: 'Error de conexión con la API' };
         }
     },

@@ -15,11 +15,23 @@
         this.initialized = true;
         
         var self = this;
+
+
+        console.log('🔍 [App] Hash en init():', window.location.hash);
         
-        console.log('🚀 Iniciando aplicación...');
-        
+        // Detectar ruta inicial desde hash (ej: #activate?token=...)
+        var initialRoute = this.getInitialRoute();
+
         // Cargar página inicial
-        setTimeout(function() { self.loadPageDirect('home'); }, 800);
+        setTimeout(function() { 
+            if (initialRoute) {
+
+                self.loadPageDirect(initialRoute);
+            } else {
+
+                self.loadPageDirect('home'); 
+            }
+        }, 800);
         
         // Cargar componentes estructurales
         setTimeout(function() {
@@ -47,6 +59,25 @@
         this.setupRouting();
     };
 
+    // Obtener ruta inicial desde el hash de la URL
+    App.prototype.getInitialRoute = function() {
+        var hash = window.location.hash;
+
+        if (!hash || hash === '#') {
+
+            return null;
+        }
+        
+        // Extraer nombre de la ruta (ej: #activate?token=... -> activate)
+        var route = hash.substring(1); // Quitar el #
+        var questionMarkIndex = route.indexOf('?');
+        if (questionMarkIndex > 0) {
+            route = route.substring(0, questionMarkIndex);
+        }
+
+        return route || null;
+    };
+
     // Inicializar menú de usuario tras cargar nav
     App.prototype.initializeUserMenu = function() {
         var self = this;
@@ -60,7 +91,7 @@
             if (navReady && wrapper) {
                 // SIEMPRE mostrar menú si hay usuario en localStorage
                 if (user) {
-                    console.log('✓ Usuario en localStorage, mostrando menú inmediatamente');
+
                     navComponent.updateForUser(user);
                     wrapper.style.display = 'block';
                     
@@ -77,7 +108,7 @@
                             var validUser = AuthService.getCurrentUser();
                             if (validUser) {
                                 // Token válido: actualizar con datos frescos
-                                console.log('✓ Token válido, actualizando datos');
+
                                 navComponent.updateForUser(validUser);
                                 if (window.userMenuComponent && typeof userMenuComponent.updateUser === 'function') {
                                     userMenuComponent.updateUser(validUser);
@@ -87,7 +118,7 @@
                             }
                         } else {
                             // Token realmente inválido (401 del servidor): ocultar menú
-                            console.warn('✗ Token inválido, cerrando sesión');
+
                             localStorage.removeItem('currentUser');
                             navComponent.updateForUser(null);
                         }
@@ -113,7 +144,7 @@
                 return JSON.parse(userStr);
             }
         } catch (e) {
-            console.error('Error al leer usuario de localStorage:', e);
+
         }
         return null;
     };
@@ -122,7 +153,7 @@
         var container = document.getElementById(componentName + '-component');
         
         if (!container) {
-            console.warn('Container no encontrado:', componentName + '-component');
+
             return;
         }
         
@@ -143,15 +174,15 @@
                     if (component && typeof component.init === 'function') {
                         try {
                             component.init();
-                            console.log('✓ Componente inicializado:', componentName);
+
                         } catch (error) {
-                            console.error('Error al inicializar componente:', componentName, error);
+
                         }
                     }
                 }, 100);
             })
             .catch(function(error) {
-                console.error('Error al cargar componente:', componentName, error);
+
                 container.innerHTML = '<div style="padding:0.5rem;background:#ffe;color:#990;font-size:0.8rem;">⚠️ ' + componentName + ' no disponible</div>';
             });
     };
@@ -160,7 +191,7 @@
         var mainContent = document.getElementById('main-content');
         
         if (!mainContent) {
-            console.error('❌ FATAL: main-content not found!');
+
             return;
         }
         
@@ -204,7 +235,7 @@
                             // Asegurar que el menú se muestra
                             navComponent.updateForUser(user);
                             wrapper.style.display = 'block';
-                            console.log('✓ Menú de usuario actualizado tras cambio de página');
+
                         } else {
                             navComponent.updateForUser(null);
                         }
@@ -215,14 +246,22 @@
                 setTimeout(function() { updateMenuAfterPage(1); }, 200);
                 // Initialize page
                 setTimeout(function() {
+
                     var pageObj = window[pageName + 'Page'];
+
                     if (pageObj) {
+
                         if (typeof pageObj.init === 'function') {
                             pageObj.initialized = false;
                             try {
+                                console.log('✅ [App] Llamando a init() de', pageName);
                                 pageObj.init();
-                            } catch (error) {}
+                            } catch (error) {
+
+                            }
                         }
+                    } else {
+
                     }
                 }, 400);
             })
@@ -262,7 +301,7 @@
                 if (target.hasAttribute && target.hasAttribute('data-route')) {
                     e.preventDefault();
                     var route = target.getAttribute('data-route');
-                    console.log('🔗 Route clicked:', route);
+
                     self.navigate(route);
                     return;
                 }
@@ -282,7 +321,7 @@
         try {
             var user = AuthService.getCurrentUser();
             if (user) {
-                console.log('[Auth] Usuario logueado:', user.username || user.email);
+
             }
             var event = new CustomEvent('userLoggedIn', { detail: user });
             document.dispatchEvent(event);
@@ -304,3 +343,4 @@
         window.app.init();
     }
 })();
+

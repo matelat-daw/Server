@@ -99,12 +99,12 @@ var AuthService = {
                     self.currentUser = response.user;
                     // Guardar usuario en localStorage
                     localStorage.setItem('currentUser', JSON.stringify(response.user));
-                    console.log('✓ Token validado correctamente');
+
                     // NO forzar actualización del nav aquí - lo hace app.js
                     return true;
                 } else {
                     // Token inválido CONFIRMADO por el servidor (401)
-                    console.warn('✗ Token inválido según servidor, cerrando sesión');
+
                     self.currentUser = null;
                     localStorage.removeItem('currentUser');
                     var event = new CustomEvent('userLoggedOut');
