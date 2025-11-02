@@ -30,7 +30,7 @@ class OrdersComponent {
     async loadTemplate() {
         // Cargar template de manera asíncrona usando fetch
         try {
-            const response = await fetch('/app/pages/orders/orders.component.html');
+            const response = await fetch(window.AppConfig.getPath('app/pages/orders/orders.component.html'));
             if (response.ok) {
                 this.template = await response.text();
             } else {
@@ -62,7 +62,7 @@ class OrdersComponent {
         if (!document.querySelector('link[href="/app/pages/orders/orders.component.css"]')) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = '/app/pages/orders/orders.component.css';
+            link.href = window.AppConfig.getPath('app/pages/orders/orders.component.css');
             document.head.appendChild(link);
         }
     }

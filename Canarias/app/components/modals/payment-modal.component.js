@@ -7,20 +7,11 @@ class PaymentModal {
         this.cardElement = null;
     }
 
-    async show() {
-        console.log('💳 [PAYMENT MODAL] Iniciando show()...');
-        
+    async loadTemplate() {
+        if (this.template) return this.template;
         try {
-            // Cargar template
-            console.log('💳 [PAYMENT MODAL] Cargando template HTML...');
-            const response = await fetch('/app/components/modals/payment-modal.component.html');
-            
-            if (!response.ok) {
-                throw new Error(`Error al cargar template: ${response.status} ${response.statusText}`);
-            }
-            
-            const template = await response.text();
-            console.log('💳 [PAYMENT MODAL] Template cargado, longitud:', template.length);
+            const response = await fetch(window.AppConfig.getPath('app/components/modals/payment-modal.component.html'));
+            this.template = await response.text();
 
             // Inyectar en DOM si no existe
             if (!document.getElementById('paymentModal')) {
@@ -74,7 +65,7 @@ class PaymentModal {
             const link = document.createElement('link');
             link.id = 'payment-modal-styles';
             link.rel = 'stylesheet';
-            link.href = '/app/components/modals/payment-modal.component.css';
+            link.href = window.AppConfig.getPath('app/components/modals/payment-modal.component.css');
             document.head.appendChild(link);
         }
     }

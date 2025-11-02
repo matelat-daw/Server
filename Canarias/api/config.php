@@ -137,60 +137,22 @@ class Key {
     }
 }
 
-// Cargar variables de entorno
-function loadEnvironmentVariables($filePath = __DIR__ . '/../.env') {
-    if (!file_exists($filePath)) {
-        error_log("Archivo .env no encontrado en: $filePath");
-        return false;
-    }
-    
-    $content = file_get_contents($filePath);
-    $lines = explode("\n", $content);
-    
-    foreach ($lines as $line) {
-        $line = trim($line);
-        
-        // Saltar líneas vacías y comentarios
-        if (empty($line) || strpos($line, '#') === 0) continue;
-        
-        // Verificar que tenga formato clave=valor
-        if (strpos($line, '=') === false) continue;
-        
-        // Dividir en clave y valor
-        list($key, $value) = explode('=', $line, 2);
-        $key = trim($key);
-        $value = trim($value);
-        
-        // Remover comillas si las hay, pero mantener el contenido
-        if ((strpos($value, '"') === 0 && strrpos($value, '"') === strlen($value) - 1) ||
-            (strpos($value, "'") === 0 && strrpos($value, "'") === strlen($value) - 1)) {
-            $value = substr($value, 1, -1);
-        }
-        
-        $_ENV[$key] = $value;
-        putenv("$key=$value");
-        
-        // Log para debugging (solo en modo desarrollo)
-        if (defined('DEBUG_MODE') && DEBUG_MODE && $key === 'DB_PASS') {
-            error_log("Variable $key cargada con longitud: " . strlen($value));
-        }
-    }
-    return true;
-}
+// ====================================
+// CONFIGURACIÓN DE LA BASE DE DATOS
+// ====================================
 
-loadEnvironmentVariables();
+// Configuración MySQL simplificada
+// La contraseña se lee de la variable de entorno del sistema
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'canarias_ec');
+define('DB_USER', 'root');
+define('DB_PASS', getenv('MySQL') ?: ''); // Lee de variable de entorno del sistema
+define('DB_CHARSET', 'utf8mb4');
+define('DB_PORT', 3306);
 
 // Configuración esencial
-define('ENVIRONMENT', $_ENV['ENVIRONMENT'] ?? 'development');
+define('ENVIRONMENT', 'development');
 define('DEBUG_MODE', ENVIRONMENT === 'development');
-
-// Base de datos
-define('DB_HOST', $_ENV['DB_HOST'] ?? 'localhost');
-define('DB_NAME', $_ENV['DB_NAME'] ?? 'users');
-define('DB_USER', $_ENV['DB_USER'] ?? 'root');
-define('DB_PASS', $_ENV['DB_PASS'] ?? '');
-define('DB_CHARSET', $_ENV['DB_CHARSET'] ?? 'utf8mb4');
-define('DB_PORT', (int)($_ENV['DB_PORT'] ?? 3306));
 
 /**
  * Función centralizada para obtener conexión PDO segura
@@ -235,14 +197,18 @@ function getDBConnection() {
     return $pdo;
 }
 
-// JWT
-define('JWT_SECRET', $_ENV['JWT_SECRET'] ?? 'fallback_secret_key_change_in_production');
-define('JWT_EXPIRATION', 24 * 60 * 60);
+// ====================================
+// CONFIGURACIÓN JWT Y SEGURIDAD
+// ====================================
+
+// JWT - Clave secreta para firmar tokens
+define('JWT_SECRET', 'NexusAstralis2024_SuperSecureKey_ChangeInProduction_47hx9mK8nL3wQ2rT');
+define('JWT_EXPIRATION', 24 * 60 * 60); // 24 horas
 
 // Cookies
 define('COOKIE_NAME', 'ecc_auth_token');
 define('COOKIE_EXPIRATION', 24 * 60 * 60);
-define('COOKIE_SECURE', false);
+define('COOKIE_SECURE', false); // true en producción con HTTPS
 define('COOKIE_HTTP_ONLY', false);
 define('COOKIE_SAME_SITE', 'Lax');
 
@@ -256,7 +222,7 @@ define('RATE_LIMIT_WINDOW', 3600); // 1 hora
 // Email
 define('EMAIL_FROM', 'matelat@gmail.com');
 define('EMAIL_FROM_NAME', 'Canarias Circular');
-define('SITE_URL', 'https://localhost');
+define('SITE_URL', 'http://localhost');
 
 // ====================================
 // FUNCIONES HELPER OPTIMIZADAS
@@ -268,13 +234,15 @@ define('SITE_URL', 'https://localhost');
 function setCorsHeaders() {
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
     $allowedOrigins = [
-        'https://localhost',
-        'https://localhost:443', 
-        'https://127.0.0.1',
-        'https://127.0.0.1:443'
+        'http://localhost',
+        'http://localhost:80',
+        'http://localhost:8080',
+        'http://127.0.0.1',
+        'http://127.0.0.1:80',
+        'http://127.0.0.1:8080'
     ];
     
-    header("Access-Control-Allow-Origin: " . (in_array($origin, $allowedOrigins) ? $origin : 'https://localhost'));
+    header("Access-Control-Allow-Origin: " . (in_array($origin, $allowedOrigins) ? $origin : 'http://localhost'));
     header("Access-Control-Allow-Credentials: true");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin");

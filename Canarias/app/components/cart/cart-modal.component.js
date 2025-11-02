@@ -15,7 +15,7 @@ class CartModal {
         if (this.template) return this.template;
         
         try {
-            const response = await fetch('/app/components/cart/cart-modal.component.html');
+            const response = await fetch(window.AppConfig.getPath('app/components/cart/cart-modal.component.html'));
             this.template = await response.text();
             return this.template;
         } catch (error) {
@@ -293,7 +293,7 @@ class CartModal {
             const link = document.createElement('link');
             link.id = 'cart-modal-styles';
             link.rel = 'stylesheet';
-            link.href = '/app/components/cart/cart-modal.component.css';
+            link.href = window.AppConfig.getPath('app/components/cart/cart-modal.component.css');
             document.head.appendChild(link);
             this.cssLoaded = true;
         }

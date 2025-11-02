@@ -23,7 +23,7 @@ class ProfileComponent {
                 return;
             }
             // Cargar HTML del componente
-            const response = await fetch('/app/pages/profile/profile.component.html');
+            const response = await fetch(window.AppConfig.getPath('app/pages/profile/profile.component.html'));
             if (!response.ok) {
                 throw new Error(`Error cargando HTML: ${response.status} ${response.statusText}`);
             }
@@ -33,7 +33,7 @@ class ProfileComponent {
             if (!document.querySelector('link[href*="profile.component.css"]')) {
                 const link = document.createElement('link');
                 link.rel = 'stylesheet';
-                link.href = '/app/pages/profile/profile.component.css';
+                link.href = window.AppConfig.getPath('app/pages/profile/profile.component.css');
                 document.head.appendChild(link);
             }
             // Cargar datos del usuario

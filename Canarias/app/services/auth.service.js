@@ -2,21 +2,36 @@
 
 class AuthService {
     constructor() {
-        // Configuración de endpoints
-        this.endpoints = {
-            register: '/api/auth/register.php',
-            login: '/api/auth/login.php',
-            logout: '/api/auth/logout.php',
-            validate: '/api/auth/validate.php'
-        };
+        // Ya no usamos endpoints hardcodeados, usamos AppConfig
         this.currentUser = null;
         this.token = null;
     }
+    
     // Función helper para construir URLs del API
-    getApiUrl(endpoint) {
-        const url = this.endpoints[endpoint] || '';
-        return url;
+    getApiUrl(endpointKey) {
+        // Usar la configuración de AppConfig
+        const config = window.AppConfig;
+        const endpoint = config.api.endpoints[endpointKey];
+        
+        if (!endpoint) {
+            console.error(`Endpoint no encontrado: ${endpointKey}`);
+            return '';
+        }
+        
+        // Construir la URL completa
+        // endpoint ya es 'auth/login.php'
+        // baseUrl es 'api'
+        // Resultado final: /Canarias/api/auth/login.php
+        const fullPath = `${config.api.baseUrl}/${endpoint}`;
+        const finalUrl = config.getPath(fullPath);
+        
+        if (config.debug.enableAuthServiceLogs) {
+            console.log(`[AUTH SERVICE] Construyendo URL para ${endpointKey}:`, finalUrl);
+        }
+        
+        return finalUrl;
     }
+    
     // Obtener token de la cookie
     getTokenFromCookie() {
         const cookieName = 'ecc_auth_token';

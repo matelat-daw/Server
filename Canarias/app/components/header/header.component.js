@@ -18,7 +18,7 @@ class HeaderComponent {
     async loadTemplate() {
         if (this.template) return this.template;
         try {
-            const response = await fetch('/app/components/header/header.component.html');
+            const response = await fetch(window.AppConfig.getPath('app/components/header/header.component.html'));
             this.template = await response.text();
             return this.template;
         } catch (error) {
@@ -272,7 +272,7 @@ class HeaderComponent {
         if (!this.cssLoaded) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = '/app/components/header/header.component.css';
+            link.href = window.AppConfig.getPath('app/components/header/header.component.css');
             document.head.appendChild(link);
             this.cssLoaded = true;
         }

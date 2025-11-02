@@ -8,7 +8,7 @@ class FooterComponent {
     async loadTemplate() {
         if (this.template) return this.template;
         try {
-            const response = await fetch('/app/components/footer/footer.component.html');
+            const response = await fetch(window.AppConfig.getPath('app/components/footer/footer.component.html'));
             this.template = await response.text();
             return this.template;
         } catch (error) {
@@ -48,7 +48,7 @@ class FooterComponent {
         if (!this.cssLoaded) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = '/app/components/footer/footer.component.css';
+            link.href = window.AppConfig.getPath('app/components/footer/footer.component.css');
             document.head.appendChild(link);
             this.cssLoaded = true;
         }

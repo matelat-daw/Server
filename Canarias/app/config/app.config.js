@@ -1,36 +1,41 @@
 // Configuración de la aplicación Economía Circular Canarias
 window.AppConfig = {
+    // Ruta base de la aplicación (ajustar según dónde esté instalada)
+    // Para localhost/Canarias/ usar 'Canarias'
+    // Para localhost:8080/ usar '' (vacío)
+    basePath: 'Canarias',
+    
     // Configuración del API
     api: {
         // Cambiar a false cuando el backend esté listo
         useMockMode: false, // Activado para probar el backend PHP
-        // URLs del API - usando rutas relativas para el mismo servidor
-        baseUrl: '', // Vacío para usar rutas relativas desde la misma raíz
-        // Rutas del API desde la raíz del servidor (http://localhost:8080)
+        // URLs del API - usando rutas relativas desde la carpeta actual
+        baseUrl: 'api', // Rutas relativas desde donde está el index.html
+        // Rutas del API relativas a la carpeta actual
         endpoints: {
             // Autenticación
-            register: '/api/auth/register.php',
-            login: '/api/auth/login.php',
-            logout: '/api/auth/logout.php',
-            validate: '/api/auth/validate.php',
-            confirmEmail: '/api/auth/confirm-email.php',
-            requestPasswordReset: '/api/auth/request-password-reset.php',
-            resetPassword: '/api/auth/reset-password.php',
+            register: 'auth/register.php',
+            login: 'auth/login.php',
+            logout: 'auth/logout.php',
+            validate: 'auth/validate.php',
+            confirmEmail: 'auth/confirm-email.php',
+            requestPasswordReset: 'auth/request-password-reset.php',
+            resetPassword: 'auth/reset-password.php',
             // Productos
-            createProduct: '/api/products/create.php',
-            listProducts: '/api/products/list.php',
-            getProduct: '/api/products/get.php',
-            updateProduct: '/api/products/update.php',
-            deleteProduct: '/api/products/delete.php',
-            getCategories: '/api/products/categories.php',
+            createProduct: 'products/create.php',
+            listProducts: 'products/list.php',
+            getProduct: 'products/get.php',
+            updateProduct: 'products/update.php',
+            deleteProduct: 'products/delete.php',
+            getCategories: 'products/categories.php',
             // Pedidos
-            createOrder: '/api/orders/create.php',
-            getOrder: '/api/orders/get.php',
-            myOrders: '/api/orders/my-orders.php',
-            updateOrderStatus: '/api/orders/update-status.php',
+            createOrder: 'orders/create.php',
+            getOrder: 'orders/get.php',
+            myOrders: 'orders/my-orders.php',
+            updateOrderStatus: 'orders/update-status.php',
             // Pruebas
-            testProducts: '/api/test-products.php',
-            testOrders: '/api/test-orders.php'
+            testProducts: 'test-products.php',
+            testOrders: 'test-orders.php'
         }
     },
     // Configuración de la aplicación
@@ -43,5 +48,15 @@ window.AppConfig = {
     debug: {
         enableLogs: true,
         enableAuthServiceLogs: true
+    },
+    
+    // Helper para construir rutas correctas
+    getPath: function(relativePath) {
+        // Si relativePath empieza con /, la quitamos
+        const cleanPath = relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
+        // Si basePath está vacío, retornamos la ruta con / al inicio
+        // Si basePath tiene valor, retornamos /basePath/ruta
+        return this.basePath ? `/${this.basePath}/${cleanPath}` : `/${cleanPath}`;
     }
 };
+

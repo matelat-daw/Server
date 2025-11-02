@@ -8,7 +8,7 @@ class NavComponent {
     async loadTemplate() {
         if (this.template) return this.template;
         try {
-            const response = await fetch('/app/components/nav/nav.component.html');
+            const response = await fetch(window.AppConfig.getPath('app/components/nav/nav.component.html'));
             this.template = await response.text();
             return this.template;
         } catch (error) {
@@ -61,7 +61,7 @@ class NavComponent {
         if (!this.cssLoaded) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = '/app/components/nav/nav.component.css';
+            link.href = window.AppConfig.getPath('app/components/nav/nav.component.css');
             document.head.appendChild(link);
             this.cssLoaded = true;
         }
