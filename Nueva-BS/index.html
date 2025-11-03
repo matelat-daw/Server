@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Tu Tienda de Tecnología</title>
+    <link rel="icon" href="data:,">
+    
+    <!-- Bootstrap CSS (local) -->
+    <link rel="stylesheet" href="/Nueva-BS/frontend/style/bootstrap.min.css">
+    
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/Nueva-BS/frontend/style/custom.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-component"></div>
+
+    <!-- Navigation -->
+    <div id="nav-component"></div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container-fluid px-0">
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+            <div class="text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <h4 class="text-muted">Iniciando aplicación...</h4>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-component"></div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal-container"></div>
+
+    <!-- Bootstrap Bundle (local, includes Popper) -->
+    <script src="/Nueva-BS/frontend/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Utilities -->
+    <script src="/Nueva-BS/frontend/utils/modal.js"></script>
+    
+    <!-- Services -->
+    <script src="/Nueva-BS/frontend/services/api.js"></script>
+    <script src="/Nueva-BS/frontend/services/auth.js"></script>
+    <script src="/Nueva-BS/frontend/services/cart.js"></script>
+    
+    <!-- Components -->
+    <script src="/Nueva-BS/frontend/components/header/header.js"></script>
+    <script src="/Nueva-BS/frontend/components/nav/nav.js"></script>
+    <script src="/Nueva-BS/frontend/components/user-menu/user-menu.js"></script>
+    <script src="/Nueva-BS/frontend/components/product-card/product-card.js"></script>
+    <script src="/Nueva-BS/frontend/components/cart/cart.js"></script>
+    <script src="/Nueva-BS/frontend/components/footer/footer.js"></script>
+    
+    <!-- Pages -->
+    <script src="/Nueva-BS/frontend/pages/home/home.js"></script>
+    <script src="/Nueva-BS/frontend/pages/products/products.js"></script>
+    <script src="/Nueva-BS/frontend/pages/about/about.js"></script>
+    <script src="/Nueva-BS/frontend/pages/contact/contact.js"></script>
+    <script src="/Nueva-BS/frontend/pages/login/login.js"></script>
+    <script src="/Nueva-BS/frontend/pages/register/register.js"></script>
+    <script src="/Nueva-BS/frontend/pages/profile/profile.js"></script>
+    <script src="/Nueva-BS/frontend/pages/activate/activate.js"></script>
+    
+    <!-- App Router (Load LAST) -->
+    <script src="/Nueva-BS/frontend/app.js"></script>
+</body>
+</html>

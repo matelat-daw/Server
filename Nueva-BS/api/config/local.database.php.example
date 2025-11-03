@@ -1,0 +1,10 @@
+<?php
+// Copiar este archivo a local.database.php y ajustar credenciales locales.
+// Este archivo NO debe versionarse con credenciales reales.
+return [
+    'host' => 'localhost',
+    'name' => 'newapp',
+    'user' => 'root',
+    'pass' => ''
+];
+?>

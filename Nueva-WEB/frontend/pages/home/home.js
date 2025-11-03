@@ -114,10 +114,42 @@ var homePage = {
 
     showSampleProducts: function(container) {
         var samples = [
-            { id: 1, name: 'Laptop HP ProBook', price: 599.99, description: 'Laptop HP 15.6" Intel Core i5, 8GB RAM', stock: 15 },
-            { id: 2, name: 'Mouse Logitech', price: 89.99, description: 'Mouse inalámbrico Logitech M185', stock: 25 },
-            { id: 3, name: 'Teclado Mecánico RGB', price: 129.99, description: 'Teclado mecánico RGB gaming', stock: 12 },
-            { id: 4, name: 'Monitor Samsung 4K', price: 299.99, description: 'Monitor Samsung 27" 4K UHD', stock: 8 }
+            { 
+                id: 1, 
+                name: 'Laptop HP ProBook', 
+                price: 599.99, 
+                description: 'Laptop HP 15.6" Intel Core i5, 8GB RAM, 256GB SSD', 
+                stock: 15,
+                category: 'Electrónica',
+                image: '/Nueva-WEB/media/productos/laptop.jpg'
+            },
+            { 
+                id: 2, 
+                name: 'Mouse Logitech', 
+                price: 89.99, 
+                description: 'Mouse inalámbrico Logitech con sensor de alta precisión', 
+                stock: 25,
+                category: 'Accesorios',
+                image: '/Nueva-WEB/media/productos/mouse.jpg'
+            },
+            { 
+                id: 3, 
+                name: 'Teclado Mecánico RGB', 
+                price: 129.99, 
+                description: 'Teclado mecánico RGB gaming con switches mecánicos', 
+                stock: 12,
+                category: 'Accesorios',
+                image: '/Nueva-WEB/media/productos/teclado.jpg'
+            },
+            { 
+                id: 4, 
+                name: 'Monitor Samsung 4K', 
+                price: 299.99, 
+                description: 'Monitor Samsung 27" 4K UHD con panel IPS', 
+                stock: 8,
+                category: 'Electrónica',
+                image: '/Nueva-WEB/media/productos/monitor.jpg'
+            }
         ];
 
         this.displayProducts(container, samples);

@@ -16,6 +16,7 @@ echo '<!DOCTYPE html>
     <link rel="stylesheet" href="/Nueva-WEB/frontend/components/header/header.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/components/nav/nav.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/components/user-menu/user-menu.css">
+    <link rel="stylesheet" href="/Nueva-WEB/frontend/components/cart/cart.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/components/footer/footer.css">
     <link rel="stylesheet" href="/Nueva-WEB/frontend/components/product-card/product-card.css">
     
@@ -55,6 +56,7 @@ echo '<!DOCTYPE html>
     <!-- Services -->
     <script src="/Nueva-WEB/frontend/services/api.js"></script>
     <script src="/Nueva-WEB/frontend/services/auth.js"></script>
+    <script src="/Nueva-WEB/frontend/services/cart.js"></script>
     
     <!-- Components Scripts -->
     <script src="/Nueva-WEB/frontend/components/header/header.js"></script>

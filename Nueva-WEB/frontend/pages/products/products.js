@@ -52,10 +52,54 @@ var productsPage = {
 
     showSampleProducts(container) {
         const sampleProducts = [
-            { id: 1, name: 'Laptop HP', price: 599.99, description: 'Laptop HP 15.6" Intel Core i5' },
-            { id: 2, name: 'Mouse Logitech', price: 19.99, description: 'Mouse inalámbrico' },
-            { id: 3, name: 'Teclado Mecánico', price: 79.99, description: 'Teclado mecánico RGB' },
-            { id: 4, name: 'Monitor Samsung', price: 149.99, description: 'Monitor 24" Full HD' }
+            { 
+                id: 1, 
+                name: 'Laptop HP', 
+                price: 599.99, 
+                description: 'Laptop HP 15.6" Intel Core i5, 8GB RAM, 256GB SSD',
+                category: 'Electrónica',
+                image: '/Nueva-WEB/media/productos/laptop.jpg'
+            },
+            { 
+                id: 2, 
+                name: 'Mouse Logitech', 
+                price: 19.99, 
+                description: 'Mouse inalámbrico con sensor óptico de alta precisión',
+                category: 'Accesorios',
+                image: '/Nueva-WEB/media/productos/mouse.jpg'
+            },
+            { 
+                id: 3, 
+                name: 'Teclado Mecánico', 
+                price: 79.99, 
+                description: 'Teclado mecánico RGB con switches azules',
+                category: 'Accesorios',
+                image: '/Nueva-WEB/media/productos/teclado.jpg'
+            },
+            { 
+                id: 4, 
+                name: 'Monitor Samsung', 
+                price: 149.99, 
+                description: 'Monitor 24" Full HD con tecnología IPS',
+                category: 'Electrónica',
+                image: '/Nueva-WEB/media/productos/monitor.jpg'
+            },
+            { 
+                id: 5, 
+                name: 'Auriculares Sony', 
+                price: 89.99, 
+                description: 'Auriculares inalámbricos con cancelación de ruido',
+                category: 'Audio',
+                image: '/Nueva-WEB/media/productos/auriculares.jpg'
+            },
+            { 
+                id: 6, 
+                name: 'Webcam Logitech HD', 
+                price: 59.99, 
+                description: 'Webcam Full HD 1080p con micrófono integrado',
+                category: 'Accesorios',
+                image: '/Nueva-WEB/media/productos/webcam.jpg'
+            }
         ];
         
         this.displayProducts(sampleProducts, container);

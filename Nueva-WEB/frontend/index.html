@@ -17,16 +17,45 @@
     </div>
 
     <!-- Servicios primero -->
+    <script>
+        console.log('📍 Ubicación actual:', window.location.href);
+        console.log('📍 Base href:', document.location.origin + document.location.pathname);
+    </script>
     <script src="/Nueva-WEB/frontend/services/api.js"></script>
     <script src="/Nueva-WEB/frontend/services/auth.js"></script>
+    <script src="/Nueva-WEB/frontend/services/cart.js" onerror="console.error('❌ Error cargando cart.js')"></script>
+    <script>
+        // Verificar que el servicio se cargó
+        console.log('Verificando CartService después de cargar cart.js...');
+        console.log('typeof window.cartService:', typeof window.cartService);
+        if (typeof window.cartService !== 'undefined') {
+            console.log('✓ CartService cargado correctamente:', window.cartService);
+        } else {
+            console.error('✗ CartService NO se cargó. Revisa la consola para errores.');
+            console.error('window.cartService es:', window.cartService);
+        }
+    </script>
     
     <!-- Componentes -->
     <script src="/Nueva-WEB/frontend/components/header/header.js"></script>
     <script src="/Nueva-WEB/frontend/components/nav/nav.js"></script>
     <script src="/Nueva-WEB/frontend/components/user-menu/user-menu.js"></script>
+    <script src="/Nueva-WEB/frontend/components/cart/cart.js"></script>
     <script src="/Nueva-WEB/frontend/components/footer/footer.js"></script>
+    
+    <!-- Estilos del carrito -->
+    <link rel="stylesheet" href="/Nueva-WEB/frontend/components/cart/cart.css">
     
     <!-- App principal al final -->
     <script src="/Nueva-WEB/frontend/app.js"></script>
+    
+    <!-- Inicializar carrito después de cargar todo -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof cartComponent !== 'undefined') {
+                cartComponent.init();
+            }
+        });
+    </script>
 </body>
 </html>

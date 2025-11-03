@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Cart Service</title>
+</head>
+<body>
+    <h1>Test del Servicio del Carrito</h1>
+    <button onclick="testCart()">Probar Carrito</button>
+    <div id="output"></div>
+
+    <script src="/Nueva-WEB/frontend/services/cart.js"></script>
+    <script>
+        function testCart() {
+            const output = document.getElementById('output');
+            
+            if (typeof window.cartService === 'undefined') {
+                output.innerHTML = '<p style="color: red;">❌ CartService NO está definido</p>';
+                console.error('window.cartService no existe');
+                console.log('window:', window);
+            } else {
+                output.innerHTML = '<p style="color: green;">✓ CartService está definido</p>';
+                console.log('CartService:', window.cartService);
+                
+                // Probar agregar un item
+                window.cartService.addItem({
+                    id: 1,
+                    name: 'Producto de prueba',
+                    price: 19.99,
+                    image: '/test.jpg',
+                    category: 'Test'
+                });
+                
+                output.innerHTML += '<p>Items en el carrito: ' + window.cartService.getItemCount() + '</p>';
+                output.innerHTML += '<p>Total: €' + window.cartService.getTotal().toFixed(2) + '</p>';
+            }
+        }
+        
+        // Auto-ejecutar al cargar
+        window.addEventListener('load', function() {
+            console.log('Página cargada');
+            console.log('window.cartService:', window.cartService);
+            testCart();
+        });
+    </script>
+</body>
+</html>

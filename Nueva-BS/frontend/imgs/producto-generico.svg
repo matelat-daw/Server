@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <rect width="300" height="300" fill="#f8f9fa"/>
+  <text x="50%" y="45%" text-anchor="middle" font-family="Arial, sans-serif" font-size="80" fill="#0d6efd" dy=".3em">📦</text>
+  <text x="50%" y="65%" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#6c757d">Producto</text>
+</svg>

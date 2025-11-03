@@ -1,3 +1,4 @@
+$css = @"
 /* Cart Modal Styles */
 .modal-overlay {
     position: fixed;
@@ -222,3 +223,6 @@
         justify-self: end;
     }
 }
+"@
+
+[System.IO.File]::WriteAllText("C:\Server\html\Nueva-WEB\frontend\components\cart\cart.css", $css)
