@@ -1,0 +1,26 @@
+# Aplicaciones pesadas - no subir al repositorio
+moodle/
+wordpress/
+
+# Backups
+*_backup_*/
+Barbery_backup_*/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+~*
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
