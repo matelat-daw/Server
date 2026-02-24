@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation</title>
+    <style>
+        body {
+            background: #222;
+            color: #fff;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #character {
+            position: absolute;
+            top: 50%;
+            left: 100px;
+            font-size: 80px;
+            font-family: monospace;
+            transform: translateY(-50%);
+            transition: left 0.1s, color 0.1s, top 0.3s cubic-bezier(.68,-0.55,.27,1.55);
+        }
+    </style>
+</head>
+<body>
+    <div id="character">A</div>
+    <script>
+        // Secuencia: A B C B A
+        const sequence = ['A', 'B', 'C', 'B'];
+        let index = 0;
+        let position = 100;
+        const step = 20;
+        const character = document.getElementById('character');
+        let direction = 'right';
+        let keyPressed = false;
+        let intervalId = null;
+        let jumping = false;
+        let jumpTimeout = null;
+        const baseTop = 50; // porcentaje
+        const jumpHeight = 50 * 0.5; // 50% de la altura del carácter
+
+        function updateCharacter() {
+            character.textContent = sequence[index];
+            character.style.left = position + 'px';
+        }
+
+        function nextFrame(dir) {
+            if (dir === 'right') {
+                index = (index + 1) % sequence.length;
+                position += step;
+            } else {
+                index = (index - 1 + sequence.length) % sequence.length;
+                position -= step;
+            }
+            updateCharacter();
+        }
+
+        function jump(isMoving) {
+            if (jumping) return;
+            jumping = true;
+            // Salta hacia arriba
+            character.style.top = (baseTop - jumpHeight) + '%';
+            // Si está en movimiento, sigue cambiando la letra
+            if (isMoving) {
+                nextFrame(direction);
+            }
+            // Vuelve a bajar después de 350ms
+            jumpTimeout = setTimeout(() => {
+                character.style.top = baseTop + '%';
+                jumping = false;
+            }, 350);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space') {
+                // Salto: si keyPressed está activo, está en movimiento
+                jump(keyPressed);
+                return;
+            }
+            if (keyPressed) return;
+            if (e.code === 'ArrowRight' || e.code === 'ArrowLeft') {
+                keyPressed = true;
+                direction = e.code === 'ArrowRight' ? 'right' : 'left';
+                nextFrame(direction);
+                intervalId = setInterval(() => nextFrame(direction), 150);
+            }
+        });
+
+        document.addEventListener('keyup', function(e) {
+            if (e.code === 'ArrowRight' || e.code === 'ArrowLeft') {
+                keyPressed = false;
+                clearInterval(intervalId);
+            }
+        });
+
+        updateCharacter();
+    </script>
+</body>
+</html>
