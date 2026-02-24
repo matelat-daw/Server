@@ -1,0 +1,88 @@
+<div class="register-page">
+    <div class="register-container">
+        <div class="register-header">
+            <div class="register-icon">📝</div>
+            <h2>Crear Cuenta</h2>
+            <p>Únete a Energy App y comienza a ahorrar</p>
+        </div>
+        
+        <form id="register-form" class="register-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="reg-first-name">Nombre</label>
+                    <input type="text" id="reg-first-name" name="first_name" required placeholder="Juan">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reg-last-name">Primer apellido</label>
+                    <input type="text" id="reg-last-name" name="last_name" required placeholder="Pérez">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-second-last-name">Segundo apellido (opcional)</label>
+                <input type="text" id="reg-second-last-name" name="second_last_name" placeholder="García">
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-email">Correo electrónico</label>
+                <input type="email" id="reg-email" name="email" required placeholder="tu@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-username">Nombre de usuario</label>
+                <input type="text" id="reg-username" name="username" required placeholder="usuario123">
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-password">Contraseña</label>
+                <div class="password-input-wrapper">
+                    <input type="password" id="reg-password" name="password" required placeholder="••••••••" minlength="6">
+                    <button type="button" class="password-toggle" id="toggle-password-1" aria-label="Mostrar contraseña">
+                        <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+                <small class="form-hint">Mínimo 6 caracteres</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-password-confirm">Confirmar contraseña</label>
+                <div class="password-input-wrapper">
+                    <input type="password" id="reg-password-confirm" name="password_confirm" required placeholder="••••••••" minlength="6">
+                    <button type="button" class="password-toggle" id="toggle-password-2" aria-label="Mostrar contraseña">
+                        <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-phone">Teléfono (opcional)</label>
+                <input type="tel" id="reg-phone" name="phone" placeholder="+34 600 000 000">
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-role">Tipo de cuenta</label>
+                <select id="reg-role" name="role" required>
+                    <option value="user">Cliente - Busco proveedor de energía</option>
+                    <option value="seller">Vendedor - Represento un proveedor</option>
+                </select>
+            </div>
+            
+            <div id="register-error" class="error-message" style="display: none;"></div>
+            
+            <button type="submit" class="btn btn-primary btn-block" id="register-btn">
+                Crear Cuenta
+            </button>
+        </form>
+        
+        <div class="register-footer">
+            <p>¿Ya tienes cuenta? <a href="#login" class="link">Inicia sesión aquí</a></p>
+        </div>
+    </div>
+</div>

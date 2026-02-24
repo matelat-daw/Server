@@ -1,0 +1,117 @@
+<div class="profile-page">
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar">👤</div>
+            <h2>Mi Perfil</h2>
+            <p id="user-role-badge" class="role-badge"></p>
+        </div>
+        
+        <div class="profile-content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="profilePage.switchTab('info')">
+                    📋 Información
+                </button>
+                <button class="tab-btn" onclick="profilePage.switchTab('settings')">
+                    ⚙️ Configuración
+                </button>
+            </div>
+            
+            <!-- Tab: Información -->
+            <div id="tab-info" class="tab-content active">
+                <form id="profile-form" class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profile-first-name">Nombre</label>
+                            <input type="text" id="profile-first-name" name="first_name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profile-last-name">Primer apellido</label>
+                            <input type="text" id="profile-last-name" name="last_name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profile-second-last-name">Segundo apellido (opcional)</label>
+                            <input type="text" id="profile-second-last-name" name="second_last_name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profile-username">Usuario</label>
+                            <input type="text" id="profile-username" name="username" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="profile-email">Correo electrónico</label>
+                        <input type="email" id="profile-email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="profile-phone">Teléfono</label>
+                        <input type="tel" id="profile-phone" name="phone" placeholder="+34 600 000 000">
+                    </div>
+                    
+                    <div id="profile-message" class="message" style="display: none;"></div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="save-btn">
+                            💾 Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Tab: Configuración -->
+            <div id="tab-settings" class="tab-content">
+                <div class="settings-section">
+                    <h3>🔐 Cambiar Contraseña</h3>
+                    <form id="password-form" class="settings-form">
+                        <div class="form-group">
+                            <label for="current-password">Contraseña actual</label>
+                            <input type="password" id="current-password" name="current_password" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new-password">Nueva contraseña</label>
+                            <input type="password" id="new-password" name="new_password" required minlength="6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm-password">Confirmar contraseña</label>
+                            <input type="password" id="confirm-password" name="confirm_password" required minlength="6">
+                        </div>
+                        
+                        <div id="password-message" class="message" style="display: none;"></div>
+                        
+                        <button type="submit" class="btn btn-primary" id="password-btn">
+                            Cambiar Contraseña
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="settings-section danger-zone">
+                    <h3>⚠️ Zona de Peligro</h3>
+                    <p>Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, está seguro.</p>
+                    <button class="btn btn-danger" onclick="profilePage.confirmDelete()">
+                        🗑️ Eliminar Cuenta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div id="delete-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h3>⚠️ ¿Eliminar cuenta?</h3>
+        <p>Esta acción no se puede deshacer. Todos tus datos serán eliminados permanentemente.</p>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="profilePage.closeDeleteModal()">Cancelar</button>
+            <button class="btn btn-danger" onclick="profilePage.deleteAccount()">Sí, eliminar mi cuenta</button>
+        </div>
+    </div>
+</div>
