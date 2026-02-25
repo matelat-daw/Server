@@ -57,6 +57,8 @@ var registerPage = {
             var password = document.getElementById('reg-password').value;
             var passwordConfirm = document.getElementById('reg-password-confirm').value;
             
+            var privacyCheckbox = document.getElementById('reg-privacy');
+            
             var formData = {
                 first_name: firstName,
                 last_name: lastName,
@@ -67,6 +69,14 @@ var registerPage = {
                 phone: document.getElementById('reg-phone').value.trim() || null,
                 role: 'user' // Siempre cliente
             };
+            
+            // Validación de política de privacidad
+            if (!privacyCheckbox.checked) {
+                errorDiv.className = 'error-message';
+                errorDiv.textContent = 'Debes aceptar la política de privacidad para poder beneficiarte de las ofertas';
+                errorDiv.style.display = 'block';
+                return;
+            }
             
             // Validación de contraseña
             if (password.length < 6) {
@@ -96,32 +106,22 @@ var registerPage = {
                 .then(function(response) {
                     console.log('✓ Registro exitoso:', response);
                     
-                    // Verificar si requiere activación por email
-                    if (response.requiresActivation) {
-                        errorDiv.className = 'success-message';
-                        errorDiv.innerHTML = 
-                            '✓ ¡Cuenta creada exitosamente!<br>' +
-                            '<strong>Por favor revisa tu email para activar tu cuenta.</strong><br>' +
-                            'Enviamos un enlace de activación a tu correo electrónico.';
-                        errorDiv.style.display = 'block';
-                        
-                        // Limpiar formulario
-                        form.reset();
-                        
-                        // Redirigir a home después de 3 segundos
-                        setTimeout(function() {
-                            window.app.loadPage('home');
-                        }, 3000);
-                    } else {
-                        // Si no requiere activación, redirigir al perfil
-                        errorDiv.className = 'success-message';
-                        errorDiv.textContent = '✓ ¡Cuenta creada exitosamente! Redirigiendo a tu perfil...';
-                        errorDiv.style.display = 'block';
-                        
-                        setTimeout(function() {
-                            window.app.loadPage('profile');
-                        }, 1500);
-                    }
+                    // Mostrar mensaje de éxito
+                    errorDiv.className = 'success-message';
+                    errorDiv.innerHTML = 
+                        '✓ ¡Cuenta creada exitosamente!<br>' +
+                        '<strong>Por favor revisa tu email para activar tu cuenta.</strong><br>' +
+                        'Enviamos un enlace de activación a tu correo electrónico.';
+                    errorDiv.style.display = 'block';
+                    
+                    // Limpiar formulario
+                    form.reset();
+                    
+                    // Siempre redirigir a home después del registro
+                    // El usuario debe activar su cuenta antes de acceder
+                    setTimeout(function() {
+                        window.app.loadPage('home');
+                    }, 3000);
                 })
                 .catch(function(error) {
                     console.error('✗ Error en registro:', error);

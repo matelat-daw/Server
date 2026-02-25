@@ -1,0 +1,95 @@
+<div class="contact-page">
+    <div class="contact-container">
+        <div class="page-header">
+            <div class="page-icon">📧</div>
+            <h1>Contacto</h1>
+            <p class="tagline">Estamos aquí para ayudarte</p>
+        </div>
+
+        <div class="contact-content">
+            <div class="contact-info">
+                <h2>Información de Contacto</h2>
+                
+                <div class="info-item">
+                    <div class="info-icon">📧</div>
+                    <div class="info-text">
+                        <h3>Email</h3>
+                        <a href="mailto:info@energyapp.com">info@energyapp.com</a>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">📞</div>
+                    <div class="info-text">
+                        <h3>Teléfono</h3>
+                        <a href="tel:+34900123456">+34 900 123 456</a>
+                        <p class="small-text">Lunes a Viernes: 9:00 - 18:00</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">📍</div>
+                    <div class="info-text">
+                        <h3>Dirección</h3>
+                        <p>Calle Energía, 123<br>28001 Madrid, España</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">⏰</div>
+                    <div class="info-text">
+                        <h3>Horario de Atención</h3>
+                        <p>Lunes a Viernes: 9:00 - 18:00<br>Sábados: 10:00 - 14:00</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-wrapper">
+                <h2>Envíanos un Mensaje</h2>
+                <form id="contact-form" class="contact-form">
+                    <div class="form-group">
+                        <label for="contact-name">Nombre completo</label>
+                        <input type="text" id="contact-name" name="name" required placeholder="Juan Pérez">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-email">Correo electrónico</label>
+                        <input type="email" id="contact-email" name="email" required placeholder="tu@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-phone">Teléfono (opcional)</label>
+                        <input type="tel" id="contact-phone" name="phone" placeholder="+34 600 000 000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-subject">Asunto</label>
+                        <select id="contact-subject" name="subject" required>
+                            <option value="">Selecciona un asunto</option>
+                            <option value="info">Información general</option>
+                            <option value="support">Soporte técnico</option>
+                            <option value="billing">Facturación</option>
+                            <option value="offers">Consulta de ofertas</option>
+                            <option value="other">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-message">Mensaje</label>
+                        <textarea id="contact-message" name="message" required rows="6" placeholder="Escribe tu mensaje aquí..."></textarea>
+                    </div>
+
+                    <div id="contact-response" class="response-message" style="display: none;"></div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="contact-btn">
+                        Enviar Mensaje
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a href="#home" class="btn btn-outline">← Volver al inicio</a>
+        </div>
+    </div>
+</div>

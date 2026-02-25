@@ -40,8 +40,16 @@ var authService = {
         return apiService.post('/register', userData)
             .then(function(response) {
                 if (response.success && response.data) {
+                    // Si requiere activación, NO guardar el usuario
+                    // El usuario se guardará después de activar su cuenta
+                    if (response.data.requiresActivation) {
+                        // No guardar nada en localStorage
+                        // El usuario debe activar su cuenta primero
+                        return response;
+                    }
+                    
+                    // Solo guardar si NO requiere activación
                     self.user = response.data;
-                    // Solo guardar usuario, NO el token (va en cookie HTTP-only)
                     localStorage.setItem('user', JSON.stringify(response.data));
                     
                     // Actualizar menú de usuario
