@@ -6,6 +6,7 @@ class Plan {
 
     public $id;
     public $provider_id;
+    public $seller_id;
     public $name;
     public $description;
     public $price_per_kwh;
@@ -25,9 +26,11 @@ class Plan {
      * Obtener todos los planes
      */
     public function readAll($active_only = false) {
-        $query = "SELECT p.*, pr.name as provider_name 
+        $query = "SELECT p.*, pr.name as provider_name, 
+                  CONCAT(u.first_name, ' ', u.last_name) as seller_name
                   FROM " . $this->table_name . " p
-                  LEFT JOIN energy_providers pr ON p.provider_id = pr.id";
+                  LEFT JOIN energy_providers pr ON p.provider_id = pr.id
+                  LEFT JOIN users u ON p.seller_id = u.id";
         
         if ($active_only) {
             $query .= " WHERE p.is_active = 1";
@@ -45,9 +48,11 @@ class Plan {
      * Obtener un plan por ID
      */
     public function readOne() {
-        $query = "SELECT p.*, pr.name as provider_name 
+        $query = "SELECT p.*, pr.name as provider_name,
+                  CONCAT(u.first_name, ' ', u.last_name) as seller_name
                   FROM " . $this->table_name . " p
                   LEFT JOIN energy_providers pr ON p.provider_id = pr.id
+                  LEFT JOIN users u ON p.seller_id = u.id
                   WHERE p.id = :id 
                   LIMIT 0,1";
 
@@ -59,6 +64,7 @@ class Plan {
 
         if ($row) {
             $this->provider_id = $row['provider_id'];
+            $this->seller_id = $row['seller_id'];
             $this->name = $row['name'];
             $this->description = $row['description'];
             $this->price_per_kwh = $row['price_per_kwh'];
@@ -101,6 +107,7 @@ class Plan {
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
                   SET provider_id=:provider_id,
+                      seller_id=:seller_id,
                       name=:name,
                       description=:description,
                       price_per_kwh=:price_per_kwh,
@@ -123,6 +130,7 @@ class Plan {
         $features_json = is_array($this->features) ? json_encode($this->features) : $this->features;
 
         $stmt->bindParam(":provider_id", $this->provider_id);
+        $stmt->bindParam(":seller_id", $this->seller_id);
         $stmt->bindParam(":name", $this->name);
         $stmt->bindParam(":description", $description);
         $stmt->bindParam(":price_per_kwh", $this->price_per_kwh);
@@ -146,6 +154,7 @@ class Plan {
     public function update() {
         $query = "UPDATE " . $this->table_name . " 
                   SET name=:name,
+                      seller_id=:seller_id,
                       description=:description,
                       price_per_kwh=:price_per_kwh,
                       monthly_fee=:monthly_fee,
@@ -164,6 +173,7 @@ class Plan {
         $features_json = is_array($this->features) ? json_encode($this->features) : $this->features;
 
         $stmt->bindParam(":name", $this->name);
+        $stmt->bindParam(":seller_id", $this->seller_id);
         $stmt->bindParam(":description", $description);
         $stmt->bindParam(":price_per_kwh", $this->price_per_kwh);
         $stmt->bindParam(":monthly_fee", $this->monthly_fee);

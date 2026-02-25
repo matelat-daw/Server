@@ -15,6 +15,9 @@
                 <button class="tab-btn" onclick="profilePage.switchTab('settings')">
                     ⚙️ Configuración
                 </button>
+                <button class="tab-btn" id="tab-management-btn" style="display: none;" onclick="profilePage.switchTab('management')">
+                    👥 Gestión
+                </button>
             </div>
             
             <!-- Tab: Información -->
@@ -98,6 +101,64 @@
                     <button class="btn btn-danger" onclick="profilePage.confirmDelete()">
                         🗑️ Eliminar Cuenta
                     </button>
+                </div>
+            </div>
+            
+            <!-- Tab: Gestión (solo para admin) -->
+            <div id="tab-management" class="tab-content">
+                <div class="settings-section">
+                    <h3>👤 Agregar Vendedor</h3>
+                    <p>Crea una cuenta de vendedor activa con acceso inmediato al sistema.</p>
+                    <form id="add-seller-form" class="settings-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="seller-first-name">Nombre *</label>
+                                <input type="text" id="seller-first-name" name="first_name" required placeholder="Juan">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="seller-last-name">Primer apellido *</label>
+                                <input type="text" id="seller-last-name" name="last_name" required placeholder="Pérez">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="seller-second-last-name">Segundo apellido (opcional)</label>
+                            <input type="text" id="seller-second-last-name" name="second_last_name" placeholder="García">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="seller-email">Correo electrónico *</label>
+                            <input type="email" id="seller-email" name="email" required placeholder="vendedor@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="seller-username">Nombre de usuario *</label>
+                            <input type="text" id="seller-username" name="username" required placeholder="vendedor123">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="seller-password">Contraseña *</label>
+                            <input type="password" id="seller-password" name="password" required minlength="6" placeholder="••••••••">
+                            <small class="form-hint">Mínimo 6 caracteres</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="seller-password-confirm">Confirmar contraseña *</label>
+                            <input type="password" id="seller-password-confirm" name="password_confirm" required minlength="6" placeholder="••••••••">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="seller-phone">Teléfono (opcional)</label>
+                            <input type="tel" id="seller-phone" name="phone" placeholder="+34 600 000 000">
+                        </div>
+                        
+                        <div id="seller-message" class="message" style="display: none;"></div>
+                        
+                        <button type="submit" class="btn btn-primary" id="add-seller-btn">
+                            ➕ Crear Vendedor
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

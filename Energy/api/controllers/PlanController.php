@@ -70,6 +70,7 @@ class PlanController {
         }
 
         $this->plan->provider_id = $data['provider_id'];
+        $this->plan->seller_id = isset($data['seller_id']) ? $data['seller_id'] : null;
         $this->plan->name = $data['name'];
         $this->plan->description = isset($data['description']) ? $data['description'] : null;
         $this->plan->price_per_kwh = $data['price_per_kwh'];
@@ -104,6 +105,9 @@ class PlanController {
         // Actualizar campos
         if (isset($data['name'])) {
             $this->plan->name = $data['name'];
+        }
+        if (isset($data['seller_id'])) {
+            $this->plan->seller_id = $data['seller_id'];
         }
         if (isset($data['description'])) {
             $this->plan->description = $data['description'];

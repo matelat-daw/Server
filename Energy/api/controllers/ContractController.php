@@ -128,8 +128,23 @@ class ContractController {
         }
 
         $this->contract->client_id = $data['client_id'];
-        $this->contract->seller_id = isset($data['seller_id']) ? $data['seller_id'] : null;
         $this->contract->plan_id = $data['plan_id'];
+        
+        // Si no se proporciona seller_id, obtenerlo del plan
+        if (!isset($data['seller_id']) || empty($data['seller_id'])) {
+            // Obtener el plan para conseguir el seller_id
+            require_once __DIR__ . '/../models/Plan.php';
+            $plan = new Plan($this->db);
+            $plan->id = $data['plan_id'];
+            if ($plan->readOne() && !empty($plan->seller_id)) {
+                $this->contract->seller_id = $plan->seller_id;
+            } else {
+                $this->contract->seller_id = null;
+            }
+        } else {
+            $this->contract->seller_id = $data['seller_id'];
+        }
+        
         $this->contract->start_date = $data['start_date'];
         $this->contract->end_date = isset($data['end_date']) ? $data['end_date'] : null;
         $this->contract->status = isset($data['status']) ? $data['status'] : 'pending';
@@ -140,6 +155,7 @@ class ContractController {
         if ($this->contract->create()) {
             $contract_data = [
                 'id' => $this->contract->id,
+                'seller_id' => $this->contract->seller_id,
                 'status' => $this->contract->status
             ];
 

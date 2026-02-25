@@ -76,8 +76,7 @@ var headerComponent = {
                 '<button class="auth-btn btn-register" onclick="authService.logout(); app.loadPage(\'home\')">Salir</button>';
         } else {
             menuArea.innerHTML = 
-                '<button class="auth-btn btn-login" onclick="app.loadPage(\'login\')">Iniciar Sesión</button>' +
-                '<button class="auth-btn btn-register" onclick="app.loadPage(\'register\')">Registrarse</button>';
+                '<button class="auth-btn btn-login" onclick="app.loadPage(\'login\')">Iniciar Sesión</button>';
         }
     },
     

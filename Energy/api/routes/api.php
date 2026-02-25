@@ -23,6 +23,11 @@ $router->get("$apiBase/auth/validate", [AuthController::class, 'validateToken'])
 $router->put("$apiBase/auth/profile", [AuthController::class, 'updateProfile']);
 
 // ===============================
+// RUTAS DE ADMINISTRACIÓN
+// ===============================
+$router->post("$apiBase/admin/create-seller", [AuthController::class, 'createSeller']);
+
+// ===============================
 // RUTAS DE USUARIOS
 // ===============================
 $router->get("$apiBase/users", [UserController::class, 'index']);

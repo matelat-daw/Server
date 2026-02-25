@@ -390,5 +390,91 @@ class AuthController {
             return $this->sendResponse(400, false, $result['message']);
         }
     }
+    
+    /**
+     * Crear vendedor (solo admin)
+     */
+    public function createSeller($data) {
+        $token = $this->getTokenFromRequest();
+        
+        if (!$token) {
+            return $this->sendResponse(401, false, "No autorizado");
+        }
+
+        $decoded = JWT::decode($token);
+        
+        if (!$decoded) {
+            return $this->sendResponse(401, false, "Token inválido");
+        }
+
+        // Verificar que el usuario sea admin
+        if (!isset($decoded['roles']) || !in_array('admin', $decoded['roles'])) {
+            return $this->sendResponse(403, false, "No tienes permisos de administrador");
+        }
+
+        // Validar datos requeridos
+        if (empty($data['username']) || empty($data['email']) || empty($data['password'])) {
+            return $this->sendResponse(400, false, "Username, email y contraseña son requeridos");
+        }
+
+        // Validar email
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            return $this->sendResponse(400, false, "Email inválido");
+        }
+
+        // Validar longitud de contraseña
+        if (strlen($data['password']) < 6) {
+            return $this->sendResponse(400, false, "La contraseña debe tener al menos 6 caracteres");
+        }
+
+        // Verificar si el email ya existe
+        $this->user->email = $data['email'];
+        if ($this->user->emailExists()) {
+            return $this->sendResponse(409, false, "El email ya está registrado");
+        }
+
+        // Verificar si el username ya existe
+        $this->user->username = $data['username'];
+        if ($this->user->usernameExists()) {
+            return $this->sendResponse(409, false, "El username ya está en uso");
+        }
+
+        // Asignar datos del usuario
+        $this->user->username = $data['username'];
+        $this->user->email = $data['email'];
+        $this->user->password = $data['password'];
+        $this->user->first_name = isset($data['first_name']) ? $data['first_name'] : null;
+        $this->user->last_name = isset($data['last_name']) ? $data['last_name'] : null;
+        $this->user->second_last_name = isset($data['second_last_name']) && !empty($data['second_last_name']) ? $data['second_last_name'] : null;
+        $this->user->phone = isset($data['phone']) ? $data['phone'] : null;
+        $this->user->profile_img = null;
+        
+        // Vendedor activo inmediatamente (sin necesidad de activación por email)
+        $this->user->is_active = 1;
+        $this->user->activation_token = null;
+        $this->user->activation_token_expires = null;
+
+        if ($this->user->register()) {
+            $userId = $this->user->id;
+            
+            // Asignar rol de vendedor
+            if ($this->role->getRoleByName('seller')) {
+                $this->role->assignRoleToUser($userId, $this->role->id);
+            }
+            
+            $fullName = trim($this->user->first_name . ' ' . $this->user->last_name . ($this->user->second_last_name ? ' ' . $this->user->second_last_name : ''));
+            
+            $userData = [
+                'id' => $this->user->id,
+                'username' => $this->user->username,
+                'email' => $this->user->email,
+                'name' => $fullName,
+                'role' => 'seller'
+            ];
+            
+            return $this->sendResponse(201, true, "Vendedor creado exitosamente", $userData);
+        }
+        
+        return $this->sendResponse(500, false, "Error al crear vendedor");
+    }
 }
-?>

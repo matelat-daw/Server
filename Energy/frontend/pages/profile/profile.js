@@ -32,11 +32,20 @@ var profilePage = {
         var roleText = this.currentUser.roles && this.currentUser.roles[0] || 'usuario';
         var roleEmoji = roleText === 'admin' ? '👑' : roleText === 'seller' ? '💼' : '👤';
         roleBadge.textContent = roleEmoji + ' ' + roleText.charAt(0).toUpperCase() + roleText.slice(1);
+        
+        // Mostrar pestaña de gestión solo para admin
+        if (this.currentUser.roles && this.currentUser.roles.includes('admin')) {
+            var managementTab = document.getElementById('tab-management-btn');
+            if (managementTab) {
+                managementTab.style.display = 'inline-block';
+            }
+        }
     },
     
     setupForms: function() {
         this.setupProfileForm();
         this.setupPasswordForm();
+        this.setupAddSellerForm();
     },
     
     setupProfileForm: function() {
@@ -216,7 +225,93 @@ var profilePage = {
                 console.error('✗ Error eliminando cuenta:', error);
                 alert('Error al eliminar la cuenta: ' + (error.message || 'Error desconocido'));
             });
-    }
+    },
+    
+    setupAddSellerForm: function() {
+        var form = document.getElementById('add-seller-form');
+        var messageDiv = document.getElementById('seller-message');
+        var addSellerBtn = document.getElementById('add-seller-btn');
+        
+        if (!form) return;
+        
+        var self = this;
+        
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            
+            // Verificar que el usuario sea admin
+            if (!self.currentUser.roles || !self.currentUser.roles.includes('admin')) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'No tienes permisos para realizar esta acción';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            var password = document.getElementById('seller-password').value;
+            var passwordConfirm = document.getElementById('seller-password-confirm').value;
+            
+            // Validar contraseña
+            if (password.length < 6) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'La contraseña debe tener al menos 6 caracteres';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            // Validar que las contraseñas coincidan
+            if (password !== passwordConfirm) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Las contraseñas no coinciden';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            var formData = {
+                first_name: document.getElementById('seller-first-name').value.trim(),
+                last_name: document.getElementById('seller-last-name').value.trim(),
+                second_last_name: document.getElementById('seller-second-last-name').value.trim() || null,
+                email: document.getElementById('seller-email').value.trim(),
+                username: document.getElementById('seller-username').value.trim(),
+                password: password,
+                phone: document.getElementById('seller-phone').value.trim() || null,
+                role: 'seller',
+                is_active: true // Vendedor activo inmediatamente
+            };
+            
+            messageDiv.style.display = 'none';
+            addSellerBtn.classList.add('loading');
+            addSellerBtn.disabled = true;
+            
+            // Crear vendedor
+            window.apiService.post('/admin/create-seller', formData)
+                .then(function(response) {
+                    console.log('✓ Vendedor creado:', response);
+                    
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✓ Vendedor creado exitosamente';
+                    messageDiv.style.display = 'block';
+                    
+                    // Limpiar formulario
+                    form.reset();
+                    
+                    addSellerBtn.classList.remove('loading');
+                    addSellerBtn.disabled = false;
+                    
+                    setTimeout(function() {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
+                })
+                .catch(function(error) {
+                    console.error('✗ Error creando vendedor:', error);
+                    
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = error.message || 'Error al crear vendedor';
+                    messageDiv.style.display = 'block';
+                    
+                    addSellerBtn.classList.remove('loading');
+                    addSellerBtn.disabled = false;
+                });
+        };  }
 };
 
 window.profilePage = profilePage;

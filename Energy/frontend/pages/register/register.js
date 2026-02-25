@@ -65,7 +65,7 @@ var registerPage = {
                 username: document.getElementById('reg-username').value.trim(),
                 password: password,
                 phone: document.getElementById('reg-phone').value.trim() || null,
-                role: document.getElementById('reg-role').value
+                role: 'user' // Siempre cliente
             };
             
             // Validación de contraseña
