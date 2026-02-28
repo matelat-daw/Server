@@ -3,8 +3,6 @@ var profilePage = {
     currentUser: null,
     
     init: function() {
-        console.log('👤 Página de perfil cargada');
-        
         // Verificar si está logueado
         if (!window.authService || !window.authService.isLoggedIn()) {
             window.app.loadPage('login');
@@ -13,6 +11,7 @@ var profilePage = {
         
         this.currentUser = window.authService.getUser();
         this.loadUserData();
+        this.loadContractData();
         this.setupForms();
     },
     
@@ -40,6 +39,143 @@ var profilePage = {
                 managementTab.style.display = 'inline-block';
             }
         }
+    },
+    
+    loadContractData: function() {
+        // Cargar contratos reales desde la API
+        if (!this.currentUser) return;
+        
+        var self = this;
+        
+        // Obtener contratos del usuario
+        window.apiService.get('/contracts/my')
+            .then(function(response) {
+                
+                if (response.data && response.data.length > 0) {
+                    // Tomar el primer contrato activo o el más reciente
+                    var contract = response.data.find(c => c.status === 'active') || response.data[0];
+                    self.displayContractData(contract);
+                } else {
+                    // No hay contratos, mostrar datos por defecto o de calculadora
+                    self.displayNoContract();
+                }
+            })
+            .catch(function(error) {
+                // Si hay error, intentar cargar desde sessionStorage
+                self.loadContractFromStorage();
+            });
+    },
+    
+    displayContractData: function(contract) {
+        // Actualizar elementos con datos del contrato real
+        var contractNumberEl = document.getElementById('contract-number');
+        var previousCompanyEl = document.getElementById('previous-company');
+        var providerNameEl = document.getElementById('provider-name');
+        var monthlySavingsEl = document.getElementById('monthly-savings');
+        var statusEl = document.querySelector('.status-active');
+        
+        // Información del contrato
+        if (contractNumberEl) {
+            contractNumberEl.textContent = 'CT-' + contract.id.toString().padStart(6, '0');
+        }
+        
+        // Compañía anterior (por ahora desde sessionStorage o por defecto)
+        var calculatorData = sessionStorage.getItem('calculatorData');
+        var previousCompany = 'Anterior proveedor';
+        if (calculatorData) {
+            var data = JSON.parse(calculatorData);
+            previousCompany = data.companyName || previousCompany;
+        }
+        if (previousCompanyEl) {
+            previousCompanyEl.textContent = previousCompany;
+        }
+        
+        // Nombre del proveedor
+        var providerName = contract.provider_name || 'Proveedor';
+        if (providerNameEl) {
+            providerNameEl.textContent = providerName;
+        }
+        
+        // Actualizar todas las referencias al proveedor
+        var providerNameElements = [
+            document.getElementById('provider-name-text'),
+            document.getElementById('provider-name-text2'),
+            document.getElementById('provider-name-text3'),
+            document.getElementById('provider-name-text4')
+        ];
+        providerNameElements.forEach(function(el) {
+            if (el) el.textContent = providerName;
+        });
+        
+        // Ahorro estimado (por ahora usar dato de sessionStorage o por defecto)
+        var savings = '30%';
+        if (calculatorData) {
+            var data = JSON.parse(calculatorData);
+            savings = data.savings || savings;
+        }
+        if (monthlySavingsEl) {
+            monthlySavingsEl.textContent = savings;
+        }
+        
+        // Estado del contrato
+        if (statusEl) {
+            var statusMap = {
+                'active': '✓ Activo',
+                'pending': '⏳ Pendiente',
+                'cancelled': '✗ Cancelado',
+                'completed': '✓ Completado'
+            };
+            statusEl.textContent = statusMap[contract.status] || contract.status;
+            statusEl.className = 'detail-value status-' + contract.status;
+        }
+        
+        // Guardar contrato actual para referencia
+        this.currentContract = contract;
+    },
+    
+    displayNoContract: function() {
+        // No hay contratos, intentar cargar desde sessionStorage
+        this.loadContractFromStorage();
+    },
+    
+    loadContractFromStorage: function() {
+        // Cargar datos de cotización desde sessionStorage
+        var calculatorData = sessionStorage.getItem('calculatorData');
+        var contractNumber = 'No disponible';
+        var previousCompany = 'No disponible';
+        var providerName = 'Proveedor';
+        
+        if (calculatorData) {
+            var data = JSON.parse(calculatorData);
+            previousCompany = data.companyName || previousCompany;
+            providerName = data.selectedProvider || providerName;
+        }
+        
+        // Actualizar elementos
+        var contractNumberEl = document.getElementById('contract-number');
+        var previousCompanyEl = document.getElementById('previous-company');
+        var providerNameEl = document.getElementById('provider-name');
+        
+        if (contractNumberEl) {
+            contractNumberEl.textContent = contractNumber;
+        }
+        if (previousCompanyEl) {
+            previousCompanyEl.textContent = previousCompany;
+        }
+        if (providerNameEl) {
+            providerNameEl.textContent = providerName;
+        }
+        
+        // Actualizar todas las referencias al proveedor
+        var providerNameElements = [
+            document.getElementById('provider-name-text'),
+            document.getElementById('provider-name-text2'),
+            document.getElementById('provider-name-text3'),
+            document.getElementById('provider-name-text4')
+        ];
+        providerNameElements.forEach(function(el) {
+            if (el) el.textContent = providerName;
+        });
     },
     
     setupForms: function() {
@@ -76,7 +212,6 @@ var profilePage = {
             // Actualizar perfil
             window.apiService.put('/auth/profile', formData)
                 .then(function(response) {
-                    console.log('✓ Perfil actualizado:', response);
                     
                     // Actualizar datos en authService y localStorage
                     if (response.data) {
@@ -104,7 +239,6 @@ var profilePage = {
                     }, 3000);
                 })
                 .catch(function(error) {
-                    console.error('✗ Error actualizando perfil:', error);
                     
                     messageDiv.className = 'message error';
                     messageDiv.textContent = error.message || 'Error al actualizar el perfil';
@@ -156,7 +290,6 @@ var profilePage = {
                 new_password: newPassword
             })
                 .then(function(response) {
-                    console.log('✓ Contraseña actualizada');
                     
                     messageDiv.className = 'message success';
                     messageDiv.textContent = '✓ Contraseña actualizada exitosamente';
@@ -173,7 +306,6 @@ var profilePage = {
                     }, 3000);
                 })
                 .catch(function(error) {
-                    console.error('✗ Error cambiando contraseña:', error);
                     
                     messageDiv.className = 'message error';
                     messageDiv.textContent = error.message || 'Error al cambiar la contraseña';
@@ -193,9 +325,17 @@ var profilePage = {
         tabBtns.forEach(function(btn) { btn.classList.remove('active'); });
         tabContents.forEach(function(content) { content.classList.remove('active'); });
         
-        // Activar tab seleccionado
-        event.target.classList.add('active');
-        document.getElementById('tab-' + tabName).classList.add('active');
+        // Activar tab seleccionado - buscar el botón correspondiente
+        tabBtns.forEach(function(btn) {
+            if (btn.onclick && btn.onclick.toString().includes("'" + tabName + "'")) {
+                btn.classList.add('active');
+            }
+        });
+        
+        var tabContent = document.getElementById('tab-' + tabName);
+        if (tabContent) {
+            tabContent.classList.add('active');
+        }
     },
     
     confirmDelete: function() {
@@ -211,7 +351,6 @@ var profilePage = {
         
         window.apiService.delete('/users/' + userId)
             .then(function(response) {
-                console.log('✓ Cuenta eliminada');
                 
                 // Cerrar sesión
                 window.authService.logout();
@@ -222,7 +361,6 @@ var profilePage = {
                 alert('Tu cuenta ha sido eliminada exitosamente');
             })
             .catch(function(error) {
-                console.error('✗ Error eliminando cuenta:', error);
                 alert('Error al eliminar la cuenta: ' + (error.message || 'Error desconocido'));
             });
     },
@@ -285,7 +423,6 @@ var profilePage = {
             // Crear vendedor
             window.apiService.post('/admin/create-seller', formData)
                 .then(function(response) {
-                    console.log('✓ Vendedor creado:', response);
                     
                     messageDiv.className = 'message success';
                     messageDiv.textContent = '✓ Vendedor creado exitosamente';
@@ -302,7 +439,6 @@ var profilePage = {
                     }, 3000);
                 })
                 .catch(function(error) {
-                    console.error('✗ Error creando vendedor:', error);
                     
                     messageDiv.className = 'message error';
                     messageDiv.textContent = error.message || 'Error al crear vendedor';

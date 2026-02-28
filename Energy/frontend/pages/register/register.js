@@ -1,13 +1,38 @@
 // Register Page
 var registerPage = {
     init: function() {
-        console.log('📝 Página de registro cargada');
         this.setupForm();
         this.setupPasswordToggles();
+        this.prefillFromCalculator();
         
         // Si ya está logueado, redirigir a perfil
         if (window.authService && window.authService.isLoggedIn()) {
             window.app.loadPage('profile');
+        }
+    },
+    
+    prefillFromCalculator: function() {
+        // Obtener datos del sessionStorage si existen
+        var dataJson = sessionStorage.getItem('calculatorData');
+        
+        if (dataJson) {
+            var data = JSON.parse(dataJson);
+            
+            // Prellenar los campos de contrato y compañía
+            var contractNumberInput = document.getElementById('reg-contract-number');
+            var currentCompanyInput = document.getElementById('reg-current-company');
+            
+            if (contractNumberInput && data.contractNumber) {
+                contractNumberInput.value = data.contractNumber;
+                contractNumberInput.readOnly = true;
+                contractNumberInput.style.backgroundColor = '#f7fafc';
+            }
+            
+            if (currentCompanyInput && data.companyName) {
+                currentCompanyInput.value = data.companyName;
+                currentCompanyInput.readOnly = true;
+                currentCompanyInput.style.backgroundColor = '#f7fafc';
+            }
         }
     },
     
@@ -67,6 +92,8 @@ var registerPage = {
                 username: document.getElementById('reg-username').value.trim(),
                 password: password,
                 phone: document.getElementById('reg-phone').value.trim() || null,
+                contract_number: document.getElementById('reg-contract-number').value.trim(),
+                current_company: document.getElementById('reg-current-company').value.trim(),
                 role: 'user' // Siempre cliente
             };
             
@@ -104,7 +131,6 @@ var registerPage = {
             // Llamar al servicio de autenticación
             window.authService.register(formData)
                 .then(function(response) {
-                    console.log('✓ Registro exitoso:', response);
                     
                     // Mostrar mensaje de éxito
                     errorDiv.className = 'success-message';
@@ -124,8 +150,6 @@ var registerPage = {
                     }, 3000);
                 })
                 .catch(function(error) {
-                    console.error('✗ Error en registro:', error);
-                    
                     // Mostrar error
                     errorDiv.className = 'error-message';
                     errorDiv.textContent = error.message || 'Error al crear la cuenta. Por favor intenta de nuevo.';

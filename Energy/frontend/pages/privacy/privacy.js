@@ -1,7 +1,6 @@
 // Privacy Page
 var privacyPage = {
     init: function() {
-        console.log('🔒 Página de privacidad cargada');
         this.scrollToTop();
     },
     

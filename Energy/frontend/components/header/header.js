@@ -5,6 +5,7 @@ var headerComponent = {
         this.initThemeToggle();
         this.updateUserMenu();
         this.setupLogoClick();
+        this.updateBreadcrumb();
     },
     
     loadHeaderHTML: function() {
@@ -26,10 +27,9 @@ var headerComponent = {
                 headerComponent.initThemeToggle();
                 headerComponent.updateUserMenu();
                 headerComponent.setupLogoClick();
+                headerComponent.updateBreadcrumb();
             })
-            .catch(function(error) {
-                console.error('Error cargando header:', error);
-            });
+            .catch(function(error) {});
     },
     
     initThemeToggle: function() {
@@ -89,6 +89,40 @@ var headerComponent = {
                 }
             };
         }
+    },
+    
+    updateBreadcrumb: function() {
+        var breadcrumb = document.getElementById('breadcrumb');
+        if (!breadcrumb) return;
+        
+        // Mapeo de rutas a nombres descriptivos
+        var pageNames = {
+            'home': { icon: '🏠', name: 'Inicio' },
+            'providers': { icon: '⚡', name: 'Proveedores' },
+            'login': { icon: '🔐', name: 'Iniciar Sesión' },
+            'register': { icon: '📝', name: 'Registro' },
+            'profile': { icon: '👤', name: 'Mi Perfil' },
+            'calculator': { icon: '🧮', name: 'Calculadora' },
+            'about': { icon: 'ℹ️', name: 'Acerca de' },
+            'contact': { icon: '📧', name: 'Contacto' }
+        };
+        
+        // Obtener página actual desde el hash o app
+        var currentPage = 'home';
+        if (window.location.hash) {
+            currentPage = window.location.hash.substring(1).split('?')[0] || 'home';
+        } else if (window.app && window.app.currentPage) {
+            currentPage = window.app.currentPage;
+        }
+        
+        var pageInfo = pageNames[currentPage] || { icon: '📄', name: currentPage.charAt(0).toUpperCase() + currentPage.slice(1) };
+        
+        breadcrumb.innerHTML = 
+            '<a href="#home" class="breadcrumb-item breadcrumb-link">🏠 Inicio</a>' +
+            (currentPage !== 'home' ? 
+                '<span class="breadcrumb-separator">›</span>' +
+                '<span class="breadcrumb-item breadcrumb-current">' + pageInfo.icon + ' ' + pageInfo.name + '</span>'
+            : '');
     }
 };
 

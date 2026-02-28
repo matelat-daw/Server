@@ -1,7 +1,6 @@
 // Login Page
 var loginPage = {
     init: function() {
-        console.log('🔐 Página de login cargada');
         this.setupForm();
         this.setupPasswordToggle();
         
@@ -16,11 +15,8 @@ var loginPage = {
         var passwordInput = document.getElementById('password');
         
         if (!toggleBtn || !passwordInput) {
-            console.log('⚠️ No se encontró toggle-password o password input');
             return;
         }
-        
-        console.log('✓ Password toggle configurado');
         
         toggleBtn.onclick = function(e) {
             e.preventDefault();
@@ -28,8 +24,6 @@ var loginPage = {
             
             var type = passwordInput.type === 'password' ? 'text' : 'password';
             passwordInput.type = type;
-            
-            console.log('👁️ Password toggle:', type);
             
             // Cambiar icono
             var eyeIcon = toggleBtn.querySelector('.eye-icon');
@@ -66,7 +60,6 @@ var loginPage = {
             // Llamar al servicio de autenticación
             window.authService.login(email, password)
                 .then(function(response) {
-                    console.log('✓ Login exitoso:', response);
                     
                     // Mostrar mensaje de éxito
                     errorDiv.className = 'success-message';
@@ -79,8 +72,6 @@ var loginPage = {
                     }, 1000);
                 })
                 .catch(function(error) {
-                    console.error('✗ Error en login:', error);
-                    
                     // Mostrar error
                     errorDiv.className = 'error-message';
                     errorDiv.textContent = error.message || 'Error al iniciar sesión. Verifica tus credenciales.';

@@ -12,6 +12,9 @@
                 <button class="tab-btn active" onclick="profilePage.switchTab('info')">
                     📋 Información
                 </button>
+                <button class="tab-btn" onclick="profilePage.switchTab('contract')">
+                    📄 Mi Contrato
+                </button>
                 <button class="tab-btn" onclick="profilePage.switchTab('settings')">
                     ⚙️ Configuración
                 </button>
@@ -65,6 +68,70 @@
                         </button>
                     </div>
                 </form>
+            </div>
+            
+            <!-- Tab: Mi Contrato -->
+            <div id="tab-contract" class="tab-content">
+                <div class="contract-section">
+                    <div class="contract-header">
+                        <h3>📄 Información del Contrato</h3>
+                        <p>Detalles de tu contratación con el proveedor de energía</p>
+                    </div>
+                    
+                    <div class="contract-card">
+                        <div class="contract-provider">
+                            <div class="provider-logo">🌿</div>
+                            <div class="provider-info">
+                                <h4 id="provider-name">Naturgy</h4>
+                                <span class="provider-badge">Energía Verde</span>
+                            </div>
+                        </div>
+                        
+                        <div class="contract-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Número de contrato anterior:</span>
+                                <span class="detail-value" id="contract-number">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Compañía anterior:</span>
+                                <span class="detail-value" id="previous-company">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Ahorro mensual estimado:</span>
+                                <span class="detail-value highlight" id="monthly-savings">30%</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Estado:</span>
+                                <span class="detail-value status-active">✓ Activo</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-notice">
+                        <div class="notice-icon">ℹ️</div>
+                        <div class="notice-content">
+                            <h4>Información importante</h4>
+                            <p>Tu contrato es <strong>directamente con <span id="provider-name-text">Naturgy</span></strong>, el proveedor de energía que has contratado. Nosotros solo facilitamos la conexión entre tú y el proveedor.</p>
+                            <p><strong>No somos intermediarios</strong> en tu servicio de energía. Una vez realizada la contratación, toda la gestión, facturación y atención al cliente la realiza directamente <span id="provider-name-text2">Naturgy</span>.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="account-deletion-notice">
+                        <div class="notice-icon">⚠️</div>
+                        <div class="notice-content">
+                            <h4>¿Quieres eliminar tu perfil?</h4>
+                            <p>Puedes eliminar tu perfil de esta plataforma en cualquier momento desde la pestaña de <strong>Configuración</strong>. Ten en cuenta que:</p>
+                            <ul>
+                                <li>Eliminar tu perfil de esta plataforma <strong>NO cancelará tu contrato</strong> con <span id="provider-name-text3">Naturgy</span></li>
+                                <li>Tu servicio de energía continuará activo con el proveedor</li>
+                                <li>Para gestionar o cancelar tu contrato energético, debes contactar directamente con <span id="provider-name-text4">Naturgy</span></li>
+                            </ul>
+                            <a href="#" onclick="profilePage.switchTab('settings'); return false;" class="btn btn-secondary">
+                                Ir a Configuración
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- Tab: Configuración -->

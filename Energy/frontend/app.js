@@ -12,8 +12,6 @@
         if (this.initialized) return;
         this.initialized = true;
         
-        console.log('🚀 Energy App iniciando...');
-        
         var self = this;
         
         // Cargar componentes estructurales
@@ -22,15 +20,33 @@
             self.loadComponent('footer');
         }, 100);
         
-        // Cargar página inicial
+        // Cargar página inicial desde la URL
         setTimeout(function() {
-            var hashContent = window.location.hash.substring(1) || 'home';
-            // Extraer solo el nombre de la página (antes del ?)
-            var page = hashContent.split('?')[0] || 'home';
-            self.loadPage(page);
+            var initialRoute = self.getInitialRoute();
+            self.loadPageDirect(initialRoute);
         }, 300);
         
         this.setupRouting();
+    };
+    
+    // Obtener ruta inicial desde el hash de la URL
+    App.prototype.getInitialRoute = function() {
+        var hash = window.location.hash;
+        
+        if (!hash || hash === '#' || hash === '#home') {
+            // Asegurar que la URL inicial sea correcta
+            window.history.replaceState({}, '', '/Energy/#home');
+            return 'home';
+        }
+        
+        // Extraer nombre de la ruta (ej: #activate?token=... -> activate)
+        var route = hash.substring(1); // Quitar el #
+        var questionMarkIndex = route.indexOf('?');
+        if (questionMarkIndex > 0) {
+            route = route.substring(0, questionMarkIndex);
+        }
+        
+        return route || 'home';
     };
     
     App.prototype.loadComponent = function(name) {
@@ -41,24 +57,47 @@
     
     App.prototype.setupRouting = function() {
         var self = this;
+        
+        // Listener para hashchange (navegación manual en URL)
         window.addEventListener('hashchange', function() {
             var hashContent = window.location.hash.substring(1) || 'home';
-            // Extraer solo el nombre de la página (antes del ?)
             var page = hashContent.split('?')[0] || 'home';
-            self.loadPage(page);
+            self.loadPageDirect(page);
+        });
+        
+        // Listener para botón atrás/adelante del navegador
+        window.addEventListener('popstate', function(e) {
+            var hashContent = window.location.hash.substring(1) || 'home';
+            var page = hashContent.split('?')[0] || 'home';
+            self.loadPageDirect(page);
+        });
+        
+        // Listener para enlaces con data-route
+        document.addEventListener('click', function(e) {
+            var target = e.target;
+            while (target && target !== document) {
+                if (target.hasAttribute && target.hasAttribute('data-route')) {
+                    e.preventDefault();
+                    var route = target.getAttribute('data-route');
+                    self.navigate(route);
+                    return;
+                }
+                target = target.parentNode;
+            }
         });
     };
     
-    App.prototype.loadPage = function(pageName) {
-        console.log('📄 Cargando página:', pageName);
-        
+    // Método público para navegar programáticamente
+    App.prototype.navigate = function(route) {
+        if (this.currentPage === route) return;
+        this.loadPageDirect(route);
+        window.history.pushState({}, '', '/Energy/#' + route);
+    };
+    
+    // Cargar página sin actualizar URL (usado internamente)
+    App.prototype.loadPageDirect = function(pageName) {
         var mainContent = document.getElementById('main-content');
-        if (!mainContent) {
-            console.error('main-content no encontrado');
-            return;
-        }
-        
-        // No actualizar hash porque puede tener parámetros
+        if (!mainContent) return;
         
         this.currentPage = pageName;
         
@@ -75,6 +114,11 @@
             })
             .then(function(html) {
                 mainContent.innerHTML = html;
+                
+                // Actualizar breadcrumb
+                if (window.headerComponent && window.headerComponent.updateBreadcrumb) {
+                    window.headerComponent.updateBreadcrumb();
+                }
                 
                 // Cargar CSS de la página
                 var cssUrl = '/Energy/frontend/pages/' + pageName + '/' + pageName + '.css';
@@ -107,14 +151,18 @@
                 }
             })
             .catch(function(error) {
-                console.error('Error cargando página:', error);
                 mainContent.innerHTML = 
                     '<div class="card" style="max-width: 600px; margin: 2rem auto; text-align: center;">' +
                     '<h2>⚠️ Página no encontrada</h2>' +
                     '<p>La página "' + pageName + '" no existe.</p>' +
-                    '<button class="btn btn-primary" onclick="app.loadPage(\'home\')">Ir al inicio</button>' +
+                    '<button class="btn btn-primary" onclick="app.navigate(\'home\')">Ir al inicio</button>' +
                     '</div>';
             });
+    };
+    
+    // Cargar página y actualizar URL (para compatibilidad con código existente)
+    App.prototype.loadPage = function(pageName) {
+        this.navigate(pageName);
     };
     
     // Inicializar app cuando el DOM esté listo

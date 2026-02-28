@@ -1,8 +1,6 @@
 // Activate Page
 var activatePage = {
     init: function() {
-        console.log('⚡ Página de activación cargada');
-        
         // Obtener token de la URL
         var urlParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
         var token = urlParams.get('token');
@@ -17,15 +15,11 @@ var activatePage = {
     },
     
     activateAccount: function(token) {
-        console.log('🔑 Activando cuenta con token:', token.substring(0, 10) + '...');
-        
         window.apiService.post('/activate', { token: token })
             .then(function(response) {
-                console.log('✓ Cuenta activada:', response);
                 activatePage.showSuccess(response.message || 'Cuenta activada exitosamente');
             })
             .catch(function(error) {
-                console.error('✗ Error al activar cuenta:', error);
                 activatePage.showError(error.message || 'Error al activar la cuenta');
             });
     },

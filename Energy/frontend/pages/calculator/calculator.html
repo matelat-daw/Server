@@ -1,0 +1,48 @@
+<div class="calculator-page">
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <div class="calculator-icon">💡</div>
+            <h2>Calculadora de Ahorro Energético</h2>
+            <p>Descubre cuánto puedes ahorrar en tu factura de electricidad</p>
+        </div>
+        
+        <form id="calculator-form" class="calculator-form">
+            <div class="form-group">
+                <label for="calc-holder-name">Nombre del titular del contrato</label>
+                <input type="text" id="calc-holder-name" name="holder_name" required placeholder="Ej: Juan Pérez García">
+            </div>
+            
+            <div class="form-group">
+                <label for="calc-contract-number">Número de contrato</label>
+                <input type="text" id="calc-contract-number" name="contract_number" required placeholder="Ej: ES0031406893847000001JN">
+            </div>
+            
+            <div class="form-group">
+                <label for="calc-company-name">Nombre de la compañía eléctrica actual</label>
+                <input type="text" id="calc-company-name" name="company_name" required placeholder="Ej: Iberdrola, Endesa, EDP">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="calc-consumption">Consumo del mes anterior (kWh)</label>
+                    <input type="number" id="calc-consumption" name="consumption" required placeholder="Ej: 250" min="0" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label for="calc-monthly-amount">Importe mensual (€)</label>
+                    <input type="number" id="calc-monthly-amount" name="monthly_amount" required placeholder="Ej: 85.50" min="0" step="0.01">
+                </div>
+            </div>
+            
+            <div id="calculator-error" class="error-message" style="display: none;"></div>
+            
+            <button type="submit" class="btn btn-primary btn-block" id="calculate-btn">
+                <span class="btn-icon">📊</span> Calcular mi ahorro
+            </button>
+        </form>
+        
+        <div class="calculator-footer">
+            <p>¿Ya tienes cuenta? <a href="#login" class="link">Inicia sesión aquí</a></p>
+        </div>
+    </div>
+</div>

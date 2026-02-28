@@ -1,5 +1,46 @@
 <?php
-// Redirigir al frontend
-header('Location: /Energy/frontend/index.html');
-exit;
+// Energy App - Punto de entrada principal
+echo '<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy App - Proveedores de Energía</title>
+    <base href="/Energy/">
+    <link rel="stylesheet" href="/Energy/frontend/styles/global.css">
+    <link rel="stylesheet" href="/Energy/frontend/styles/responsive.css">
+    <link rel="stylesheet" href="/Energy/frontend/styles/language-selector.css">
+</head>
+<body>
+    <!-- Widget oculto de Google Translate -->
+    <div id="google_translate_element"></div>
+    
+    <!-- Selector de idioma personalizado -->
+    <div class="language-selector">
+        <button class="language-btn" onclick="changeLanguage()" title="Switch to English">
+            <span class="flag">EN</span>
+            <span class="lang-text">English</span>
+        </button>
+    </div>
+    
+    <div id="app">
+        <div id="header-component"></div>
+        <main id="main-content"></main>
+        <div id="footer-component"></div>
+    </div>
+
+    <!-- Servicios -->
+    <script src="/Energy/frontend/services/translator.js"></script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="/Energy/frontend/services/api.js"></script>
+    <script src="/Energy/frontend/services/auth.js"></script>
+    
+    <!-- Componentes -->
+    <script src="/Energy/frontend/components/header/header.js"></script>
+    <script src="/Energy/frontend/components/footer/footer.js"></script>
+    
+    <!-- App principal -->
+    <script src="/Energy/frontend/app.js"></script>
+</body>
+</html>';
 ?>

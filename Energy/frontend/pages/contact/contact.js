@@ -1,7 +1,6 @@
 // Contact Page
 var contactPage = {
     init: function() {
-        console.log('📧 Página de contacto cargada');
         this.scrollToTop();
         this.setupForm();
     },
@@ -43,7 +42,6 @@ var contactPage = {
             
             // Simular envío (aquí deberías hacer la llamada al API)
             setTimeout(function() {
-                console.log('📧 Mensaje de contacto:', formData);
                 
                 // Mostrar mensaje de éxito
                 responseDiv.className = 'response-message success-message';

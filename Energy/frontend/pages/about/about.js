@@ -1,7 +1,6 @@
 // About Page
 var aboutPage = {
     init: function() {
-        console.log('⚡ Página Acerca de cargada');
         this.scrollToTop();
     },
     

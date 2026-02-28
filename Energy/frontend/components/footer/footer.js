@@ -19,9 +19,7 @@ var footerComponent = {
                 link.href = '/Energy/frontend/components/footer/footer.css';
                 document.head.appendChild(link);
             })
-            .catch(function(error) {
-                console.error('Error cargando footer:', error);
-            });
+            .catch(function(error) {});
     }
 };
 

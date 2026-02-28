@@ -9,7 +9,6 @@ var authService = {
             try {
                 this.user = JSON.parse(userData);
             } catch (e) {
-                console.error('Error parseando datos de usuario:', e);
                 this.logout();
             }
         }
