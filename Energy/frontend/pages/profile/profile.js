@@ -196,7 +196,8 @@ var profilePage = {
         this.setupProfileForm();
         this.setupPasswordForm();
         this.setupAddSellerForm();
-        this.setupAddSaleForm();
+        this.setupSellerCalculator();
+        this.setupSellerRegister();
     },
     
     setupProfileForm: function() {
@@ -465,10 +466,86 @@ var profilePage = {
         };
     },
     
-    setupAddSaleForm: function() {
-        var form = document.getElementById('add-sale-form');
-        var messageDiv = document.getElementById('sale-message');
-        var addSaleBtn = document.getElementById('add-sale-btn');
+    setupSellerCalculator: function() {
+        var form = document.getElementById('seller-calculator-form');
+        var errorDiv = document.getElementById('seller-calc-error');
+        var calculateBtn = document.getElementById('seller-calculate-btn');
+        
+        if (!form) return;
+        
+        var self = this;
+        
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            
+            var holderName = document.getElementById('seller-calc-holder-name').value.trim();
+            var contractNumber = document.getElementById('seller-calc-contract-number').value.trim();
+            var companyName = document.getElementById('seller-calc-company-name').value.trim();
+            var consumption = parseFloat(document.getElementById('seller-calc-consumption').value);
+            var monthlyAmount = parseFloat(document.getElementById('seller-calc-monthly-amount').value);
+            
+            // Validaciones
+            if (!holderName || !contractNumber || !companyName) {
+                errorDiv.className = 'message error';
+                errorDiv.textContent = 'Por favor, completa todos los campos obligatorios';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            if (consumption <= 0 || monthlyAmount <= 0) {
+                errorDiv.className = 'message error';
+                errorDiv.textContent = 'El consumo y el importe deben ser mayores que cero';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Ocultar error
+            errorDiv.style.display = 'none';
+            
+            // Calcular ahorro (30%)
+            var savings = monthlyAmount * 0.30;
+            var newAmount = monthlyAmount - savings;
+            
+            // Guardar datos temporalmente en el objeto profilePage
+            self.clientCalculatorData = {
+                holderName: holderName,
+                contractNumber: contractNumber,
+                companyName: companyName,
+                consumption: consumption,
+                monthlyAmount: monthlyAmount,
+                savings: savings,
+                newAmount: newAmount
+            };
+            
+            // Mostrar resultados
+            document.getElementById('seller-result-current').textContent = '€' + monthlyAmount.toFixed(2);
+            document.getElementById('seller-result-savings').textContent = '€' + savings.toFixed(2);
+            document.getElementById('seller-result-new').textContent = '€' + newAmount.toFixed(2);
+            
+            // Ocultar calculadora, mostrar resultados y formulario de registro
+            document.getElementById('seller-calculator-section').style.display = 'none';
+            document.getElementById('seller-results-section').style.display = 'block';
+        };
+        
+        // Botón para volver a la calculadora
+        var backBtn = document.getElementById('seller-back-btn');
+        if (backBtn) {
+            backBtn.onclick = function() {
+                document.getElementById('seller-calculator-section').style.display = 'block';
+                document.getElementById('seller-results-section').style.display = 'none';
+                // Limpiar mensajes
+                var messageDiv = document.getElementById('seller-reg-message');
+                if (messageDiv) {
+                    messageDiv.style.display = 'none';
+                }
+            };
+        }
+    },
+    
+    setupSellerRegister: function() {
+        var form = document.getElementById('seller-register-form');
+        var messageDiv = document.getElementById('seller-reg-message');
+        var registerBtn = document.getElementById('seller-register-btn');
         
         if (!form) return;
         
@@ -485,8 +562,16 @@ var profilePage = {
                 return;
             }
             
-            var password = document.getElementById('sale-password').value;
-            var passwordConfirm = document.getElementById('sale-password-confirm').value;
+            // Verificar que hay datos de la calculadora
+            if (!self.clientCalculatorData) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Debes calcular el ahorro primero';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            var password = document.getElementById('seller-reg-password').value;
+            var passwordConfirm = document.getElementById('seller-reg-password-confirm').value;
             
             // Validar contraseña
             if (password.length < 6) {
@@ -505,23 +590,23 @@ var profilePage = {
             }
             
             var formData = {
-                first_name: document.getElementById('sale-first-name').value.trim(),
-                last_name: document.getElementById('sale-last-name').value.trim(),
-                second_last_name: document.getElementById('sale-second-last-name').value.trim() || null,
-                email: document.getElementById('sale-email').value.trim(),
-                username: document.getElementById('sale-username').value.trim(),
+                first_name: document.getElementById('seller-reg-first-name').value.trim(),
+                last_name: document.getElementById('seller-reg-last-name').value.trim(),
+                second_last_name: document.getElementById('seller-reg-second-last-name').value.trim() || null,
+                email: document.getElementById('seller-reg-email').value.trim(),
+                username: document.getElementById('seller-reg-username').value.trim(),
                 password: password,
-                phone: document.getElementById('sale-phone').value.trim() || null,
-                contract_number: document.getElementById('sale-contract-number').value.trim(),
-                current_company: document.getElementById('sale-current-company').value.trim(),
-                provider: document.getElementById('sale-provider').value.trim() || null,
+                phone: document.getElementById('seller-reg-phone').value.trim() || null,
+                contract_number: self.clientCalculatorData.contractNumber,
+                current_company: self.clientCalculatorData.companyName,
+                provider: 'Naturgy',
                 role: 'user',
                 seller_id: self.currentUser.id
             };
             
             messageDiv.style.display = 'none';
-            addSaleBtn.classList.add('loading');
-            addSaleBtn.disabled = true;
+            registerBtn.classList.add('loading');
+            registerBtn.disabled = true;
             
             // Registrar cliente y crear contrato
             window.authService.register(formData)
@@ -531,15 +616,22 @@ var profilePage = {
                     messageDiv.textContent = '✓ Cliente registrado exitosamente con su contrato';
                     messageDiv.style.display = 'block';
                     
-                    // Limpiar formulario
+                    // Limpiar formularios
                     form.reset();
+                    document.getElementById('seller-calculator-form').reset();
                     
-                    addSaleBtn.classList.remove('loading');
-                    addSaleBtn.disabled = false;
+                    // Limpiar datos temporales
+                    self.clientCalculatorData = null;
                     
+                    registerBtn.classList.remove('loading');
+                    registerBtn.disabled = false;
+                    
+                    // Después de 2 segundos, volver a la calculadora
                     setTimeout(function() {
                         messageDiv.style.display = 'none';
-                    }, 3000);
+                        document.getElementById('seller-calculator-section').style.display = 'block';
+                        document.getElementById('seller-results-section').style.display = 'none';
+                    }, 2000);
                 })
                 .catch(function(error) {
                     
@@ -547,8 +639,8 @@ var profilePage = {
                     messageDiv.textContent = error.message || 'Error al registrar cliente';
                     messageDiv.style.display = 'block';
                     
-                    addSaleBtn.classList.remove('loading');
-                    addSaleBtn.disabled = false;
+                    registerBtn.classList.remove('loading');
+                    registerBtn.disabled = false;
                 });
         };
     }
