@@ -162,5 +162,63 @@ class Provider {
         $plan = new Plan($this->conn);
         return $plan->getPlansByProvider($this->id);
     }
+
+    /**
+     * Buscar proveedor por nombre
+     */
+    public function getByName($name) {
+        $query = "SELECT id, name, description, logo, contact_email, contact_phone, 
+                         website, is_active, created_at, updated_at 
+                  FROM " . $this->table_name . " 
+                  WHERE LOWER(name) = LOWER(:name) 
+                  LIMIT 0,1";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":name", $name);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            $this->id = $row['id'];
+            $this->name = $row['name'];
+            $this->description = $row['description'];
+            $this->logo = $row['logo'];
+            $this->contact_email = $row['contact_email'];
+            $this->contact_phone = $row['contact_phone'];
+            $this->website = $row['website'];
+            $this->is_active = $row['is_active'];
+            $this->created_at = $row['created_at'];
+            $this->updated_at = $row['updated_at'];
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Buscar o crear proveedor por nombre
+     */
+    public function findOrCreate($name) {
+        // Intentar buscar primero
+        if ($this->getByName($name)) {
+            return $this->id;
+        }
+
+        // Crear si no existe
+        $this->name = $name;
+        $this->description = "Proveedor de energía";
+        $this->logo = null;
+        $this->contact_email = null;
+        $this->contact_phone = null;
+        $this->website = null;
+        $this->is_active = 1;
+
+        if ($this->create()) {
+            return $this->id;
+        }
+
+        return null;
+    }
 }
 ?>

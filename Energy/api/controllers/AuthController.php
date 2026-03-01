@@ -4,6 +4,9 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/jwt.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Role.php';
+require_once __DIR__ . '/../models/Provider.php';
+require_once __DIR__ . '/../models/Plan.php';
+require_once __DIR__ . '/../models/Contract.php';
 require_once __DIR__ . '/../services/EmailService.php';
 
 class AuthController {
@@ -88,6 +91,11 @@ class AuthController {
                 $roles[] = $roleRow['name'];
             }
             
+            // Crear contrato si se proporcionó información de proveedor
+            if (!empty($data['contract_number']) || !empty($data['current_company'])) {
+                $this->createUserContract($userId, $data);
+            }
+            
             // Enviar email de activación
             $emailService = new EmailService();
             $emailSent = $emailService->sendActivationEmail(
@@ -118,6 +126,72 @@ class AuthController {
         }
         
         return $this->sendResponse(500, false, "Error al registrar usuario");
+    }
+
+    /**
+     * Crear contrato para un usuario registrado
+     */
+    private function createUserContract($userId, $data) {
+        try {
+            // Determinar el proveedor
+            $providerName = 'Naturgy'; // Proveedor por defecto
+            
+            // Si se especificó un proveedor, usarlo
+            if (!empty($data['provider'])) {
+                $providerName = $data['provider'];
+            }
+            
+            // Buscar o crear proveedor
+            $provider = new Provider($this->db);
+            $providerId = $provider->findOrCreate($providerName);
+            
+            if (!$providerId) {
+                error_log("❌ Error al crear/buscar proveedor para el usuario {$userId}");
+                return false;
+            }
+            
+            // Obtener o crear plan genérico para este proveedor
+            $plan = new Plan($this->db);
+            $sellerId = isset($data['seller_id']) ? $data['seller_id'] : null;
+            $planId = $plan->getOrCreateDefaultPlan($providerId, $sellerId);
+            
+            if (!$planId) {
+                error_log("❌ Error al crear/buscar plan para el usuario {$userId}");
+                return false;
+            }
+            
+            // Crear el contrato
+            $contract = new Contract($this->db);
+            $contract->client_id = $userId;
+            $contract->seller_id = $sellerId;
+            $contract->plan_id = $planId;
+            $contract->start_date = date('Y-m-d');
+            $contract->end_date = null;
+            $contract->status = 'active';
+            $contract->total_amount = 0.00;
+            $contract->commission_amount = 0.00;
+            
+            // Construir notas con la información del contrato anterior
+            $notes = [];
+            if (!empty($data['contract_number'])) {
+                $notes[] = "Número de contrato anterior: " . $data['contract_number'];
+            }
+            if (!empty($data['current_company'])) {
+                $notes[] = "Compañía anterior: " . $data['current_company'];
+            }
+            $contract->notes = !empty($notes) ? implode("\n", $notes) : null;
+            
+            if ($contract->create()) {
+                error_log("✅ Contrato creado exitosamente para usuario {$userId} con ID {$contract->id}");
+                return true;
+            } else {
+                error_log("❌ Error al crear contrato para usuario {$userId}");
+                return false;
+            }
+        } catch (Exception $e) {
+            error_log("❌ Excepción al crear contrato: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**

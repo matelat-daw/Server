@@ -39,6 +39,20 @@ var profilePage = {
                 managementTab.style.display = 'inline-block';
             }
         }
+        
+        // Configurar pestañas según el rol del usuario
+        var contractTab = document.getElementById('tab-contract-btn');
+        var addSaleTab = document.getElementById('tab-add-sale-btn');
+        
+        if (this.currentUser.roles && this.currentUser.roles.includes('seller')) {
+            // Para vendedores: ocultar Mi Contrato, mostrar Agregar Venta
+            if (contractTab) contractTab.style.display = 'none';
+            if (addSaleTab) addSaleTab.style.display = 'inline-block';
+        } else {
+            // Para usuarios normales y admin: mostrar Mi Contrato, ocultar Agregar Venta
+            if (contractTab) contractTab.style.display = 'inline-block';
+            if (addSaleTab) addSaleTab.style.display = 'none';
+        }
     },
     
     loadContractData: function() {
@@ -182,6 +196,7 @@ var profilePage = {
         this.setupProfileForm();
         this.setupPasswordForm();
         this.setupAddSellerForm();
+        this.setupAddSaleForm();
     },
     
     setupProfileForm: function() {
@@ -447,7 +462,96 @@ var profilePage = {
                     addSellerBtn.classList.remove('loading');
                     addSellerBtn.disabled = false;
                 });
-        };  }
+        };
+    },
+    
+    setupAddSaleForm: function() {
+        var form = document.getElementById('add-sale-form');
+        var messageDiv = document.getElementById('sale-message');
+        var addSaleBtn = document.getElementById('add-sale-btn');
+        
+        if (!form) return;
+        
+        var self = this;
+        
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            
+            // Verificar que el usuario sea vendedor
+            if (!self.currentUser.roles || !self.currentUser.roles.includes('seller')) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'No tienes permisos para realizar esta acción';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            var password = document.getElementById('sale-password').value;
+            var passwordConfirm = document.getElementById('sale-password-confirm').value;
+            
+            // Validar contraseña
+            if (password.length < 6) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'La contraseña debe tener al menos 6 caracteres';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            // Validar que las contraseñas coincidan
+            if (password !== passwordConfirm) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Las contraseñas no coinciden';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            var formData = {
+                first_name: document.getElementById('sale-first-name').value.trim(),
+                last_name: document.getElementById('sale-last-name').value.trim(),
+                second_last_name: document.getElementById('sale-second-last-name').value.trim() || null,
+                email: document.getElementById('sale-email').value.trim(),
+                username: document.getElementById('sale-username').value.trim(),
+                password: password,
+                phone: document.getElementById('sale-phone').value.trim() || null,
+                contract_number: document.getElementById('sale-contract-number').value.trim(),
+                current_company: document.getElementById('sale-current-company').value.trim(),
+                provider: document.getElementById('sale-provider').value.trim() || null,
+                role: 'user',
+                seller_id: self.currentUser.id
+            };
+            
+            messageDiv.style.display = 'none';
+            addSaleBtn.classList.add('loading');
+            addSaleBtn.disabled = true;
+            
+            // Registrar cliente y crear contrato
+            window.authService.register(formData)
+                .then(function(response) {
+                    
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✓ Cliente registrado exitosamente con su contrato';
+                    messageDiv.style.display = 'block';
+                    
+                    // Limpiar formulario
+                    form.reset();
+                    
+                    addSaleBtn.classList.remove('loading');
+                    addSaleBtn.disabled = false;
+                    
+                    setTimeout(function() {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
+                })
+                .catch(function(error) {
+                    
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = error.message || 'Error al registrar cliente';
+                    messageDiv.style.display = 'block';
+                    
+                    addSaleBtn.classList.remove('loading');
+                    addSaleBtn.disabled = false;
+                });
+        };
+    }
 };
 
 window.profilePage = profilePage;

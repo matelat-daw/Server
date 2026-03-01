@@ -196,5 +196,44 @@ class Plan {
 
         return $stmt->execute();
     }
+
+    /**
+     * Obtener plan genérico de un proveedor o crear uno
+     */
+    public function getOrCreateDefaultPlan($provider_id, $seller_id = null) {
+        // Intentar obtener un plan existente del proveedor
+        $query = "SELECT id FROM " . $this->table_name . " 
+                  WHERE provider_id = :provider_id 
+                  AND is_active = 1 
+                  LIMIT 0,1";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":provider_id", $provider_id);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return $row['id'];
+        }
+
+        // Crear plan genérico si no existe
+        $this->provider_id = $provider_id;
+        $this->seller_id = $seller_id;
+        $this->name = "Plan Estándar";
+        $this->description = "Plan genérico de energía";
+        $this->price_per_kwh = 0.15;
+        $this->monthly_fee = 0.00;
+        $this->contract_duration_months = 12;
+        $this->renewable_energy_percentage = 0;
+        $this->features = json_encode([]);
+        $this->is_active = 1;
+
+        if ($this->create()) {
+            return $this->id;
+        }
+
+        return null;
+    }
 }
 ?>

@@ -3,36 +3,10 @@ var registerPage = {
     init: function() {
         this.setupForm();
         this.setupPasswordToggles();
-        this.prefillFromCalculator();
         
         // Si ya está logueado, redirigir a perfil
         if (window.authService && window.authService.isLoggedIn()) {
             window.app.loadPage('profile');
-        }
-    },
-    
-    prefillFromCalculator: function() {
-        // Obtener datos del sessionStorage si existen
-        var dataJson = sessionStorage.getItem('calculatorData');
-        
-        if (dataJson) {
-            var data = JSON.parse(dataJson);
-            
-            // Prellenar los campos de contrato y compañía
-            var contractNumberInput = document.getElementById('reg-contract-number');
-            var currentCompanyInput = document.getElementById('reg-current-company');
-            
-            if (contractNumberInput && data.contractNumber) {
-                contractNumberInput.value = data.contractNumber;
-                contractNumberInput.readOnly = true;
-                contractNumberInput.style.backgroundColor = '#f7fafc';
-            }
-            
-            if (currentCompanyInput && data.companyName) {
-                currentCompanyInput.value = data.companyName;
-                currentCompanyInput.readOnly = true;
-                currentCompanyInput.style.backgroundColor = '#f7fafc';
-            }
         }
     },
     
@@ -84,6 +58,18 @@ var registerPage = {
             
             var privacyCheckbox = document.getElementById('reg-privacy');
             
+            // Obtener datos de la calculadora desde sessionStorage si existen
+            var calculatorData = null;
+            var contractNumber = null;
+            var currentCompany = null;
+            
+            var dataJson = sessionStorage.getItem('calculatorData');
+            if (dataJson) {
+                calculatorData = JSON.parse(dataJson);
+                contractNumber = calculatorData.contractNumber || null;
+                currentCompany = calculatorData.companyName || null;
+            }
+            
             var formData = {
                 first_name: firstName,
                 last_name: lastName,
@@ -92,8 +78,8 @@ var registerPage = {
                 username: document.getElementById('reg-username').value.trim(),
                 password: password,
                 phone: document.getElementById('reg-phone').value.trim() || null,
-                contract_number: document.getElementById('reg-contract-number').value.trim(),
-                current_company: document.getElementById('reg-current-company').value.trim(),
+                contract_number: contractNumber,
+                current_company: currentCompany,
                 role: 'user' // Siempre cliente
             };
             

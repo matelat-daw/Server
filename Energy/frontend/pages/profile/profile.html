@@ -12,8 +12,11 @@
                 <button class="tab-btn active" onclick="profilePage.switchTab('info')">
                     📋 Información
                 </button>
-                <button class="tab-btn" onclick="profilePage.switchTab('contract')">
+                <button class="tab-btn" id="tab-contract-btn" onclick="profilePage.switchTab('contract')">
                     📄 Mi Contrato
+                </button>
+                <button class="tab-btn" id="tab-add-sale-btn" style="display: none;" onclick="profilePage.switchTab('add-sale')">
+                    🛒 Agregar Venta
                 </button>
                 <button class="tab-btn" onclick="profilePage.switchTab('settings')">
                     ⚙️ Configuración
@@ -131,6 +134,79 @@
                             </a>
                         </div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Tab: Agregar Venta (solo para vendedores) -->
+            <div id="tab-add-sale" class="tab-content">
+                <div class="settings-section">
+                    <h3>🛒 Registrar Nuevo Cliente</h3>
+                    <p>Completa el formulario para agregar un nuevo cliente con su contrato.</p>
+                    <form id="add-sale-form" class="settings-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sale-first-name">Nombre *</label>
+                                <input type="text" id="sale-first-name" name="first_name" required placeholder="Juan">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sale-last-name">Primer apellido *</label>
+                                <input type="text" id="sale-last-name" name="last_name" required placeholder="Pérez">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sale-second-last-name">Segundo apellido (opcional)</label>
+                            <input type="text" id="sale-second-last-name" name="second_last_name" placeholder="García">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sale-email">Correo electrónico *</label>
+                            <input type="email" id="sale-email" name="email" required placeholder="cliente@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sale-username">Nombre de usuario *</label>
+                            <input type="text" id="sale-username" name="username" required placeholder="usuario123">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sale-password">Contraseña *</label>
+                            <input type="password" id="sale-password" name="password" required minlength="6" placeholder="••••••••">
+                            <small class="form-hint">Mínimo 6 caracteres</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sale-password-confirm">Confirmar contraseña *</label>
+                            <input type="password" id="sale-password-confirm" name="password_confirm" required minlength="6" placeholder="••••••••">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sale-phone">Teléfono (opcional)</label>
+                            <input type="tel" id="sale-phone" name="phone" placeholder="+34 600 000 000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sale-contract-number">Número de contrato con su proveedor *</label>
+                            <input type="text" id="sale-contract-number" name="contract_number" required placeholder="Ej: ES0031406893847000001JN">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sale-current-company">Compañía eléctrica actual *</label>
+                            <input type="text" id="sale-current-company" name="current_company" required placeholder="Ej: Iberdrola, Endesa">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sale-provider">Proveedor nuevo (opcional)</label>
+                            <input type="text" id="sale-provider" name="provider" placeholder="Ej: Naturgy">
+                        </div>
+                        
+                        <div id="sale-message" class="message" style="display: none;"></div>
+                        
+                        <button type="submit" class="btn btn-primary" id="add-sale-btn">
+                            ➕ Registrar Cliente
+                        </button>
+                    </form>
                 </div>
             </div>
             
