@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy App - Proveedores de Energía</title>
+    <base href="/Energy/">
+    <link rel="stylesheet" href="/Energy/frontend/styles/global.css">
+    <link rel="stylesheet" href="/Energy/frontend/styles/responsive.css">
+    <link rel="stylesheet" href="/Energy/frontend/styles/language-selector.css">
+    <link rel="preconnect" href="//translate.google.com">
+    <link rel="preconnect" href="//translate.gstatic.com">
+</head>
+<body>
+    <!-- Widget oculto de Google Translate -->
+    <div id="google_translate_element"></div>
+    
+    <!-- Selector de idioma personalizado -->
+    <div class="language-selector">
+        <button class="language-btn" onclick="changeLanguage()" title="Switch to English">
+            <span class="flag-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" width="24" height="12">
+                    <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+                    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+                    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/>
+                    <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+                    <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+                </svg>
+            </span>
+            <span class="lang-text">English</span>
+        </button>
+    </div>
+    
+    <div id="app">
+        <div id="header-component"></div>
+        <main id="main-content"></main>
+        <div id="footer-component"></div>
+    </div>
+
+    <!-- Servicios y Scripts (Carga diferida para mejor rendimiento) -->
+    <script src="/Energy/frontend/services/translator.js" defer></script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
+    <script src="/Energy/frontend/services/api.js" defer></script>
+    <script src="/Energy/frontend/services/auth.js" defer></script>
+    
+    <!-- Componentes -->
+    <script src="/Energy/frontend/components/header/header.js" defer></script>
+    <script src="/Energy/frontend/components/footer/footer.js" defer></script>
+    
+    <!-- App principal -->
+    <script src="/Energy/frontend/app.js" defer></script>
+</body>
+</html>

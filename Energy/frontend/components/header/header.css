@@ -96,6 +96,46 @@
     box-shadow: var(--shadow);
 }
 
+/* Language selector button in header */
+.language-btn {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+}
+
+.language-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+}
+
+.language-btn .flag-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.language-btn .flag-icon svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.6); /* Ajuste para que la bandera llene mejor el círculo */
+}
+
 .auth-btn {
     padding: 0.6rem 1.5rem;
     border-radius: 25px;
@@ -151,6 +191,15 @@
         padding: 0.5rem 1rem;
         font-size: 0.85rem;
     }
+    
+    .language-btn {
+        width: 42px;
+        height: 42px;
+    }
+    
+    .language-btn .flag-icon {
+        font-size: 0.7rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -171,6 +220,15 @@
         width: 40px;
         height: 40px;
         font-size: 1.1rem;
+    }
+    
+    .language-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .language-btn .flag-icon {
+        font-size: 0.65rem;
     }
 }
 

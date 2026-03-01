@@ -14,17 +14,13 @@
         
         var self = this;
         
-        // Cargar componentes estructurales
-        setTimeout(function() {
-            self.loadComponent('header');
-            self.loadComponent('footer');
-        }, 100);
+        // Cargar componentes estructurales inmediatamente
+        this.loadComponent('header');
+        this.loadComponent('footer');
         
         // Cargar página inicial desde la URL
-        setTimeout(function() {
-            var initialRoute = self.getInitialRoute();
-            self.loadPageDirect(initialRoute);
-        }, 300);
+        var initialRoute = this.getInitialRoute();
+        this.loadPageDirect(initialRoute);
         
         this.setupRouting();
     };
