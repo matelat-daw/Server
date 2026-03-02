@@ -1,6 +1,7 @@
 // Profile Page
 var profilePage = {
     currentUser: null,
+    _deleteOpener: null,
     
     init: function() {
         // Verificar si está logueado
@@ -17,6 +18,55 @@ var profilePage = {
             this.loadContractData();
         }
         this.setupForms();
+        this._setupModalKeyboard();
+        this._setupTabKeyboard();
+    },
+
+    /* Accesibilidad: Escape cierra el modal */
+    _setupModalKeyboard: function() {
+        document.addEventListener('keydown', function(e) {
+            var modal = document.getElementById('delete-modal');
+            if (!modal || modal.style.display === 'none') return;
+            if (e.key === 'Escape') {
+                profilePage.closeDeleteModal();
+            }
+            // Trampa de foco dentro del modal
+            if (e.key === 'Tab') {
+                var focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                if (!focusable.length) return;
+                var first = focusable[0];
+                var last = focusable[focusable.length - 1];
+                if (e.shiftKey) {
+                    if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+                } else {
+                    if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+                }
+            }
+        });
+    },
+
+    /* Accesibilidad: navegación con flechas del teclado en la barra de tabs */
+    _setupTabKeyboard: function() {
+        var tabList = document.querySelector('[role="tablist"]');
+        if (!tabList) return;
+        tabList.addEventListener('keydown', function(e) {
+            var tabs = Array.from(tabList.querySelectorAll('[role="tab"]:not([style*="display: none"])'));
+            var idx = tabs.indexOf(document.activeElement);
+            if (idx < 0) return;
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                tabs[(idx + 1) % tabs.length].focus();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                tabs[(idx - 1 + tabs.length) % tabs.length].focus();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                tabs[0].focus();
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                tabs[tabs.length - 1].focus();
+            }
+        });
     },
     
     loadUserData: function() {
@@ -30,11 +80,12 @@ var profilePage = {
         document.getElementById('profile-email').value = this.currentUser.email || '';
         document.getElementById('profile-phone').value = this.currentUser.phone || '';
         
-        // Mostrar rol
+        // Mostrar rol (emoji aria-hidden para lectores de pantalla)
         var roleBadge = document.getElementById('user-role-badge');
         var roleText = this.currentUser.roles && this.currentUser.roles[0] || 'usuario';
         var roleEmoji = roleText === 'admin' ? '👑' : roleText === 'seller' ? '💼' : '👤';
-        roleBadge.textContent = roleEmoji + ' ' + roleText.charAt(0).toUpperCase() + roleText.slice(1);
+        var roleLabel = roleText.charAt(0).toUpperCase() + roleText.slice(1);
+        roleBadge.innerHTML = '<span aria-hidden="true">' + roleEmoji + '</span> ' + roleLabel;
         
         // Mostrar pestaña de gestión solo para admin
         if (this.currentUser.roles && this.currentUser.roles.includes('admin')) {
@@ -346,19 +397,35 @@ var profilePage = {
     },
     
     switchTab: function(tabName) {
-        // Desactivar todos los tabs
-        var tabBtns = document.querySelectorAll('.tab-btn');
-        var tabContents = document.querySelectorAll('.tab-content');
+        // Desactivar todos los tabs y sus paneles (ARIA tablist pattern)
+        var tabBtns = document.querySelectorAll('.tab-btn[role="tab"]');
+        var tabContents = document.querySelectorAll('.tab-content[role="tabpanel"]');
         
-        tabBtns.forEach(function(btn) { btn.classList.remove('active'); });
-        tabContents.forEach(function(content) { content.classList.remove('active'); });
-        
-        // Activar tab seleccionado - buscar el botón correspondiente
         tabBtns.forEach(function(btn) {
-            if (btn.onclick && btn.onclick.toString().includes("'" + tabName + "'")) {
-                btn.classList.add('active');
-            }
+            btn.classList.remove('active');
+            btn.setAttribute('aria-selected', 'false');
+            btn.setAttribute('tabindex', '-1');
         });
+        tabContents.forEach(function(content) {
+            content.classList.remove('active');
+        });
+        
+        // Activar tab seleccionado - buscar el botón por id convencional
+        var activeBtn = document.getElementById('tab-' + tabName + '-btn');
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+            activeBtn.setAttribute('aria-selected', 'true');
+            activeBtn.setAttribute('tabindex', '0');
+        } else {
+            // Fallback: buscar por onclick
+            tabBtns.forEach(function(btn) {
+                if (btn.onclick && btn.onclick.toString().includes("'" + tabName + "'")) {
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-selected', 'true');
+                    btn.setAttribute('tabindex', '0');
+                }
+            });
+        }
         
         var tabContent = document.getElementById('tab-' + tabName);
         if (tabContent) {
@@ -367,11 +434,21 @@ var profilePage = {
     },
     
     confirmDelete: function() {
-        document.getElementById('delete-modal').style.display = 'flex';
+        var modal = document.getElementById('delete-modal');
+        modal.style.display = 'flex';
+        // Mover el foco al modal (accesibilidad)
+        var firstBtn = modal.querySelector('button');
+        if (firstBtn) firstBtn.focus();
+        // Guardar referencia del elemento que abrió el modal
+        this._deleteOpener = document.activeElement;
     },
     
     closeDeleteModal: function() {
         document.getElementById('delete-modal').style.display = 'none';
+        // Devolver el foco al botón que abrió el modal
+        if (this._deleteOpener) {
+            this._deleteOpener.focus();
+        }
     },
     
     deleteAccount: function() {

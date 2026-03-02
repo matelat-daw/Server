@@ -41,10 +41,14 @@ var headerComponent = {
         function setTheme(theme) {
             if (theme === 'dark') {
                 document.body.classList.add('dark-theme');
-                btn.textContent = '☀️';
+                btn.innerHTML = '<span aria-hidden="true">☀️</span>';
+                btn.setAttribute('aria-label', 'Cambiar a tema claro');
+                btn.setAttribute('aria-pressed', 'true');
             } else {
                 document.body.classList.remove('dark-theme');
-                btn.textContent = '🌙';
+                btn.innerHTML = '<span aria-hidden="true">🌙</span>';
+                btn.setAttribute('aria-label', 'Cambiar a tema oscuro');
+                btn.setAttribute('aria-pressed', 'false');
             }
             localStorage.setItem('theme', theme);
         }
@@ -71,12 +75,15 @@ var headerComponent = {
         
         if (isLoggedIn) {
             var user = window.authService.getUser();
+            var name = user.name || 'Perfil';
             menuArea.innerHTML = 
-                '<button class="auth-btn btn-login" onclick="app.loadPage(\'profile\')">👤 ' + (user.name || 'Perfil') + '</button>' +
-                '<button class="auth-btn btn-register" onclick="authService.logout(); app.loadPage(\'home\')">Salir</button>';
+                '<button type="button" class="auth-btn btn-login" onclick="app.loadPage(\'profile\')" aria-label="Ver perfil de ' + name + '">' +
+                    '<span aria-hidden="true">👤</span> ' + name +
+                '</button>' +
+                '<button type="button" class="auth-btn btn-register" onclick="authService.logout(); app.loadPage(\'home\')" aria-label="Cerrar sesión">Salir</button>';
         } else {
             menuArea.innerHTML = 
-                '<button class="auth-btn btn-login" onclick="app.loadPage(\'login\')">Iniciar Sesión</button>';
+                '<button type="button" class="auth-btn btn-login" onclick="app.loadPage(\'login\')">Iniciar Sesión</button>';
         }
     },
     
@@ -118,10 +125,10 @@ var headerComponent = {
         var pageInfo = pageNames[currentPage] || { icon: '📄', name: currentPage.charAt(0).toUpperCase() + currentPage.slice(1) };
         
         breadcrumb.innerHTML = 
-            '<a href="#home" class="breadcrumb-item breadcrumb-link">🏠 Inicio</a>' +
+            '<a href="#home" class="breadcrumb-item breadcrumb-link"><span aria-hidden="true">🏠</span> Inicio</a>' +
             (currentPage !== 'home' ? 
-                '<span class="breadcrumb-separator">›</span>' +
-                '<span class="breadcrumb-item breadcrumb-current">' + pageInfo.icon + ' ' + pageInfo.name + '</span>'
+                '<span class="breadcrumb-separator" aria-hidden="true">›</span>' +
+                '<span class="breadcrumb-item breadcrumb-current" aria-current="page"><span aria-hidden="true">' + pageInfo.icon + '</span> ' + pageInfo.name + '</span>'
             : '');
     }
 };

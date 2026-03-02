@@ -96,9 +96,95 @@
         if (!mainContent) return;
         
         this.currentPage = pageName;
-        
+
+        // ---- SEO: datos por página ----
+        var BASE_URL = 'https://www.energyapp.es';
+        var seoData = {
+            'home': {
+                title: 'Energy App – Compara Proveedores de Energía y Ahorra hasta un 30% en tu Factura de Luz',
+                description: 'Compara los mejores proveedores de electricidad en España y encuentra la tarifa más barata para tu hogar o negocio. Calcula tu ahorro en segundos, sin compromiso y con energía 100% renovable.',
+                canonical: BASE_URL + '/'
+            },
+            'calculator': {
+                title: 'Calculadora de Ahorro Energético – Descubre Cuánto Puedes Ahorrar | Energy App',
+                description: 'Introduce tu consumo actual y descubre cuánto puedes ahorrar cambiando de proveedor de electricidad. Cálculo gratuito, inmediato y sin compromiso.',
+                canonical: BASE_URL + '/#calculator'
+            },
+            'results': {
+                title: 'Resultados de tu Ahorro en Electricidad | Energy App',
+                description: 'Consulta tu ahorro potencial con Naturgy. Hasta un 30% de descuento en tu factura de luz con energía 100% renovable y sin permanencia.',
+                canonical: BASE_URL + '/#results'
+            },
+            'about': {
+                title: 'Acerca de Energy App – Nuestra Misión y Servicios | Energy App',
+                description: 'Conoce Energy App: la plataforma española que ayuda a hogares y negocios a comparar tarifas eléctricas y reducir su consumo energético con transparencia y sin letra pequeña.',
+                canonical: BASE_URL + '/#about'
+            },
+            'contact': {
+                title: 'Contacto – Habla con Nuestro Equipo | Energy App',
+                description: 'Ponte en contacto con Energy App. Atención personalizada de lunes a viernes de 9:00 a 18:00. Llámanos al +34 900 123 456 o escríbenos por el formulario.',
+                canonical: BASE_URL + '/#contact'
+            },
+            'privacy': {
+                title: 'Política de Privacidad | Energy App',
+                description: 'Consulta nuestra política de privacidad. Energy App cumple con el RGPD y garantiza la protección de tus datos personales en todo momento.',
+                canonical: BASE_URL + '/#privacy'
+            },
+            'login': {
+                title: 'Iniciar Sesión en tu Cuenta | Energy App',
+                description: 'Accede a tu cuenta de Energy App para gestionar tu contrato, consultar tu ahorro y administrar tu perfil energético.',
+                canonical: BASE_URL + '/#login'
+            },
+            'register': {
+                title: 'Crear Cuenta Gratuita | Energy App',
+                description: 'Regístrate gratis en Energy App y empieza a ahorrar en tu factura de electricidad. Solo necesitas tu email para comenzar.',
+                canonical: BASE_URL + '/#register'
+            },
+            'profile': {
+                title: 'Mi Perfil | Energy App',
+                description: 'Gestiona tu cuenta de Energy App: actualiza tus datos, consulta tu contrato actual y controla tu ahorro energético.',
+                canonical: BASE_URL + '/#profile'
+            },
+            'activate': {
+                title: 'Activar Cuenta | Energy App',
+                description: 'Activa tu cuenta de Energy App para empezar a comparar tarifas de electricidad y ahorrar en tu factura de luz.',
+                canonical: BASE_URL + '/#activate'
+            }
+        };
+
+        var seo = seoData[pageName] || {
+            title: pageName.charAt(0).toUpperCase() + pageName.slice(1) + ' | Energy App',
+            description: 'Energy App – Compara proveedores de energía eléctrica en España y ahorra hasta un 30% en tu factura de luz.',
+            canonical: BASE_URL + '/#' + pageName
+        };
+
+        // Actualizar <title>
+        document.title = seo.title;
+
+        // Actualizar <meta name="description">
+        var metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute('content', seo.description);
+
+        // Actualizar Open Graph
+        var ogTitle = document.getElementById('og-title');
+        var ogDesc = document.getElementById('og-description');
+        var ogUrl = document.getElementById('og-url');
+        if (ogTitle) ogTitle.setAttribute('content', seo.title);
+        if (ogDesc) ogDesc.setAttribute('content', seo.description);
+        if (ogUrl) ogUrl.setAttribute('content', seo.canonical);
+
+        // Actualizar Twitter Card
+        var twTitle = document.getElementById('tw-title');
+        var twDesc = document.getElementById('tw-description');
+        if (twTitle) twTitle.setAttribute('content', seo.title);
+        if (twDesc) twDesc.setAttribute('content', seo.description);
+
+        // Actualizar URL canónica
+        var canonical = document.getElementById('canonical-url');
+        if (canonical) canonical.setAttribute('href', seo.canonical);
+
         // Mostrar loading
-        mainContent.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+        mainContent.innerHTML = '<div class="loading"><div class="spinner" role="status" aria-label="Cargando..."></div></div>';
         
         // Cargar HTML de la página
         var pageUrl = this.basePath + 'pages/' + pageName + '/' + pageName + '.html';
@@ -149,9 +235,9 @@
             .catch(function(error) {
                 mainContent.innerHTML = 
                     '<div class="card" style="max-width: 600px; margin: 2rem auto; text-align: center;">' +
-                    '<h2>⚠️ Página no encontrada</h2>' +
+                    '<h2><span aria-hidden="true">⚠️</span> Página no encontrada</h2>' +
                     '<p>La página "' + pageName + '" no existe.</p>' +
-                    '<button class="btn btn-primary" onclick="app.navigate(\'home\')">Ir al inicio</button>' +
+                    '<button type="button" class="btn btn-primary" onclick="app.navigate(\'home\')">Ir al inicio</button>' +
                     '</div>';
             });
     };

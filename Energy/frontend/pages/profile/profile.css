@@ -77,16 +77,23 @@
     color: var(--primary-color);
 }
 
+.tab-btn[aria-selected="true"],
 .tab-btn.active {
     color: var(--primary-color);
     border-bottom-color: var(--primary-color);
+}
+
+.tab-btn:focus-visible {
+    outline: 3px solid var(--secondary-color);
+    outline-offset: 2px;
 }
 
 .tab-content {
     display: none;
 }
 
-.tab-content.active {
+.tab-content.active,
+.tab-content[aria-selected="true"] {
     display: block;
     animation: fadeIn 0.3s ease;
 }
@@ -127,9 +134,10 @@
 }
 
 .form-group input:focus {
-    outline: none;
+    outline: 3px solid var(--secondary-color);
+    outline-offset: 0;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
 }
 
 .message {
