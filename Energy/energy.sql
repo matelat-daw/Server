@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-03-2026 a las 12:48:45
+-- Tiempo de generación: 02-03-2026 a las 12:35:17
 -- Versión del servidor: 10.11.6-MariaDB
 -- Versión de PHP: 8.4.14
 
@@ -33,7 +33,7 @@ CREATE TABLE `contracts` (
   `id` int(11) NOT NULL,
   `client_id` int(11) DEFAULT NULL,
   `seller_id` int(11) DEFAULT NULL,
-  `plan_id` int(11) NOT NULL,
+  `plan_id` int(11) DEFAULT NULL,
   `start_date` date NOT NULL,
   `end_date` date DEFAULT NULL,
   `status` enum('pending','active','cancelled','completed') DEFAULT 'pending',
@@ -43,6 +43,15 @@ CREATE TABLE `contracts` (
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+--
+-- Volcado de datos para la tabla `contracts`
+--
+
+INSERT INTO `contracts` (`id`, `client_id`, `seller_id`, `plan_id`, `start_date`, `end_date`, `status`, `total_amount`, `commission_amount`, `notes`, `created_at`, `updated_at`) VALUES
+(1, NULL, NULL, 5, '2026-03-01', NULL, 'active', 0.00, 0.00, 'Número de contrato anterior: N259F\nCompañía anterior: Endesa', '2026-03-01 12:38:36', '2026-03-01 12:39:52'),
+(2, NULL, 2, 5, '2026-03-01', NULL, 'active', 0.00, 0.00, 'Número de contrato anterior: Ns2538N\nCompañía anterior: Iberdrola', '2026-03-01 13:01:56', '2026-03-01 13:01:56'),
+(3, 4, 2, 5, '2026-03-02', NULL, 'active', 0.00, 0.00, 'Número de contrato anterior: NJ256NRG\nCompañía anterior: Iberdrola', '2026-03-02 11:08:17', '2026-03-02 11:08:17');
 
 -- --------------------------------------------------------
 
@@ -158,7 +167,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `first_name`, `last_name`, `second_last_name`, `phone`, `profile_img`, `is_active`, `activation_token`, `activation_token_expires`, `created_at`, `updated_at`) VALUES
 (1, 'admin', 'admin@energy.com', '$2y$12$EhxewlfrYNk8diFqxy/a/uBjfP9J895TkkW3pXCeqIDaXLxYJlPF6', 'Admin', 'Sistema', NULL, NULL, NULL, 1, NULL, NULL, '2026-02-24 18:21:21', '2026-02-24 19:34:17'),
-(3, 'Pepe', 'orions68@gmail.com', '$2y$12$KyRkLxFmE.zM7diF1RXOyO1uM/gnWR.93UAsaQtl4q.sf87dj3OU.', 'Yo', 'First', 'Second', '+34611111111', NULL, 1, NULL, NULL, '2026-02-25 11:36:22', '2026-02-25 11:37:30');
+(2, 'Pepe', 'orions68@gmail.com', '$2y$12$KyRkLxFmE.zM7diF1RXOyO1uM/gnWR.93UAsaQtl4q.sf87dj3OU.', 'Yo', 'First', 'Second', '+34611111111', NULL, 1, NULL, NULL, '2026-02-25 11:36:22', '2026-03-01 11:53:30'),
+(3, 'Vendo Todo', 'matesar68@gmail.com', '$2y$12$A1F2g/jf/l8p1wJWyd.HouVdZUNikFpCiwd.3q84e2FuKSB9ZK0CO', 'Segundo', 'Vendedor', NULL, '+34664774821', NULL, 1, NULL, NULL, '2026-03-02 09:57:24', '2026-03-02 09:57:24'),
+(4, 'César-NRG', 'cesarmatelat@gmail.com', '$2y$12$PAfGTLCevMgZ1i8ZOgiGAugeFj2WHwhGiwbJlqK7cb7CGS8yB9Dca', 'César', 'Matelat', 'Borneo', '+34664774821', NULL, 1, NULL, NULL, '2026-03-02 11:08:17', '2026-03-02 11:08:51');
 
 -- --------------------------------------------------------
 
@@ -179,7 +190,9 @@ CREATE TABLE `user_roles` (
 
 INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`) VALUES
 (1, 1, 1, '2026-02-24 18:21:21'),
-(3, 3, 3, '2026-02-25 11:36:22');
+(2, 2, 2, '2026-02-25 11:36:22'),
+(3, 3, 2, '2026-03-02 09:57:24'),
+(4, 4, 3, '2026-03-02 11:08:17');
 
 --
 -- Índices para tablas volcadas
@@ -244,7 +257,7 @@ ALTER TABLE `user_roles`
 -- AUTO_INCREMENT de la tabla `contracts`
 --
 ALTER TABLE `contracts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `energy_plans`
@@ -284,9 +297,9 @@ ALTER TABLE `user_roles`
 -- Filtros para la tabla `contracts`
 --
 ALTER TABLE `contracts`
-  ADD CONSTRAINT `contracts_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `contracts_ibfk_2` FOREIGN KEY (`seller_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `contracts_ibfk_3` FOREIGN KEY (`plan_id`) REFERENCES `energy_plans` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `contracts_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `contracts_ibfk_2` FOREIGN KEY (`seller_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `contracts_ibfk_3` FOREIGN KEY (`plan_id`) REFERENCES `energy_plans` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `energy_plans`

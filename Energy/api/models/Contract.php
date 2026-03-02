@@ -204,6 +204,53 @@ class Contract {
     }
 
     /**
+     * Obtener todos los contratos hechos a través de vendedores (admin)
+     */
+    public function getAllSellerContracts() {
+        $query = "SELECT c.*,
+                         COALESCE(u_client.first_name, '[Usuario eliminado]') as client_first_name,
+                         COALESCE(u_client.last_name, '') as client_last_name,
+                         COALESCE(u_client.email, 'N/A') as client_email,
+                         u_seller.first_name as seller_first_name,
+                         u_seller.last_name as seller_last_name,
+                         u_seller.username as seller_username,
+                         p.name as plan_name, pr.name as provider_name
+                  FROM " . $this->table_name . " c
+                  LEFT JOIN users u_client ON c.client_id = u_client.id
+                  INNER JOIN users u_seller ON c.seller_id = u_seller.id
+                  LEFT JOIN energy_plans p ON c.plan_id = p.id
+                  LEFT JOIN energy_providers pr ON p.provider_id = pr.id
+                  WHERE c.seller_id IS NOT NULL
+                  ORDER BY c.created_at DESC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    /**
+     * Obtener todos los contratos hechos directamente por usuarios sin vendedor (admin)
+     */
+    public function getAllDirectContracts() {
+        $query = "SELECT c.*,
+                         COALESCE(u_client.first_name, '[Usuario eliminado]') as client_first_name,
+                         COALESCE(u_client.last_name, '') as client_last_name,
+                         COALESCE(u_client.email, 'N/A') as client_email,
+                         COALESCE(u_client.username, 'N/A') as client_username,
+                         p.name as plan_name, pr.name as provider_name
+                  FROM " . $this->table_name . " c
+                  LEFT JOIN users u_client ON c.client_id = u_client.id
+                  LEFT JOIN energy_plans p ON c.plan_id = p.id
+                  LEFT JOIN energy_providers pr ON p.provider_id = pr.id
+                  WHERE c.seller_id IS NULL
+                  ORDER BY c.created_at DESC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    /**
      * Obtener estadísticas de contratos por vendedor
      */
     public function getSellerStats($seller_id) {

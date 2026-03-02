@@ -15,6 +15,46 @@ class ContractController {
     }
 
     /**
+     * Obtener todos los contratos para el administrador (separados por origen)
+     */
+    public function adminContracts() {
+        $token = $this->getTokenFromRequest();
+
+        if (!$token) {
+            return $this->sendResponse(401, false, "No autorizado");
+        }
+
+        $decoded = JWT::decode($token);
+
+        if (!$decoded) {
+            return $this->sendResponse(401, false, "Token inválido");
+        }
+
+        if (!in_array('admin', $decoded['roles'])) {
+            return $this->sendResponse(403, false, "Acceso denegado. Se requiere rol de administrador");
+        }
+
+        // Contratos gestionados por vendedores
+        $stmtSeller = $this->contract->getAllSellerContracts();
+        $sellerContracts = [];
+        while ($row = $stmtSeller->fetch(PDO::FETCH_ASSOC)) {
+            $sellerContracts[] = $row;
+        }
+
+        // Contratos realizados directamente por usuarios
+        $stmtDirect = $this->contract->getAllDirectContracts();
+        $directContracts = [];
+        while ($row = $stmtDirect->fetch(PDO::FETCH_ASSOC)) {
+            $directContracts[] = $row;
+        }
+
+        return $this->sendResponse(200, true, "Contratos obtenidos exitosamente", [
+            'seller_contracts' => $sellerContracts,
+            'direct_contracts' => $directContracts
+        ]);
+    }
+
+    /**
      * Listar todos los contratos
      */
     public function index() {

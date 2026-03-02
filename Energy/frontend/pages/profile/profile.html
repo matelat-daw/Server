@@ -24,6 +24,9 @@
                 <button class="tab-btn" id="tab-management-btn" style="display: none;" onclick="profilePage.switchTab('management')">
                     👥 Gestión
                 </button>
+                <button class="tab-btn" id="tab-admin-contracts-btn" style="display: none;" onclick="profilePage.switchTab('admin-contracts'); profilePage.loadAdminContracts();">
+                    📊 Administración
+                </button>
             </div>
             
             <!-- Tab: Información -->
@@ -307,6 +310,78 @@
                 </div>
             </div>
             
+            <!-- Tab: Administración - Contratos (solo para admin) -->
+            <div id="tab-admin-contracts" class="tab-content">
+                <div class="admin-contracts-section">
+
+                    <!-- Tabla 1: Contratos por vendedores -->
+                    <div class="admin-table-block">
+                        <div class="admin-table-header">
+                            <h3>👤 Contratos gestionados por vendedores</h3>
+                            <p>Contratos registrados a través de un vendedor. Se muestran incluso si el cliente eliminó su perfil.</p>
+                        </div>
+                        <div id="seller-contracts-loading" class="table-loading">
+                            <div class="loading-spinner"></div>
+                            <span>Cargando contratos...</span>
+                        </div>
+                        <div id="seller-contracts-empty" class="table-empty" style="display:none;">
+                            📍 No hay contratos registrados por vendedores.
+                        </div>
+                        <div class="table-responsive" id="seller-contracts-table-wrap" style="display:none;">
+                            <table class="admin-contracts-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Cliente</th>
+                                        <th>Email cliente</th>
+                                        <th>Vendedor</th>
+                                        <th>Plan</th>
+                                        <th>Proveedor</th>
+                                        <th>Estado</th>
+                                        <th>Comisión</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="seller-contracts-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tabla 2: Contratos directos de usuarios -->
+                    <div class="admin-table-block">
+                        <div class="admin-table-header">
+                            <h3>🌐 Contratos realizados directamente por usuarios</h3>
+                            <p>Contratos contratados por usuarios desde la app sin intervención de un vendedor.</p>
+                        </div>
+                        <div id="direct-contracts-loading" class="table-loading">
+                            <div class="loading-spinner"></div>
+                            <span>Cargando contratos...</span>
+                        </div>
+                        <div id="direct-contracts-empty" class="table-empty" style="display:none;">
+                            📍 No hay contratos directos de usuarios.
+                        </div>
+                        <div class="table-responsive" id="direct-contracts-table-wrap" style="display:none;">
+                            <table class="admin-contracts-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Usuario</th>
+                                        <th>Email</th>
+                                        <th>Plan</th>
+                                        <th>Proveedor</th>
+                                        <th>Estado</th>
+                                        <th>Importe</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="direct-contracts-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
             <!-- Tab: Gestión (solo para admin) -->
             <div id="tab-management" class="tab-content">
                 <div class="settings-section">

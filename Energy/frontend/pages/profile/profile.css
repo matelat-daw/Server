@@ -700,3 +700,143 @@
         text-align: left;
     }
 }
+
+/* ===== Pestaña Administración - Tablas de contratos ===== */
+.admin-contracts-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.admin-table-block {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.admin-table-header {
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-table-header h3 {
+    margin: 0 0 0.35rem 0;
+    font-size: 1rem;
+    color: #1e293b;
+}
+
+.admin-table-header p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.admin-contracts-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.admin-contracts-table thead tr {
+    background: #f8fafc;
+}
+
+.admin-contracts-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #475569;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.admin-contracts-table td {
+    padding: 0.75rem 1rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.admin-contracts-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-contracts-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.table-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2rem 1.5rem;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e2e8f0;
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.table-empty {
+    padding: 2rem 1.5rem;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Badges de estado */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.status-badge.status-active {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.status-badge.status-pending {
+    background: #fef9c3;
+    color: #a16207;
+}
+
+.status-badge.status-cancelled {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.status-badge.status-completed {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+@media (max-width: 768px) {
+    .admin-contracts-table th,
+    .admin-contracts-table td {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}

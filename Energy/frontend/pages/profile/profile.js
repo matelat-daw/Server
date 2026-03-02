@@ -10,8 +10,12 @@ var profilePage = {
         }
         
         this.currentUser = window.authService.getUser();
+        this._adminContractsLoaded = false; // Resetear flag para permitir recarga fresca
         this.loadUserData();
-        this.loadContractData();
+        // Solo cargar datos de contrato si no es admin
+        if (!this.currentUser.roles || !this.currentUser.roles.includes('admin')) {
+            this.loadContractData();
+        }
         this.setupForms();
     },
     
@@ -38,6 +42,10 @@ var profilePage = {
             if (managementTab) {
                 managementTab.style.display = 'inline-block';
             }
+            var adminContractsTab = document.getElementById('tab-admin-contracts-btn');
+            if (adminContractsTab) {
+                adminContractsTab.style.display = 'inline-block';
+            }
         }
         
         // Configurar pestañas según el rol del usuario
@@ -48,8 +56,12 @@ var profilePage = {
             // Para vendedores: ocultar Mi Contrato, mostrar Agregar Venta
             if (contractTab) contractTab.style.display = 'none';
             if (addSaleTab) addSaleTab.style.display = 'inline-block';
+        } else if (this.currentUser.roles && this.currentUser.roles.includes('admin')) {
+            // Para admin: ocultar Mi Contrato y Agregar Venta
+            if (contractTab) contractTab.style.display = 'none';
+            if (addSaleTab) addSaleTab.style.display = 'none';
         } else {
-            // Para usuarios normales y admin: mostrar Mi Contrato, ocultar Agregar Venta
+            // Para usuarios normales: mostrar Mi Contrato, ocultar Agregar Venta
             if (contractTab) contractTab.style.display = 'inline-block';
             if (addSaleTab) addSaleTab.style.display = 'none';
         }
@@ -542,6 +554,105 @@ var profilePage = {
         }
     },
     
+    loadAdminContracts: function() {
+        // Evitar recargar si ya se cargó
+        if (this._adminContractsLoaded) return;
+        this._adminContractsLoaded = true;
+
+        var self = this;
+        var statusLabels = {
+            'active':    { text: 'Activo',    cls: 'status-badge status-active' },
+            'pending':   { text: 'Pendiente', cls: 'status-badge status-pending' },
+            'cancelled': { text: 'Cancelado', cls: 'status-badge status-cancelled' },
+            'completed': { text: 'Completado',cls: 'status-badge status-completed' }
+        };
+
+        function statusBadge(status) {
+            var s = statusLabels[status] || { text: status || '-', cls: 'status-badge' };
+            return '<span class="' + s.cls + '">' + s.text + '</span>';
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            var d = new Date(dateStr);
+            return isNaN(d) ? dateStr : d.toLocaleDateString('es-ES');
+        }
+
+        window.apiService.get('/admin/contracts')
+            .then(function(response) {
+                var data = response.data || {};
+
+                // --- Tabla vendedores ---
+                var sellerContracts = data.seller_contracts || [];
+                var sellerLoading = document.getElementById('seller-contracts-loading');
+                var sellerEmpty   = document.getElementById('seller-contracts-empty');
+                var sellerWrap    = document.getElementById('seller-contracts-table-wrap');
+                var sellerTbody   = document.getElementById('seller-contracts-tbody');
+
+                if (sellerLoading) sellerLoading.style.display = 'none';
+
+                if (sellerContracts.length === 0) {
+                    if (sellerEmpty) sellerEmpty.style.display = 'block';
+                } else {
+                    if (sellerWrap) sellerWrap.style.display = 'block';
+                    sellerTbody.innerHTML = sellerContracts.map(function(c) {
+                        var clientName = (c.client_first_name + ' ' + c.client_last_name).trim() || 'N/A';
+                        var sellerName = (c.seller_first_name + ' ' + c.seller_last_name).trim()
+                                         || c.seller_username || '-';
+                        var commission = c.commission_amount ? '\u20ac' + parseFloat(c.commission_amount).toFixed(2) : '-';
+                        return '<tr>' +
+                            '<td>' + 'CT-' + String(c.id).padStart(6, '0') + '</td>' +
+                            '<td>' + clientName + '</td>' +
+                            '<td>' + (c.client_email || '-') + '</td>' +
+                            '<td>' + sellerName + '</td>' +
+                            '<td>' + (c.plan_name || '-') + '</td>' +
+                            '<td>' + (c.provider_name || '-') + '</td>' +
+                            '<td>' + statusBadge(c.status) + '</td>' +
+                            '<td>' + commission + '</td>' +
+                            '<td>' + formatDate(c.created_at) + '</td>' +
+                        '</tr>';
+                    }).join('');
+                }
+
+                // --- Tabla directos ---
+                var directContracts = data.direct_contracts || [];
+                var directLoading = document.getElementById('direct-contracts-loading');
+                var directEmpty   = document.getElementById('direct-contracts-empty');
+                var directWrap    = document.getElementById('direct-contracts-table-wrap');
+                var directTbody   = document.getElementById('direct-contracts-tbody');
+
+                if (directLoading) directLoading.style.display = 'none';
+
+                if (directContracts.length === 0) {
+                    if (directEmpty) directEmpty.style.display = 'block';
+                } else {
+                    if (directWrap) directWrap.style.display = 'block';
+                    directTbody.innerHTML = directContracts.map(function(c) {
+                        var clientName = (c.client_first_name + ' ' + c.client_last_name).trim() || 'N/A';
+                        var amount = c.total_amount ? '\u20ac' + parseFloat(c.total_amount).toFixed(2) : '-';
+                        return '<tr>' +
+                            '<td>' + 'CT-' + String(c.id).padStart(6, '0') + '</td>' +
+                            '<td>' + clientName + '</td>' +
+                            '<td>' + (c.client_email || '-') + '</td>' +
+                            '<td>' + (c.plan_name || '-') + '</td>' +
+                            '<td>' + (c.provider_name || '-') + '</td>' +
+                            '<td>' + statusBadge(c.status) + '</td>' +
+                            '<td>' + amount + '</td>' +
+                            '<td>' + formatDate(c.created_at) + '</td>' +
+                        '</tr>';
+                    }).join('');
+                }
+            })
+            .catch(function(error) {
+                ['seller-contracts-loading', 'direct-contracts-loading'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) {
+                        el.innerHTML = '<span style="color:#ef4444">⚠️ Error al cargar los contratos. Intenta de nuevo.</span>';
+                    }
+                });
+            });
+    },
+
     setupSellerRegister: function() {
         var form = document.getElementById('seller-register-form');
         var messageDiv = document.getElementById('seller-reg-message');
