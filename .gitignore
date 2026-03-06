@@ -1,6 +1,7 @@
 # Aplicaciones pesadas - no subir al repositorio
 moodle/
 wordpress/
+.continue/
 
 # Backups
 *_backup_*/
