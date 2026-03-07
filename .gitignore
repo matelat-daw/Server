@@ -2,6 +2,7 @@
 moodle/
 wordpress/
 .continue/
+Celador/
 
 # Backups
 *_backup_*/
