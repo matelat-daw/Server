@@ -724,9 +724,69 @@
 }
 
 .admin-table-header {
-    padding: 1.25rem 1.5rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.admin-table-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.admin-table-desc {
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.btn-export {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-export:hover {
+    background: var(--bg-color);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.btn-export.excel:hover {
+    color: #166534;
+    border-color: #166534;
+}
+
+.btn-export.pdf:hover {
+    color: #991b1b;
+    border-color: #991b1b;
+}
+
+@media (max-width: 640px) {
+    .admin-table-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .admin-table-actions {
+        width: 100%;
+    }
+    
+    .btn-export {
+        flex: 1;
+        justify-content: center;
+    }
 }
 
 .admin-table-header h3 {

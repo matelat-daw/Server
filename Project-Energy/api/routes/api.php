@@ -35,6 +35,8 @@ $router->put("$apiBase/auth/profile", [AuthController::class, 'updateProfile']);
 // ===============================
 $router->post("$apiBase/admin/create-seller", [AuthController::class, 'createSeller']);
 $router->get("$apiBase/admin/contracts", [ContractController::class, 'adminContracts']);
+$router->get("$apiBase/admin/contracts/export/excel", [ContractController::class, 'exportExcel']);
+$router->get("$apiBase/admin/contracts/export/pdf", [ContractController::class, 'exportPdf']);
 
 // ===============================
 // RUTAS DE USUARIOS

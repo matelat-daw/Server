@@ -730,6 +730,99 @@ var profilePage = {
             });
     },
 
+    exportTable: function(type, format) {
+        // Usar la exportación del lado del servidor para administradores
+        if (this.currentUser.roles && this.currentUser.roles.includes('admin')) {
+            var endpoint = '/admin/contracts/export/' + (format === 'excel' ? 'excel' : 'pdf');
+            var url = window.apiService.baseURL + endpoint;
+            
+            // Abrir en una nueva pestaña (el servidor enviará las cabeceras de descarga)
+            window.open(url, '_blank');
+            return;
+        }
+
+        // Fallback para otros roles o si falla (exportación frontend actual)
+        var data = [];
+        var fileName = '';
+        var headers = [];
+
+        if (type === 'seller') {
+            fileName = 'Contratos_Vendedores';
+            headers = ['ID', 'Cliente', 'Email', 'Vendedor', 'Plan', 'Proveedor', 'Estado', 'Comisión', 'Fecha'];
+            var tbody = document.getElementById('seller-contracts-tbody');
+            if (tbody) {
+                Array.from(tbody.rows).forEach(row => {
+                    var rowData = Array.from(row.cells).map(cell => cell.textContent.trim());
+                    data.push(rowData);
+                });
+            }
+        } else {
+            fileName = 'Contratos_Directos';
+            headers = ['ID', 'Cliente', 'Email', 'Plan', 'Proveedor', 'Estado', 'Importe', 'Fecha'];
+            var tbody = document.getElementById('direct-contracts-tbody');
+            if (tbody) {
+                Array.from(tbody.rows).forEach(row => {
+                    var rowData = Array.from(row.cells).map(cell => cell.textContent.trim());
+                    data.push(rowData);
+                });
+            }
+        }
+
+        if (data.length === 0) {
+            alert('No hay datos para exportar');
+            return;
+        }
+
+        if (format === 'excel') {
+            this.downloadCSV(headers, data, fileName + '.csv');
+        } else if (format === 'pdf') {
+            this.downloadPDF(headers, data, fileName);
+        }
+    },
+
+    downloadCSV: function(headers, data, fileName) {
+        var csvContent = "\uFEFF"; // BOM para Excel
+        csvContent += headers.join(";") + "\n";
+        data.forEach(function(row) {
+            csvContent += row.join(";") + "\n";
+        });
+
+        var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement("a");
+        var url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", fileName);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    },
+
+    downloadPDF: function(headers, data, title) {
+        // Al ser una App pura de frontend sin librerías externas de PDF (como jsPDF),
+        // una solución robusta y compatible es usar el diálogo de impresión nativo
+        // enfocado solo en los datos. Alternativamente, generamos un HTML imprimible.
+        var printWindow = window.open('', '_blank');
+        var html = '<html><head><title>' + title + '</title>';
+        html += '<style>table{border-collapse:collapse;width:100%;font-family:sans-serif;}th,td{border:1px solid #ddd;padding:8px;text-align:left;}th{background-color:#f2f2f2;}h2{font-family:sans-serif;}</style>';
+        html += '</head><body>';
+        html += '<h2>' + title.replace(/_/g, ' ') + '</h2>';
+        html += '<table><thead><tr>';
+        headers.forEach(h => html += '<th>' + h + '</th>');
+        html += '</tr></thead><tbody>';
+        data.forEach(row => {
+            html += '<tr>';
+            row.forEach(cell => html += '<td>' + cell + '</td>');
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        html += '<script>window.onload = function() { window.print(); window.close(); };</script>';
+        html += '</body></html>';
+        
+        printWindow.document.write(html);
+        printWindow.document.close();
+    },
+
     setupSellerRegister: function() {
         var form = document.getElementById('seller-register-form');
         var messageDiv = document.getElementById('seller-reg-message');

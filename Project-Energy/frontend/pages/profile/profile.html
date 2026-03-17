@@ -374,8 +374,16 @@
                     <div class="admin-table-block">
                         <div class="admin-table-header">
                             <h3>👤 Contratos gestionados por vendedores</h3>
-                            <p>Contratos registrados a través de un vendedor. Se muestran incluso si el cliente eliminó su perfil.</p>
+                            <div class="admin-table-actions">
+                                <button type="button" class="btn btn-export excel" onclick="profilePage.exportTable('seller', 'excel')" title="Exportar a Excel">
+                                    📊 Excel
+                                </button>
+                                <button type="button" class="btn btn-export pdf" onclick="profilePage.exportTable('seller', 'pdf')" title="Exportar a PDF">
+                                    📕 PDF
+                                </button>
+                            </div>
                         </div>
+                        <p class="admin-table-desc">Contratos registrados a través de un vendedor. Se muestran incluso si el cliente eliminó su perfil.</p>
                         <div id="seller-contracts-loading" class="table-loading"
                              role="status" aria-live="polite" aria-label="Cargando contratos...">
                             <div class="loading-spinner" aria-hidden="true"></div>
@@ -409,8 +417,16 @@
                     <div class="admin-table-block">
                         <div class="admin-table-header">
                             <h3>🌐 Contratos realizados directamente por usuarios</h3>
-                            <p>Contratos contratados por usuarios desde la app sin intervención de un vendedor.</p>
+                            <div class="admin-table-actions">
+                                <button type="button" class="btn btn-export excel" onclick="profilePage.exportTable('direct', 'excel')" title="Exportar a Excel">
+                                    📊 Excel
+                                </button>
+                                <button type="button" class="btn btn-export pdf" onclick="profilePage.exportTable('direct', 'pdf')" title="Exportar a PDF">
+                                    📕 PDF
+                                </button>
+                            </div>
                         </div>
+                        <p class="admin-table-desc">Contratos contratados por usuarios desde la app sin intervención de un vendedor.</p>
                         <div id="direct-contracts-loading" class="table-loading"
                              role="status" aria-live="polite" aria-label="Cargando contratos...">
                             <div class="loading-spinner" aria-hidden="true"></div>
