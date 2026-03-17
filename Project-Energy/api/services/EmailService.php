@@ -1,17 +1,8 @@
 <?php
 /**
  * Email Service - Maneja el envío de correos electrónicos
- * Usa PHPMailer con SMTP (Gmail) — no requiere sendmail ni MTA del sistema
+ * Usa la configuración de sendmail para Gmail
  */
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
-
-// Autoloader de Composer (PHPMailer)
-require_once __DIR__ . '/../vendor/autoload.php';
-// Configuración SMTP
-require_once __DIR__ . '/../config/email.php';
 
 class EmailService {
     private $fromEmail;
@@ -19,9 +10,10 @@ class EmailService {
     private $baseUrl;
 
     public function __construct() {
-        $this->fromEmail = SMTP_FROM_EMAIL;
-        $this->fromName  = SMTP_FROM_NAME;
-
+        // Configuración del remitente
+        $this->fromEmail = 'no-reply@energyapp.com';
+        $this->fromName = 'Energy App';
+        
         // URL base para links de activación
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
@@ -131,41 +123,30 @@ HTML;
     }
 
     /**
-     * Función principal de envío de email via PHPMailer + SMTP
+     * Función principal de envío de email
      */
     private function sendEmail($to, $subject, $htmlMessage) {
-        $mail = new PHPMailer(true); // true = lanza excepciones
+        $headers = [
+            'MIME-Version: 1.0',
+            'Content-Type: text/html; charset=UTF-8',
+            'From: ' . $this->fromName . ' <' . $this->fromEmail . '>',
+            'Reply-To: ' . $this->fromEmail,
+            'X-Mailer: PHP/' . phpversion()
+        ];
 
-        try {
-            // ── Configuración del servidor SMTP ──────────────────────────
-            $mail->isSMTP();
-            $mail->Host       = SMTP_HOST;
-            $mail->SMTPAuth   = true;
-            $mail->Username   = SMTP_USER;
-            $mail->Password   = SMTP_PASS;
-            $mail->SMTPSecure = SMTP_ENCRYPTION === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = SMTP_PORT;
-            $mail->CharSet    = 'UTF-8';
+        $headersString = implode("\r\n", $headers);
 
-            // ── Remitente y destinatario ──────────────────────────────────
-            $mail->setFrom($this->fromEmail, $this->fromName);
-            $mail->addAddress($to);
-            $mail->addReplyTo($this->fromEmail, $this->fromName);
+        // Enviar email usando mail() (que usa sendmail)
+        $sent = mail($to, $subject, $htmlMessage, $headersString);
 
-            // ── Contenido ─────────────────────────────────────────────────
-            $mail->isHTML(true);
-            $mail->Subject = $subject;
-            $mail->Body    = $htmlMessage;
-            $mail->AltBody = strip_tags($htmlMessage);
-
-            $mail->send();
+        // Log para debugging
+        if ($sent) {
             error_log("✉️ Email enviado exitosamente a: {$to}");
-            return true;
-
-        } catch (Exception $e) {
-            error_log("❌ Error al enviar email a {$to}: " . $mail->ErrorInfo);
-            return false;
+        } else {
+            error_log("❌ Error al enviar email a: {$to}");
         }
+
+        return $sent;
     }
 
     /**

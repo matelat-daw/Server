@@ -1,7 +1,7 @@
 # Energy App - Configuración de rutas
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /Energy/
+    RewriteBase /Project-Energy/
     
     # Si el archivo o directorio existe, servirlo directamente
     RewriteCond %{REQUEST_FILENAME} !-f
@@ -53,16 +53,9 @@
     Header append Vary Accept-Encoding
     
     # Enlace al sitemap en cabecera HTTP
-    Header always set Link "</Energy/sitemap.xml>; rel=\"sitemap\"; type=\"application/xml\""
+    Header always set Link "</Project-Energy/sitemap.xml>; rel="sitemap"; type="application/xml""
 </IfModule>
 
-# Proteger la API de indexación directa
-<IfModule mod_rewrite.c>
-    RewriteCond %{REQUEST_URI} ^/Energy/api/
-    RewriteRule ^ - [F,L]
-</IfModule>
-
-# Tipo MIME correcto para manifest y sitemap
 AddType application/manifest+json .json
 AddType application/xml .xml
 AddType image/svg+xml .svg

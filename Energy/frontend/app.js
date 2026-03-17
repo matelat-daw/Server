@@ -25,23 +25,26 @@
         this.setupRouting();
     };
     
-    // Obtener ruta inicial desde el hash de la URL
+    // Obtener ruta inicial desde la URL
     App.prototype.getInitialRoute = function() {
-        var hash = window.location.hash;
+        var pathname = window.location.pathname;
+        var basePath = '/Energy/';
         
-        if (!hash || hash === '#' || hash === '#home') {
-            // Asegurar que la URL inicial sea correcta
-            window.history.replaceState({}, '', '/Energy/#home');
-            return 'home';
+        // Remover la ruta base y obtener el componente
+        var route = pathname.substring(basePath.length) || 'home';
+        
+        // Limpiar trailing slash
+        if (route.endsWith('/')) {
+            route = route.substring(0, route.length - 1);
         }
         
-        // Extraer nombre de la ruta (ej: #activate?token=... -> activate)
-        var route = hash.substring(1); // Quitar el #
+        // Extraer parámetros de query
         var questionMarkIndex = route.indexOf('?');
         if (questionMarkIndex > 0) {
             route = route.substring(0, questionMarkIndex);
         }
         
+        // Si no hay ruta o es vacía, ir a home
         return route || 'home';
     };
     
@@ -54,18 +57,10 @@
     App.prototype.setupRouting = function() {
         var self = this;
         
-        // Listener para hashchange (navegación manual en URL)
-        window.addEventListener('hashchange', function() {
-            var hashContent = window.location.hash.substring(1) || 'home';
-            var page = hashContent.split('?')[0] || 'home';
-            self.loadPageDirect(page);
-        });
-        
-        // Listener para botón atrás/adelante del navegador
+        // Listener para popstate (botón atrás/adelante del navegador)
         window.addEventListener('popstate', function(e) {
-            var hashContent = window.location.hash.substring(1) || 'home';
-            var page = hashContent.split('?')[0] || 'home';
-            self.loadPageDirect(page);
+            var route = self.getInitialRoute();
+            self.loadPageDirect(route);
         });
         
         // Listener para enlaces con data-route
@@ -87,7 +82,7 @@
     App.prototype.navigate = function(route) {
         if (this.currentPage === route) return;
         this.loadPageDirect(route);
-        window.history.pushState({}, '', '/Energy/#' + route);
+        window.history.pushState({}, '', '/Energy/' + route);
     };
     
     // Cargar página sin actualizar URL (usado internamente)
@@ -108,54 +103,54 @@
             'calculator': {
                 title: 'Calculadora de Ahorro Energético – Descubre Cuánto Puedes Ahorrar | Energy App',
                 description: 'Introduce tu consumo actual y descubre cuánto puedes ahorrar cambiando de proveedor de electricidad. Cálculo gratuito, inmediato y sin compromiso.',
-                canonical: BASE_URL + '/#calculator'
+                canonical: BASE_URL + '/calculator'
             },
             'results': {
                 title: 'Resultados de tu Ahorro en Electricidad | Energy App',
                 description: 'Consulta tu ahorro potencial con Naturgy. Hasta un 30% de descuento en tu factura de luz con energía 100% renovable y sin permanencia.',
-                canonical: BASE_URL + '/#results'
+                canonical: BASE_URL + '/results'
             },
             'about': {
                 title: 'Acerca de Energy App – Nuestra Misión y Servicios | Energy App',
                 description: 'Conoce Energy App: la plataforma española que ayuda a hogares y negocios a comparar tarifas eléctricas y reducir su consumo energético con transparencia y sin letra pequeña.',
-                canonical: BASE_URL + '/#about'
+                canonical: BASE_URL + '/about'
             },
             'contact': {
                 title: 'Contacto – Habla con Nuestro Equipo | Energy App',
                 description: 'Ponte en contacto con Energy App. Atención personalizada de lunes a viernes de 9:00 a 18:00. Llámanos al +34 900 123 456 o escríbenos por el formulario.',
-                canonical: BASE_URL + '/#contact'
+                canonical: BASE_URL + '/contact'
             },
             'privacy': {
                 title: 'Política de Privacidad | Energy App',
                 description: 'Consulta nuestra política de privacidad. Energy App cumple con el RGPD y garantiza la protección de tus datos personales en todo momento.',
-                canonical: BASE_URL + '/#privacy'
+                canonical: BASE_URL + '/privacy'
             },
             'login': {
                 title: 'Iniciar Sesión en tu Cuenta | Energy App',
                 description: 'Accede a tu cuenta de Energy App para gestionar tu contrato, consultar tu ahorro y administrar tu perfil energético.',
-                canonical: BASE_URL + '/#login'
+                canonical: BASE_URL + '/login'
             },
             'register': {
                 title: 'Crear Cuenta Gratuita | Energy App',
                 description: 'Regístrate gratis en Energy App y empieza a ahorrar en tu factura de electricidad. Solo necesitas tu email para comenzar.',
-                canonical: BASE_URL + '/#register'
+                canonical: BASE_URL + '/register'
             },
             'profile': {
                 title: 'Mi Perfil | Energy App',
                 description: 'Gestiona tu cuenta de Energy App: actualiza tus datos, consulta tu contrato actual y controla tu ahorro energético.',
-                canonical: BASE_URL + '/#profile'
+                canonical: BASE_URL + '/profile'
             },
             'activate': {
                 title: 'Activar Cuenta | Energy App',
                 description: 'Activa tu cuenta de Energy App para empezar a comparar tarifas de electricidad y ahorrar en tu factura de luz.',
-                canonical: BASE_URL + '/#activate'
+                canonical: BASE_URL + '/activate'
             }
         };
 
         var seo = seoData[pageName] || {
             title: pageName.charAt(0).toUpperCase() + pageName.slice(1) + ' | Energy App',
             description: 'Energy App – Compara proveedores de energía eléctrica en España y ahorra hasta un 30% en tu factura de luz.',
-            canonical: BASE_URL + '/#' + pageName
+            canonical: BASE_URL + '/' + pageName
         };
 
         // Actualizar <title>

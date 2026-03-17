@@ -6,27 +6,27 @@ User-agent: *
 Allow: /
 
 # Bloquear rutas privadas / de API
-Disallow: /Energy/api/
-Disallow: /Energy/database/
-Disallow: /Energy/frontend/services/
-Disallow: /Energy/frontend/utils/
+Disallow: /Project-Energy/api/
+Disallow: /Project-Energy/database/
+Disallow: /Project-Energy/frontend/services/
+Disallow: /Project-Energy/frontend/utils/
 
 # Bloquear páginas que requieren autenticación (no tiene valor SEO)
-Disallow: /Energy/#profile
-Disallow: /Energy/#activate
+Disallow: /Project-Energy/#profile
+Disallow: /Project-Energy/#activate
 
 # Reglas específicas para Googlebot
 User-agent: Googlebot
 Allow: /
-Disallow: /Energy/api/
+Disallow: /Project-Energy/api/
 
 # Reglas específicas para Bingbot
 User-agent: Bingbot
 Allow: /
-Disallow: /Energy/api/
+Disallow: /Project-Energy/api/
 
 # Tiempo de espera entre peticiones (segundos)
 Crawl-delay: 1
 
 # Sitemap
-Sitemap: https://www.energyapp.es/Energy/sitemap.xml
+Sitemap: https://www.energyapp.es/Project-Energy/sitemap.xml

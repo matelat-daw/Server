@@ -10,7 +10,15 @@ require_once __DIR__ . '/../controllers/ContractController.php';
 $router = new Router();
 
 // Base dinámica (evita hardcodear rutas)
-$apiBase = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+// Detectar si estamos en /Energy/api/ o /Project-Energy/api/
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+if (strpos($uri, '/Energy/api/') === 0) {
+    $apiBase = '/Energy/api';
+} elseif (strpos($uri, '/Project-Energy/api/') === 0) {
+    $apiBase = '/Project-Energy/api';
+} else {
+    $apiBase = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+}
 
 // ===============================
 // RUTAS DE AUTENTICACIÓN

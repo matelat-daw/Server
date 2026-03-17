@@ -12,7 +12,7 @@ var headerComponent = {
         var container = document.getElementById('header-component');
         if (!container) return;
         
-        fetch('/Energy/frontend/components/header/header.html')
+        fetch('/Project-Energy/frontend/components/header/header.html')
             .then(function(response) { return response.text(); })
             .then(function(html) {
                 container.innerHTML = html;
@@ -20,7 +20,7 @@ var headerComponent = {
                 // Cargar CSS del header
                 var link = document.createElement('link');
                 link.rel = 'stylesheet';
-                link.href = '/Energy/frontend/components/header/header.css';
+                link.href = '/Project-Energy/frontend/components/header/header.css';
                 document.head.appendChild(link);
                 
                 // Re-inicializar después de cargar HTML
