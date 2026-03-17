@@ -29,8 +29,40 @@ var apiService = {
                 });
             });
     },
+
+    /**
+     * Descargar archivo (Excel, PDF, etc.)
+     */
+    downloadFile: function(endpoint, filename) {
+        var url = this.baseURL + endpoint;
+        
+        return fetch(url, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Error en la descarga: ' + response.status);
+            }
+            return response.blob();
+        })
+        .then(function(blob) {
+            // Crear un link temporal para descargar
+            var link = document.createElement('a');
+            var blobUrl = window.URL.createObjectURL(blob);
+            link.href = blobUrl;
+            link.download = filename || 'archivo';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+        });
+    },
     
-    get: function(endpoint) {
+    get: function(endpoint, data, isDownload) {
+        if (isDownload) {
+            return this.downloadFile(endpoint, 'archivo');
+        }
         return this.request(endpoint, { method: 'GET' });
     },
     

@@ -831,6 +831,180 @@ var profilePage = {
                     registerBtn.disabled = false;
                 });
         };
+    },
+
+    /**
+     * Cargar contratos para la sección de administración
+     */
+    loadAdminContracts: function() {
+        if (this._adminContractsLoaded) return; // Evitar recarga innecesaria
+        
+        var self = this;
+        
+        window.apiService.get('/admin/contracts')
+            .then(function(response) {
+                self._adminContractsLoaded = true;
+                
+                if (response.data) {
+                    var sellerContracts = response.data.seller_contracts || [];
+                    var directContracts = response.data.direct_contracts || [];
+                    
+                    // Renderizar tabla de contratos por vendedor
+                    self.renderSellerContractsTable(sellerContracts);
+                    
+                    // Renderizar tabla de contratos directos
+                    self.renderDirectContractsTable(directContracts);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error al cargar contratos:', error);
+                var sellerLoadingDiv = document.getElementById('seller-contracts-loading');
+                if (sellerLoadingDiv) {
+                    sellerLoadingDiv.style.display = 'none';
+                }
+                var sellerEmptyDiv = document.getElementById('seller-contracts-empty');
+                if (sellerEmptyDiv) {
+                    sellerEmptyDiv.style.display = 'block';
+                    sellerEmptyDiv.textContent = '❌ Error al cargar los contratos';
+                }
+            });
+    },
+
+    /**
+     * Renderizar tabla de contratos por vendedor
+     */
+    renderSellerContractsTable: function(contracts) {
+        var loadingDiv = document.getElementById('seller-contracts-loading');
+        var emptyDiv = document.getElementById('seller-contracts-empty');
+        var tableWrap = document.getElementById('seller-contracts-table-wrap');
+        var tbody = document.getElementById('seller-contracts-tbody');
+        
+        if (!tbody) return;
+        
+        // Ocultar loading
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        
+        if (contracts.length === 0) {
+            if (emptyDiv) emptyDiv.style.display = 'block';
+            if (tableWrap) tableWrap.style.display = 'none';
+            return;
+        }
+        
+        // Mostrar tabla y llenar datos
+        if (tableWrap) tableWrap.style.display = 'block';
+        if (emptyDiv) emptyDiv.style.display = 'none';
+        
+        tbody.innerHTML = '';
+        
+        contracts.forEach(function(contract, index) {
+            var row = document.createElement('tr');
+            row.innerHTML = '<td>' + (index + 1) + '</td>' +
+                '<td>' + (contract.client_name || '-') + '</td>' +
+                '<td>' + (contract.client_email || '-') + '</td>' +
+                '<td>' + (contract.seller_name || '-') + '</td>' +
+                '<td>' + (contract.plan_name || '-') + '</td>' +
+                '<td>' + (contract.provider_name || '-') + '</td>' +
+                '<td><span class="status-badge status-' + (contract.status || 'pending') + '">' + 
+                    (contract.status || 'Desconocido') + '</span></td>' +
+                '<td>$' + (parseFloat(contract.commission_amount || 0).toFixed(2)) + '</td>' +
+                '<td>' + (new Date(contract.created_at).toLocaleDateString('es-ES') || '-') + '</td>';
+            tbody.appendChild(row);
+        });
+    },
+
+    /**
+     * Renderizar tabla de contratos directos
+     */
+    renderDirectContractsTable: function(contracts) {
+        var loadingDiv = document.getElementById('direct-contracts-loading');
+        var emptyDiv = document.getElementById('direct-contracts-empty');
+        var tableWrap = document.getElementById('direct-contracts-table-wrap');
+        var tbody = document.getElementById('direct-contracts-tbody');
+        
+        if (!tbody) return;
+        
+        // Ocultar loading
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        
+        if (contracts.length === 0) {
+            if (emptyDiv) emptyDiv.style.display = 'block';
+            if (tableWrap) tableWrap.style.display = 'none';
+            return;
+        }
+        
+        // Mostrar tabla y llenar datos
+        if (tableWrap) tableWrap.style.display = 'block';
+        if (emptyDiv) emptyDiv.style.display = 'none';
+        
+        tbody.innerHTML = '';
+        
+        contracts.forEach(function(contract, index) {
+            var row = document.createElement('tr');
+            row.innerHTML = '<td>' + (index + 1) + '</td>' +
+                '<td>' + (contract.client_name || '-') + '</td>' +
+                '<td>' + (contract.client_email || '-') + '</td>' +
+                '<td>' + (contract.plan_name || '-') + '</td>' +
+                '<td>' + (contract.provider_name || '-') + '</td>' +
+                '<td><span class="status-badge status-' + (contract.status || 'pending') + '">' + 
+                    (contract.status || 'Desconocido') + '</span></td>' +
+                '<td>$' + (parseFloat(contract.total_amount || 0).toFixed(2)) + '</td>' +
+                '<td>' + (new Date(contract.created_at).toLocaleDateString('es-ES') || '-') + '</td>';
+            tbody.appendChild(row);
+        });
+    },
+
+    /**
+     * Exportar contratos a Excel
+     */
+    exportToExcel: function() {
+        var exportBtn = document.getElementById('export-excel-btn');
+        if (exportBtn) {
+            exportBtn.classList.add('loading');
+            exportBtn.disabled = true;
+        }
+        
+        window.apiService.downloadFile('/admin/contracts/export/excel', 'Contratos_' + new Date().toISOString().split('T')[0] + '.xlsx')
+            .then(function() {
+                if (exportBtn) {
+                    exportBtn.classList.remove('loading');
+                    exportBtn.disabled = false;
+                }
+            })
+            .catch(function(error) {
+                console.error('Error al exportar a Excel:', error);
+                if (exportBtn) {
+                    exportBtn.classList.remove('loading');
+                    exportBtn.disabled = false;
+                }
+                alert('Error al descargar el archivo de Excel: ' + (error.message || 'Error desconocido'));
+            });
+    },
+
+    /**
+     * Exportar contratos a PDF
+     */
+    exportToPdf: function() {
+        var exportBtn = document.getElementById('export-pdf-btn');
+        if (exportBtn) {
+            exportBtn.classList.add('loading');
+            exportBtn.disabled = true;
+        }
+        
+        window.apiService.downloadFile('/admin/contracts/export/pdf', 'Contratos_' + new Date().toISOString().split('T')[0] + '.pdf')
+            .then(function() {
+                if (exportBtn) {
+                    exportBtn.classList.remove('loading');
+                    exportBtn.disabled = false;
+                }
+            })
+            .catch(function(error) {
+                console.error('Error al exportar a PDF:', error);
+                if (exportBtn) {
+                    exportBtn.classList.remove('loading');
+                    exportBtn.disabled = false;
+                }
+                alert('Error al descargar el archivo de PDF: ' + (error.message || 'Error desconocido'));
+            });
     }
 };
 

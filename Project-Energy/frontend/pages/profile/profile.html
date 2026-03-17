@@ -369,6 +369,20 @@
                  aria-labelledby="tab-admin-contracts-btn"
                  tabindex="0">
                 <div class="admin-contracts-section">
+                    
+                    <!-- Botones de descarga -->
+                    <div class="export-buttons-container" style="margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-success" id="export-excel-btn" 
+                                onclick="profilePage.exportToExcel()"
+                                title="Descargar todos los contratos en formato Excel">
+                            <span aria-hidden="true">📊</span> Descargar Excel
+                        </button>
+                        <button type="button" class="btn btn-danger" id="export-pdf-btn" 
+                                onclick="profilePage.exportToPdf()"
+                                title="Descargar todos los contratos en formato PDF">
+                            <span aria-hidden="true">📄</span> Descargar PDF
+                        </button>
+                    </div>
 
                     <!-- Tabla 1: Contratos por vendedores -->
                     <div class="admin-table-block">

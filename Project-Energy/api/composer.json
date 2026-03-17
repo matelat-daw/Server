@@ -2,7 +2,9 @@
     "name": "energy/api",
     "description": "Energy App API",
     "require": {
-        "phpmailer/phpmailer": "^6.9"
+        "phpmailer/phpmailer": "^6.9",
+        "phpoffice/phpspreadsheet": "^1.29",
+        "mpdf/mpdf": "^8.2"
     },
     "autoload": {
         "psr-4": {
