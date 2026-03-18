@@ -57,7 +57,7 @@ class ContractController {
     /**
      * Exportar contratos a Excel usando PhpSpreadsheet
      */
-    public function exportExcel() {
+    public function exportExcel($type) {
         $token = $this->getTokenFromRequest();
         if (!$token || !($decoded = JWT::decode($token)) || !in_array('admin', $decoded['roles'])) {
             return $this->sendResponse(403, false, "Acceso denegado");
@@ -67,33 +67,61 @@ class ContractController {
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         
-        $sheet->setCellValue('A1', 'Reporte de Contratos - Energy App');
-        $sheet->mergeCells('A1:I1');
-        
-        $headers = ['ID', 'Cliente', 'Email Cliente', 'Vendedor', 'Plan', 'Proveedor', 'Estado', 'Comisión', 'Fecha'];
-        $column = 'A';
-        foreach ($headers as $header) {
-            $sheet->setCellValue($column . '2', $header);
-            $column++;
-        }
+        if ($type === 'seller') {
+            $sheet->setCellValue('A1', 'Reporte de Contratos por Vendedores - Energy App');
+            $sheet->mergeCells('A1:I1');
+            
+            $headers = ['ID', 'Cliente', 'Email Cliente', 'Vendedor', 'Plan', 'Proveedor', 'Estado', 'Comisión', 'Fecha'];
+            $column = 'A';
+            foreach ($headers as $header) {
+                $sheet->setCellValue($column . '2', $header);
+                $column++;
+            }
 
-        $stmt = $this->contract->getAllSellerContracts();
-        $row = 3;
-        while ($c = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $sheet->setCellValue('A' . $row, 'CT-' . str_pad($c['id'], 6, '0', STR_PAD_LEFT));
-            $sheet->setCellValue('B' . $row, $c['client_first_name'] . ' ' . $c['client_last_name']);
-            $sheet->setCellValue('C' . $row, $c['client_email']);
-            $sheet->setCellValue('D' . $row, $c['seller_first_name'] . ' ' . $c['seller_last_name']);
-            $sheet->setCellValue('E' . $row, $c['plan_name']);
-            $sheet->setCellValue('F' . $row, $c['provider_name']);
-            $sheet->setCellValue('G' . $row, $c['status']);
-            $sheet->setCellValue('H' . $row, $c['commission_amount']);
-            $sheet->setCellValue('I' . $row, $c['created_at']);
-            $row++;
+            $stmt = $this->contract->getAllSellerContracts();
+            $row = 3;
+            while ($c = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $sheet->setCellValue('A' . $row, 'CT-' . str_pad($c['id'], 6, '0', STR_PAD_LEFT));
+                $sheet->setCellValue('B' . $row, $c['client_first_name'] . ' ' . $c['client_last_name']);
+                $sheet->setCellValue('C' . $row, $c['client_email']);
+                $sheet->setCellValue('D' . $row, $c['seller_first_name'] . ' ' . $c['seller_last_name']);
+                $sheet->setCellValue('E' . $row, $c['plan_name']);
+                $sheet->setCellValue('F' . $row, $c['provider_name']);
+                $sheet->setCellValue('G' . $row, $c['status']);
+                $sheet->setCellValue('H' . $row, $c['commission_amount']);
+                $sheet->setCellValue('I' . $row, $c['created_at']);
+                $row++;
+            }
+            $filename = 'Contratos_Vendedores.xlsx';
+        } else {
+            $sheet->setCellValue('A1', 'Reporte de Contratos Directos - Energy App');
+            $sheet->mergeCells('A1:H1');
+            
+            $headers = ['ID', 'Usuario', 'Email', 'Plan', 'Proveedor', 'Estado', 'Importe', 'Fecha'];
+            $column = 'A';
+            foreach ($headers as $header) {
+                $sheet->setCellValue($column . '2', $header);
+                $column++;
+            }
+
+            $stmt = $this->contract->getAllDirectContracts();
+            $row = 3;
+            while ($c = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $sheet->setCellValue('A' . $row, 'CT-' . str_pad($c['id'], 6, '0', STR_PAD_LEFT));
+                $sheet->setCellValue('B' . $row, $c['client_first_name'] . ' ' . $c['client_last_name']);
+                $sheet->setCellValue('C' . $row, $c['client_email']);
+                $sheet->setCellValue('D' . $row, $c['plan_name']);
+                $sheet->setCellValue('E' . $row, $c['provider_name']);
+                $sheet->setCellValue('F' . $row, $c['status']);
+                $sheet->setCellValue('G' . $row, $c['total_amount']);
+                $sheet->setCellValue('H' . $row, $c['created_at']);
+                $row++;
+            }
+            $filename = 'Contratos_Directos.xlsx';
         }
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Contratos_Energy.xlsx"');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
@@ -104,7 +132,7 @@ class ContractController {
     /**
      * Exportar contratos a PDF usando mPDF
      */
-    public function exportPdf() {
+    public function exportPdf($type) {
         $token = $this->getTokenFromRequest();
         if (!$token || !($decoded = JWT::decode($token)) || !in_array('admin', $decoded['roles'])) {
             return $this->sendResponse(403, false, "Acceso denegado");
@@ -113,26 +141,52 @@ class ContractController {
         require_once __DIR__ . '/../vendor/autoload.php';
         $mpdf = new \Mpdf\Mpdf();
 
-        $stmt = $this->contract->getAllSellerContracts();
-        $html = '<h1>Reporte de Contratos - Energy App</h1>';
-        $html .= '<table border="1" width="100%" style="border-collapse: collapse;">';
-        $html .= '<thead><tr style="background-color: #f2f2f2;"><th>ID</th><th>Cliente</th><th>Vendedor</th><th>Plan</th><th>Estado</th><th>Fecha</th></tr></thead>';
-        $html .= '<tbody>';
-        
-        while ($c = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $html .= '<tr>';
-            $html .= '<td>CT-' . str_pad($c['id'], 6, '0', STR_PAD_LEFT) . '</td>';
-            $html .= '<td>' . htmlspecialchars($c['client_first_name'] . ' ' . $c['client_last_name']) . '</td>';
-            $html .= '<td>' . htmlspecialchars($c['seller_first_name'] . ' ' . $c['seller_last_name']) . '</td>';
-            $html .= '<td>' . htmlspecialchars($c['plan_name']) . '</td>';
-            $html .= '<td>' . htmlspecialchars($c['status']) . '</td>';
-            $html .= '<td>' . htmlspecialchars($c['created_at']) . '</td>';
-            $html .= '</tr>';
+        if ($type === 'seller') {
+            $stmt = $this->contract->getAllSellerContracts();
+            $html = '<h1>Reporte de Contratos por Vendedores - Energy App</h1>';
+            $html .= '<table border="1" width="100%" style="border-collapse: collapse;">';
+            $html .= '<thead><tr style="background-color: #f2f2f2;"><th>ID</th><th>Cliente</th><th>Email</th><th>Vendedor</th><th>Plan</th><th>Proveedor</th><th>Estado</th><th>Comisión</th><th>Fecha</th></tr></thead>';
+            $html .= '<tbody>';
+            
+            while ($c = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $html .= '<tr>';
+                $html .= '<td>CT-' . str_pad($c['id'], 6, '0', STR_PAD_LEFT) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['client_first_name'] . ' ' . $c['client_last_name']) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['client_email']) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['seller_first_name'] . ' ' . $c['seller_last_name']) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['plan_name']) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['provider_name']) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['status']) . '</td>';
+                $html .= '<td>' . $c['commission_amount'] . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['created_at']) . '</td>';
+                $html .= '</tr>';
+            }
+            $filename = 'Contratos_Vendedores.pdf';
+        } else {
+            $stmt = $this->contract->getAllDirectContracts();
+            $html = '<h1>Reporte de Contratos Directos - Energy App</h1>';
+            $html .= '<table border="1" width="100%" style="border-collapse: collapse;">';
+            $html .= '<thead><tr style="background-color: #f2f2f2;"><th>ID</th><th>Usuario</th><th>Email</th><th>Plan</th><th>Proveedor</th><th>Estado</th><th>Importe</th><th>Fecha</th></tr></thead>';
+            $html .= '<tbody>';
+            
+            while ($c = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $html .= '<tr>';
+                $html .= '<td>CT-' . str_pad($c['id'], 6, '0', STR_PAD_LEFT) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['client_first_name'] . ' ' . $c['client_last_name']) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['client_email']) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['plan_name']) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['provider_name']) . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['status']) . '</td>';
+                $html .= '<td>' . $c['total_amount'] . '</td>';
+                $html .= '<td>' . htmlspecialchars($c['created_at']) . '</td>';
+                $html .= '</tr>';
+            }
+            $filename = 'Contratos_Directos.pdf';
         }
+        
         $html .= '</tbody></table>';
-
         $mpdf->WriteHTML($html);
-        $mpdf->Output('Contratos_Energy.pdf', 'D');
+        $mpdf->Output($filename, 'D');
         exit;
     }
 

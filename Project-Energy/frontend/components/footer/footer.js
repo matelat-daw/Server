@@ -8,15 +8,16 @@ var footerComponent = {
         var container = document.getElementById('footer-component');
         if (!container) return;
         
-        fetch('/Project-Energy/frontend/components/footer/footer.html')
+        var footer_url = '/Project-Energy/frontend/components/footer/footer.html?v=' + new Date().getTime();
+        fetch(footer_url)
             .then(function(response) { return response.text(); })
             .then(function(html) {
                 container.innerHTML = html;
                 
-                // Cargar CSS del footer
+                // Cargar CSS del footer (con cache buster)
                 var link = document.createElement('link');
                 link.rel = 'stylesheet';
-                link.href = '/Project-Energy/frontend/components/footer/footer.css';
+                link.href = '/Project-Energy/frontend/components/footer/footer.css?v=' + new Date().getTime();
                 document.head.appendChild(link);
             })
             .catch(function(error) {});

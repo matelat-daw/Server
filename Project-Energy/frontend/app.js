@@ -197,35 +197,24 @@
                     window.headerComponent.updateBreadcrumb();
                 }
                 
-                // Cargar CSS de la página
-                var cssUrl = '/Project-Energy/frontend/pages/' + pageName + '/' + pageName + '.css';
-                var existingLink = document.querySelector('link[href="' + cssUrl + '"]');
-                if (!existingLink) {
-                    var link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = cssUrl;
-                    document.head.appendChild(link);
-                }
+                // Cargar CSS de la página (con cache buster para evitar caching)
+                var cssUrl = '/Project-Energy/frontend/pages/' + pageName + '/' + pageName + '.css?v=' + new Date().getTime();
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = cssUrl;
+                document.head.appendChild(link);
                 
-                // Cargar JS de la página
-                var scriptUrl = '/Project-Energy/frontend/pages/' + pageName + '/' + pageName + '.js';
-                var existingScript = document.querySelector('script[src="' + scriptUrl + '"]');
-                if (!existingScript) {
-                    var script = document.createElement('script');
-                    script.src = scriptUrl;
-                    script.onload = function() {
-                        // Inicializar página si tiene método init
-                        if (window[pageName + 'Page'] && window[pageName + 'Page'].init) {
-                            window[pageName + 'Page'].init();
-                        }
-                    };
-                    document.body.appendChild(script);
-                } else {
-                    // Si el script ya existe, solo inicializar
+                // Cargar JS de la página (con cache buster para evitar caching)
+                var scriptUrl = '/Project-Energy/frontend/pages/' + pageName + '/' + pageName + '.js?v=' + new Date().getTime();
+                var script = document.createElement('script');
+                script.src = scriptUrl;
+                script.onload = function() {
+                    // Inicializar página si tiene método init
                     if (window[pageName + 'Page'] && window[pageName + 'Page'].init) {
                         window[pageName + 'Page'].init();
                     }
-                }
+                };
+                document.body.appendChild(script);
             })
             .catch(function(error) {
                 mainContent.innerHTML = 

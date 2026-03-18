@@ -733,7 +733,7 @@ var profilePage = {
     exportTable: function(type, format) {
         // Usar la exportación del lado del servidor para administradores
         if (this.currentUser.roles && this.currentUser.roles.includes('admin')) {
-            var endpoint = '/admin/contracts/export/' + (format === 'excel' ? 'excel' : 'pdf');
+            var endpoint = '/admin/contracts/export/' + type + '/' + (format === 'excel' ? 'excel' : 'pdf');
             var url = window.apiService.baseURL + endpoint;
             
             // Abrir en una nueva pestaña (el servidor enviará las cabeceras de descarga)
