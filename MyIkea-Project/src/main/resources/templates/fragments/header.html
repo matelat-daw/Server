@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+<header th:fragment="header" class="w-100 bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-primary bg-primary">
+        <div class="container">
+            <a href="/" class="navbar-brand text-light">MyIkea</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li th:if="${LOGGED}" class="nav-item">
+                        <a href="/productos" class="nav-link text-light">Muebles</a>
+                    </li>
+                    <li th:if="${LOGGED and ADMIN}" class="nav-item">
+                        <a href="/carrito" class="nav-link text-light">Carrito</a>
+                    </li>
+                    <li th:if="${LOGGED and ADMIN}" class="nav-item">
+                        <a href="/pedidos" class="nav-link text-light">Pedidos</a>
+                    </li>
+                    <li th:if="${LOGGED and ADMIN}" class="nav-item">
+                        <a href="/users" class="nav-link text-light">Usuarios</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li th:if="${not LOGGED}" class="nav-item">
+                        <a href="/login" class="nav-link text-light">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>&nbsp;&nbsp;
+                    <li th:if="${not LOGGED}" class="nav-item">
+                        <a href="/register" class="nav-link text-light">
+                            <i class="fas fa-user-plus"></i> Registrar
+                        </a>
+                    </li>
+                    <li th:if="${LOGGED}" class="nav-item">
+                            <span class="nav-link text-light">
+                                <i class="fas fa-user-circle"></i> <span th:text="${EMAIL}"></span>
+                            </span>
+                    </li>
+                    <li th:if="${LOGGED}" class="nav-item">
+                        <a href="/logout" class="nav-link text-light">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+</body>
+</html>

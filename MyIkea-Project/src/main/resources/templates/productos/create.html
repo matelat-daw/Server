@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Plantilla</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header th:replace="~{fragments/header:: header}"></header>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Crear Nuevo Producto</h1>
+        <form th:action="@{/productos/create}" th:object="${producto}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="productoName" class="form-label">Nombre del Producto</label>
+                <input type="text" class="form-control" id="productoName" th:field="*{productName}" placeholder="Ingrese el Nombre del Producto" required>
+            </div>
+            <div class="mb-3">
+                <label for="productoPrice" class="form-label">Precio del Producto</label>
+                <input type="number" step="0.01" class="form-control" id="productoPrice" th:field="*{productPrice}" placeholder="Ingrese el Precio del Producto" required>
+            </div>
+            <div class="mb-3">
+                <label for="productoStock" class="form-label">Stock del Producto</label>
+                <input type="number" class="form-control" id="productoStock" th:field="*{productStock}" placeholder="Ingrese el Stock" required>
+            </div>
+            <div class="mb-3">
+                <label for="productoPictureFile" class="form-label">Imagen del Producto</label>
+                <input type="file" class="form-control" id="productoPictureFile" th:field="*{productPictureFile}" accept="image/*">
+            </div>
+            <div class="mb-3">
+                <label for="provincia" class="form-label">Provincia</label>
+                <select class="form-select" id="provincia" th:field="*{municipio.provincia}" onchange="updateMunicipios()" required>
+                    <option value="" disabled selected>Selecciona una Provincia</option>
+                    <option th:each="provincia : ${provincias}" th:value="${provincia.idProvincia}" th:text="${provincia.nombre}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="municipio" class="form-label">Municipio</label>
+                <select class="form-select" id="municipio" th:field="*{municipio}" required>
+                    <option value="" disabled selected>Selecciona un Municipio</option>
+                    <option th:each="municipio : ${municipios}" th:value="${municipio.idMunicipio}" th:text="${municipio.nombre}" th:data-provincia="${municipio.provincia.idProvincia}"></option>
+                </select>
+            </div>
+            <div class="d-flex justify-content-between mt-5">
+                <a href="/productos" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar Producto</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function updateMunicipios() {
+            // Obtener el ID de la provincia seleccionada
+            const provinciaId = document.getElementById('provincia').value;
+            const municipios = document.querySelectorAll('#municipio option');
+
+            // Filtrar los municipios que pertenecen a la provincia seleccionada
+            municipios.forEach(municipio => {
+                if (municipio.getAttribute('data-provincia') === provinciaId || provinciaId === "") {
+                    municipio.style.display = "block"; // Mostrar el municipio
+                } else {
+                    municipio.style.display = "none"; // Ocultar el municipio
+                }
+            });
+        }
+
+        // Llamar a la función al cargar la página para asegurarse de que los municipios correctos se muestren
+        document.addEventListener('DOMContentLoaded', updateMunicipios);
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js" integrity="sha512-TPh2Oxlg1zp+kz3nFA0C5vVC6leG/6mm1z9+mA81MI5eaUVqasPLO8Cuk4gMF4gUfP5etR73rgU/8PNMsSesoQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js" integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>

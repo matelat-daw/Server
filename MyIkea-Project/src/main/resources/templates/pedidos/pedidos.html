@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Plantilla</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+<header th:replace="~{fragments/header:: header}"></header>
+
+<div class="container mt-5">
+  <h1>Lista de Pedidos</h1>
+  <div th:if="${pedidos == null or pedidos.isEmpty()}">
+    <div class="alert alert-warning" role="alert">
+      No tienes pedidos completados.
+    </div>
+  </div>
+  <table class="table table-striped mt-3" th:if="${pedidos != null and pedidos.size() > 0}">
+    <thead>
+    <tr>
+      <th scope="col">Fecha del Pedido</th>
+      <th scope="col">Total</th>
+      <th scope="col">Productos</th>
+      <th scope="col">Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pedido : ${pedidos}">
+      <td th:text="${#dates.format(pedido.fechaPedido, 'dd-MM-yyyy')}"></td>
+      <td th:text="${pedido.totalPrice}"></td>
+      <td>
+        <ul>
+          <li th:each="producto : ${pedido.products}" th:text="${producto.productName}"></li>
+        </ul>
+      </td>
+      <td>
+        <a th:href="@{/pedidos/details/{id}(id=${pedido.idPedido})}" class="btn btn-info">Detalles del Pedido</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a href="/productos" class="btn btn-primary mt-3">Seguir Comprando</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</body>
+</html>

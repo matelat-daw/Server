@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Plantilla</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <header th:replace="~{fragments/header:: header}"></header>
+
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">Detalles del Pedido</h1>
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Pedido ID: <span th:text="${pedidos.idPedido}"></span></h5>
+        <p class="card-text">
+          <strong>Fecha del Pedido:</strong> <span th:text="${#dates.format(pedidos.fechaPedido, 'dd-MM-yyyy')}"></span><br>
+          <strong>Total:</strong> $<span th:text="${pedidos.totalPrice}"></span><br>
+          <strong>Completado:</strong> <span th:text="${pedidos.completado ? 'Sí' : 'No'}"></span>
+        </p>
+      </div>
+    </div>
+    <h4 class="mb-3">Productos del Pedido</h4>
+    <div class="list-group">
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between" th:each="producto : ${pedido.products}">
+          <span th:text="${producto.productName}"></span>
+          <span>$<span th:text="${producto.productPrice}"></span></span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mt-4 text-center">
+      <a href="/pedidos" class="btn btn-secondary">Volver a la Lista de Pedidos</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</body>
+</html>
