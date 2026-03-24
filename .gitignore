@@ -1,10 +1,7 @@
 # Aplicaciones pesadas - no subir al repositorio
 moodle/
 wordpress/
-<<<<<<< HEAD
-=======
-.continue/
->>>>>>> 00405b6553fbf0b83cf74de0998ce4135d00baef
+MyIkea-Project
 
 # Backups
 *_backup_*/

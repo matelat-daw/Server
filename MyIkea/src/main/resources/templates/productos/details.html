@@ -55,7 +55,7 @@
 
                         <!-- Botón para agregar al carrito -->
                         <div class="d-flex justify-content-between">
-                            <a href="/carrito" th:if="${producto.productStock > 0 and ADMIN}" class="btn btn-success">Agregar al Carrito</a>
+                            <a th:href="@{/carrito/add/{id}(id=${producto.productId})}" th:if="${producto.productStock > 0 and ADMIN}" class="btn btn-success">Agregar al Carrito</a>
                             <a th:if="${producto.productStock == 0}" class="btn btn-secondary" disabled>Sin Stock</a>
                         </div>
                     </div>

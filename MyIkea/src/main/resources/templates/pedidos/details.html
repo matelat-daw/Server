@@ -12,11 +12,11 @@
     <h1 class="text-center mb-4">Detalles del Pedido</h1>
     <div class="card mb-4 shadow-sm">
       <div class="card-body">
-        <h5 class="card-title">Pedido ID: <span th:text="${pedidos.idPedido}"></span></h5>
+        <h5 class="card-title">Pedido ID: <span th:text="${pedido.idPedido}"></span></h5>
         <p class="card-text">
-          <strong>Fecha del Pedido:</strong> <span th:text="${#dates.format(pedidos.fechaPedido, 'dd-MM-yyyy')}"></span><br>
-          <strong>Total:</strong> $<span th:text="${pedidos.totalPrice}"></span><br>
-          <strong>Completado:</strong> <span th:text="${pedidos.completado ? 'Sí' : 'No'}"></span>
+          <strong>Fecha del Pedido:</strong> <span th:text="${#dates.format(pedido.fechaPedido, 'dd-MM-yyyy')}"></span><br>
+          <strong>Total:</strong> $<span th:text="${pedido.totalPrice}"></span><br>
+          <strong>Completado:</strong> <span th:text="${pedido.completado ? 'Sí' : 'No'}"></span>
         </p>
       </div>
     </div>

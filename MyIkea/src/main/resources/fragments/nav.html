@@ -1,15 +1,7 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Header</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body>
-<header th:fragment="header" class="w-100 bg-primary">
+<nav th:fragment="nav" class="w-100 bg-primary">
     <nav class="navbar navbar-expand-lg navbar-primary bg-primary">
         <div class="container">
-            <a href="/" class="navbar-brand text-light">MyIkea</a>
+            <a href="/static" class="navbar-brand text-light">MyIkea</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li th:if="${LOGGED}" class="nav-item">
@@ -50,6 +42,4 @@
             </div>
         </div>
     </nav>
-</header>
-</body>
-</html>
+</nav>

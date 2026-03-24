@@ -14,6 +14,7 @@ import com.futureprograms.MyIkea.Services.PedidoService;
 import com.futureprograms.MyIkea.Services.ProductService;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/")
@@ -44,7 +45,7 @@ public class PedidosController {
         Integer id_user = logged.getId();
         Pedido carrito = pes.getAllPedidos()
                 .stream()
-                .filter(c -> c.getUser().getId() == id_user && !c.getCompletado())
+                .filter(c -> Objects.equals(c.getUser().getId(), id_user) && !c.getCompletado())
                 .findFirst()
                 .orElseGet(() -> {
                     Pedido carritoNuevo = new Pedido();
@@ -128,6 +129,6 @@ public class PedidosController {
 
         model.addAttribute("pedido", pedido);
 
-        return "pedido/details";
+        return "pedidos/details";
     }
 }
