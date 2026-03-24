@@ -33,7 +33,7 @@ public class AuthController {
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute("user") User user) {
         userService.register(user);
-        return "redirect:/auth/login";
+        return "redirect:/login";
     }
 
     @GetMapping("/users")

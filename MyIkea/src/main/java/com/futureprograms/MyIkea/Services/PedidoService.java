@@ -7,6 +7,7 @@ import com.futureprograms.MyIkea.Models.Auth.User;
 import com.futureprograms.MyIkea.Repositories.PedidoRepository;
 import com.futureprograms.MyIkea.Repositories.ProductRepository;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -30,10 +31,25 @@ public class PedidoService {
         nuevoCarrito.setUser(user);
         nuevoCarrito.setCompletado(false);
         nuevoCarrito.setTotalPrice(0.0);
+        nuevoCarrito.setFechaPedido(new Date());
         return pr.save(nuevoCarrito);
     }
 
     public List<Pedido> getPedidosCompletados(User user){
-        return pr.findByCompletadoTrueAndUser(user);
+        List<Pedido> pedidos = pr.findByCompletadoTrueAndUser(user);
+        boolean updated = false;
+
+        for (Pedido pedido : pedidos) {
+            if (pedido.getFechaPedido() == null) {
+                pedido.setFechaPedido(new Date());
+                updated = true;
+            }
+        }
+
+        if (updated) {
+            pr.saveAll(pedidos);
+        }
+
+        return pedidos;
     }
 }

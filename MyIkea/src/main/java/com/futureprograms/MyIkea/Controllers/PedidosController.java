@@ -131,4 +131,16 @@ public class PedidosController {
 
         return "pedidos/details";
     }
+
+    @GetMapping("/pedidos/details/{id}/pagar")
+    public String pagarPedidoSimulado(@PathVariable Integer id) {
+        Pedido pedido = pes.getPedidoById(id);
+
+        if (pedido == null) {
+            return "redirect:/pedidos?error=Pedido+no+encontrado";
+        }
+
+        // Flujo simulado: no persiste cambios en base de datos.
+        return "redirect:/pedidos/details/" + id + "?pago=ok";
+    }
 }

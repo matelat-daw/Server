@@ -25,7 +25,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Desactiva CSRF si no es necesario
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/register", "/login").permitAll() // Rutas públicas
+                    .requestMatchers("/", "/register", "/login", "/error").permitAll() // Rutas públicas
+                    .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                         .requestMatchers("/productos/**").hasAnyRole("USER", "MANAGER", "ADMIN") // Acceso según roles
                         .requestMatchers("/users/**").hasRole("ADMIN") // Solo para ADMIN
                         .requestMatchers("/carrito/**").hasAnyRole( "ADMIN") // Acceso al carrito

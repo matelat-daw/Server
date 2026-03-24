@@ -1,5 +1,6 @@
 package com.futureprograms.MyIkea.Controllers;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,7 +11,9 @@ import com.futureprograms.MyIkea.Models.Auth.User;
 public class MainController {
     @ModelAttribute
     public void addAttributes(Model model, Authentication authentication) {
-        boolean isLoged = authentication != null;
+        boolean isLoged = authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken);
         boolean isAdmin = false;
         boolean isManager = false;
         String email = null;
@@ -20,8 +23,11 @@ public class MainController {
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
             isManager = authentication.getAuthorities().stream()
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_MANAGER"));
-            User logUser = (User) authentication.getPrincipal();
-            email = logUser.getEmail();
+
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof User logUser) {
+                email = logUser.getEmail();
+            }
         }
 
         model.addAttribute("LOGGED", isLoged);

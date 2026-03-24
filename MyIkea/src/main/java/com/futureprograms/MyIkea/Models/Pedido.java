@@ -19,6 +19,7 @@ public class Pedido {
     private Double totalPrice;
 
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaPedido;
 
     @Column
@@ -84,5 +85,13 @@ public class Pedido {
 
     public void setIdPedido(Integer idPedido) {
         this.idPedido = idPedido;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void ensureFechaPedido() {
+        if (fechaPedido == null) {
+            fechaPedido = new Date();
+        }
     }
 }
