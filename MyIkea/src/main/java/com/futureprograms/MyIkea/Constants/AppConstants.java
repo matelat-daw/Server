@@ -30,8 +30,8 @@ public class AppConstants {
     public static final String ATTR_EMAIL = "EMAIL";
     public static final String ATTR_PRODUCTOS = "productos";
     public static final String ATTR_PRODUCTO = "producto";
-    public static final String ATTR_CARRITO = "carrito";
-    public static final String ATTR_PEDIDOS = "pedidos";
+    public static final String ATTR_CART = "cart";
+    public static final String ATTR_ORDERS = "orders";
     public static final String ATTR_USUARIOS = "users";
     
     // Vistas
@@ -41,14 +41,14 @@ public class AppConstants {
     public static final String VIEW_PRODUCTOS_INDEX = "products/index";
     public static final String VIEW_PRODUCTOS_DETAILS = "products/details";
     public static final String VIEW_PRODUCTOS_CREATE = "products/create";
-    public static final String VIEW_CARRITO = "cart/carrito";
-    public static final String VIEW_PEDIDOS = "orders/pedidos";
-    public static final String VIEW_PEDIDOS_DETAILS = "orders/details";
+    public static final String VIEW_CART = "cart/cart";
+    public static final String VIEW_ORDERS = "orders/orders";
+    public static final String VIEW_ORDERS_DETAILS = "orders/details";
     public static final String VIEW_USERS = "auth/users";
     
     // Mensajes de error
     public static final String ERROR_PRODUCTO_NO_ENCONTRADO = "Producto no encontrado";
-    public static final String ERROR_CARRITO_VACIO = "No hay productos en el carrito";
+    public static final String ERROR_CART_EMPTY = "No hay productos en el carrito";
     public static final String ERROR_PEDIDO_NO_ENCONTRADO = "Pedido no encontrado";
     public static final String ERROR_USUARIO_NO_ENCONTRADO = "Usuario no encontrado";
     public static final String ERROR_SUBIR_ARCHIVO = "Error al Subir el Archivo";

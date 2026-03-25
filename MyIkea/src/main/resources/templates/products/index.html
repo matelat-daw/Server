@@ -12,7 +12,8 @@
         <div class="row g-4">
             <div class="col-lg-3 col-md-4 col-sm-6 col-12" th:each="producto : ${productos}">
                 <div class="card">
-                    <img th:src="@{'/images/' + ${producto.productPicture}}"
+                    <img th:src="@{'/images/' + ${producto.productPicture}}" 
+                         th:onerror="this.src='/images/default.jpg'"
                          th:alt="${producto.productPicture}" class="card-img-top"
                          style="height: 200px; width: 100%; object-fit: contain;"
                          onerror="this.onerror=null; this.src='/images/default.jpg';">
@@ -27,7 +28,7 @@
                                class="btn btn-success btn-sm">Detalles</a>
                             <a th:href="@{/cart/add/{id}(id=${producto.productId})}"
                                class="btn btn-primary btn-sm"
-                               th:if="${ADMIN}"
+                               th:if="${ADMIN ?: false}"
                                th:classappend="${producto.productStock == 0} ? 'disabled'">Comprar</a>
                         </div>
                     </div>

@@ -18,7 +18,7 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class FileUploadService {
     
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
     private static final String[] ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "gif", "webp"};
 
     /**
@@ -103,7 +103,7 @@ public class FileUploadService {
 
         // Validar tamaño
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException("El archivo es demasiado grande. Máximo 5MB");
+            throw new IllegalArgumentException("El archivo es demasiado grande. Máximo 10MB");
         }
 
         // Validar extensión

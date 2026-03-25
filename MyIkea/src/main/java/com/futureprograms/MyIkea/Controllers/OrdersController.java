@@ -29,8 +29,8 @@ public class OrdersController {
     @GetMapping("/cart")
     public String cart(Model model, @AuthenticationPrincipal User user) {
         Order cart = orderService.getCart(user);
-        model.addAttribute("carrito", cart);
-        return "cart/carrito";
+        model.addAttribute("cart", cart);
+        return "cart/cart";
     }
 
     @GetMapping("/cart/add/{id}")
@@ -40,9 +40,9 @@ public class OrdersController {
         productService.getProductById(id).ifPresentOrElse(
                 product -> {
                     orderService.addProductToCart(user, product);
-                    log.info("Producto {} añadido al carrito del usuario {}", id, user.getEmail());
+                    log.info("Product {} added to cart for user {}", id, user.getEmail());
                 },
-                () -> log.warn("Intento de añadir producto inexistente {} al carrito", id)
+                () -> log.warn("Attempt to add non-existent product {} to cart", id)
         );
         return "redirect:/cart";
     }
@@ -54,9 +54,9 @@ public class OrdersController {
         productService.getProductById(id).ifPresentOrElse(
                 product -> {
                     orderService.removeProductFromCart(user, product);
-                    log.info("Producto {} eliminado del carrito del usuario {}", id, user.getEmail());
+                    log.info("Product {} removed from cart for user {}", id, user.getEmail());
                 },
-                () -> log.warn("Intento de eliminar producto inexistente {} del carrito", id)
+                () -> log.warn("Attempt to remove non-existent product {} from cart", id)
         );
         return "redirect:/cart";
     }
@@ -66,8 +66,8 @@ public class OrdersController {
         if (user == null) return "redirect:/login";
 
         List<Order> orders = orderService.getCompletedOrders(user);
-        model.addAttribute("pedidos", orders);
-        return "orders/pedidos";
+        model.addAttribute("orders", orders);
+        return "orders/orders";
     }
 
     @GetMapping("/orders/complete")
@@ -75,22 +75,22 @@ public class OrdersController {
         if (user == null) return "redirect:/login";
 
         orderService.completeOrder(user);
-        log.info("Pedido completado para el usuario {}", user.getEmail());
+        log.info("Order completed for user {}", user.getEmail());
         return "redirect:/orders";
     }
 
     @GetMapping("/orders/details/{id}")
     public String orderDetails(@PathVariable Integer id, Model model) {
         orderService.getOrderById(id).ifPresentOrElse(
-                order -> model.addAttribute("pedido", order),
-                () -> model.addAttribute("error", "Pedido no encontrado")
+                order -> model.addAttribute("order", order),
+                () -> model.addAttribute("error", "Order not found")
         );
         return "orders/details";
     }
 
     @GetMapping("/orders/details/{id}/pay")
     public String payOrderSimulated(@PathVariable Integer id) {
-        // Simulación de pago
+        // Simulated payment
         return "redirect:/orders/details/" + id + "?pago=ok";
     }
 }

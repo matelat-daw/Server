@@ -7,11 +7,11 @@
     <div class="container mt-4 mb-6" style="margin-bottom: 8rem;">
         <h2>Carrito de Compras</h2>
 
-        <!-- Mensaje de error si no hay productos -->
+        <!-- Error message if present -->
         <div th:if="${error}" class="alert alert-warning" th:text="${error}"></div>
 
-        <!-- Mostrar productos si existen -->
-        <table class="table table-striped mt-3" th:if="${carrito != null and carrito.products != null and carrito.products.size() > 0}">
+        <!-- Show products if they exist -->
+        <table class="table table-striped mt-3" th:if="${cart != null and cart.products != null and cart.products.size() > 0}">
             <thead>
             <tr>
                 <th>Nombre</th>
@@ -21,41 +21,40 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="producto : ${carrito.products}" th:if="${producto != null}">
-                <td th:text="${producto.productName}"></td>
-                <td th:text="${producto.productPrice}"></td>
+            <tr th:each="product : ${cart.products}" th:if="${product != null}">
+                <td th:text="${product.productName}"></td>
+                <td th:text="${product.productPrice}"></td>
                 <td>1</td>
                 <td>
-                    <a th:href="@{/cart/remove/{id}(id=${producto.productId})}" class="btn btn-danger">Eliminar</a>
+                    <a th:href="@{/cart/remove/{id}(id=${product.productId})}" class="btn btn-danger">Eliminar</a>
                 </td>
             </tr>
             </tbody>
         </table>
 
-        <div th:if="${carrito == null or carrito.products == null or carrito.products.isEmpty()}">
+        <div th:if="${cart == null or cart.products == null or cart.products.isEmpty()}">
             <p class="text-muted">Tu Carrito Está Vacío.</p>
         </div>
 
-        <div th:if="${carrito != null and carrito.products != null and !carrito.products.isEmpty()}">
+        <div th:if="${cart != null and cart.products != null and !cart.products.isEmpty()}">
             <div class="d-flex justify-content-between mt-4">
                 <h3>Total: </h3>
-                <h3 th:text="${carrito.totalPrice}">0</h3>
+                <h3 th:text="${cart.totalPrice}">0</h3>
             </div>
         </div>
 
-        <!-- ✅ Botón de "Terminar Pedido" solo aparece cuando hay artículos -->
-        <div class="d-flex mt-3" th:if="${carrito != null and carrito.products != null and !carrito.products.isEmpty()}">
+        <!-- ✅ Checkout button only appears when there are items -->
+        <div class="d-flex mt-3" th:if="${cart != null and cart.products != null and !cart.products.isEmpty()}">
             <a href="/products" class="btn btn-primary">Seguir Comprando</a>
             <a href="/orders/complete" class="btn btn-success ms-3">Terminar Pedido</a>
         </div>
 
-        <!-- ✅ Mostrar solo botón "Seguir Comprando" cuando el carrito está vacío -->
-        <div class="d-flex mt-3" th:if="${carrito == null or carrito.products == null or carrito.products.isEmpty()}">
+        <!-- ✅ Show only "Continue Shopping" button when cart is empty -->
+        <div class="d-flex mt-3" th:if="${cart == null or cart.products == null or cart.products.isEmpty()}">
             <a href="/products" class="btn btn-primary">Seguir Comprando</a>
         </div>
     </div>
 
     <footer th:replace="~{fragments/footer::footer}"></footer>
     <th:block th:replace="~{fragments/scripts::scripts}"></th:block>
-</body>
-</html>
+</body></html>

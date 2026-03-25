@@ -22,6 +22,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <img th:src="@{'/images/' + ${producto.productPicture}}"
+                         th:onerror="this.src='/images/default.jpg'"
                          th:alt="${producto.productPicture}" class="img-fluid" style="height: 300px; object-fit: contain;"
                          onerror="this.onerror=null; this.src='/images/default.jpg';">
                 </div>
@@ -60,7 +61,7 @@
 
                         <!-- Botón para agregar al carrito -->
                         <div class="d-flex justify-content-between">
-                            <a th:href="@{/cart/add/{id}(id=${producto.productId})}" th:if="${producto.productStock > 0 and ADMIN}" class="btn btn-success">Agregar al Carrito</a>
+                            <a th:href="@{/cart/add/{id}(id=${producto.productId})}" th:if="${producto.productStock > 0 and (ADMIN ?: false)}" class="btn btn-success">Agregar al Carrito</a>
                             <a th:if="${producto.productStock == 0}" class="btn btn-secondary" disabled>Sin Stock</a>
                         </div>
                     </div>

@@ -8814,14 +8814,14 @@ CREATE TABLE `productoffer` (
 
 INSERT INTO `productoffer` (`product_id`, `product_name`, `product_price`, `product_picture`, `id_municipio`, `product_stock`) VALUES
 (1, 'Mesa Grande', 70, 'mesa_grande.jpg', 1, 4),
-(2, 'Mesa Pequeña', 100, 'mesa_pequeña.jpg', 1, 1),
+(2, 'Mesa Pequeña', 100, 'mesa_pequenia.jpg', 1, 1),
 (3, 'Mesa Mediana Negra', 70, 'mesa_mediana_negra.jpg', 2, 5),
 (4, 'Silla Normandia', 50, 'silla_normandia.jpg', 2, 1),
 (5, 'Silla Trono de Reyes', 70, 'silla_trono.jpg', 3, 7),
 (6, 'Aparador Normandia', 60, 'aparador_normandia.jpg', 3, 1),
 (7, 'Silla Ordenador Juegos', 70, 'silla_ordenador_juegos.jpg', 2, 8),
 (8, 'Mesa Juego Tronos', 100, 'mesa_juego_tronos.jpg', 1, 0),
-(9, 'cama juego de tronos', 1000, 'camajuegodetronos.jpeg', 2, 2);
+(9, 'cama juego de tronos', 1000, 'default.jpg', 2, 2);
 
 -- --------------------------------------------------------
 
