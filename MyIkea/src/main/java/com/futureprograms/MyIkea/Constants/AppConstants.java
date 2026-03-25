@@ -18,9 +18,9 @@ public class AppConstants {
     public static final String ROUTE_HOME = "/";
     public static final String ROUTE_LOGIN = "/login";
     public static final String ROUTE_REGISTER = "/register";
-    public static final String ROUTE_PRODUCTOS = "/productos";
-    public static final String ROUTE_CARRITO = "/carrito";
-    public static final String ROUTE_PEDIDOS = "/pedidos";
+    public static final String ROUTE_PRODUCTOS = "/products";
+    public static final String ROUTE_CARRITO = "/cart";
+    public static final String ROUTE_PEDIDOS = "/orders";
     public static final String ROUTE_USERS = "/users";
     
     // Atributos de modelo
@@ -38,12 +38,12 @@ public class AppConstants {
     public static final String VIEW_INDEX = "index";
     public static final String VIEW_LOGIN = "auth/login";
     public static final String VIEW_REGISTER = "auth/register";
-    public static final String VIEW_PRODUCTOS_INDEX = "productos/index";
-    public static final String VIEW_PRODUCTOS_DETAILS = "productos/details";
-    public static final String VIEW_PRODUCTOS_CREATE = "productos/create";
-    public static final String VIEW_CARRITO = "carrito/carrito";
-    public static final String VIEW_PEDIDOS = "pedidos/pedidos";
-    public static final String VIEW_PEDIDOS_DETAILS = "pedidos/details";
+    public static final String VIEW_PRODUCTOS_INDEX = "products/index";
+    public static final String VIEW_PRODUCTOS_DETAILS = "products/details";
+    public static final String VIEW_PRODUCTOS_CREATE = "products/create";
+    public static final String VIEW_CARRITO = "cart/carrito";
+    public static final String VIEW_PEDIDOS = "orders/pedidos";
+    public static final String VIEW_PEDIDOS_DETAILS = "orders/details";
     public static final String VIEW_USERS = "auth/users";
     
     // Mensajes de error

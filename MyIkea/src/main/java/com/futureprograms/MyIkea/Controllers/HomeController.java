@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class HomeController {
     @GetMapping("/")
     public String home(Model model) {
-        return "index";
+        // Redirige a la página de productos como página de inicio
+        return "redirect:/products";
     }
 }

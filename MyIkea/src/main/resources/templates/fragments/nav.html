@@ -5,13 +5,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li th:if="${LOGGED}" class="nav-item">
-                        <a href="/productos" class="nav-link text-light">Muebles</a>
+                        <a href="/products" class="nav-link text-light">Muebles</a>
                     </li>
                     <li th:if="${LOGGED and ADMIN}" class="nav-item">
-                        <a href="/carrito" class="nav-link text-light">Carrito</a>
+                        <a href="/cart" class="nav-link text-light">Carrito</a>
                     </li>
                     <li th:if="${LOGGED and ADMIN}" class="nav-item">
-                        <a href="/pedidos" class="nav-link text-light">Pedidos</a>
+                        <a href="/orders" class="nav-link text-light">Pedidos</a>
                     </li>
                     <li th:if="${LOGGED and ADMIN}" class="nav-item">
                         <a href="/users" class="nav-link text-light">Usuarios</a>

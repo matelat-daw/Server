@@ -18,17 +18,17 @@ import java.util.Objects;
 
 @Controller
 @RequestMapping("/")
-public class PedidosController {
+public class OrdersController {
     private final ProductService productService;
     private final PedidoService pedidoService;
 
-    public PedidosController(ProductService productService, PedidoService pedidoService) {
+    public OrdersController(ProductService productService, PedidoService pedidoService) {
         this.productService = productService;
         this.pedidoService = pedidoService;
     }
 
-    @GetMapping("/carrito")
-    public String carrito(Model model, Authentication authentication) {
+    @GetMapping("/cart")
+    public String cart(Model model, Authentication authentication) {
         User logged = (User) authentication.getPrincipal();
         Pedido carrito = pedidoService.carrito(logged);
 
@@ -37,11 +37,10 @@ public class PedidosController {
         } else {
             model.addAttribute("carrito", carrito);
         }
-
-        return "carrito/carrito";
+        return "cart/carrito";
     }
 
-    @GetMapping("/carrito/add/{id}")
+    @GetMapping("/cart/add/{id}")
     public String addCart(@PathVariable Integer id, Model model, Authentication authentication) {
         User logged = (User) authentication.getPrincipal();
         Integer idUser = logged.getId();
@@ -72,22 +71,22 @@ public class PedidosController {
         pedidoService.savePedido(carrito);
         productService.saveProduct(producto);
 
-        return "redirect:/carrito";
+        return "redirect:/cart";
     }
 
-    @GetMapping("/carrito/remove/{id}")
-    public String removeFromCarrito(@PathVariable Integer id, Authentication authentication) {
+    @GetMapping("/cart/remove/{id}")
+    public String removeFromCart(@PathVariable Integer id, Authentication authentication) {
         User logged = (User) authentication.getPrincipal();
 
         Pedido carrito = pedidoService.carrito(logged);
 
         if (carrito == null) {
-            return "redirect:/carrito?error=No+hay+compra+pendiente";
+            return "redirect:/cart?error=No+hay+compra+pendiente";
         }
 
         Product producto = productService.getProductById(id).orElse(null);
         if (producto == null) {
-            return "redirect:/carrito?error=Producto+no+encontrado";
+            return "redirect:/cart?error=Producto+no+encontrado";
         }
 
         if (carrito.getProducts().remove(producto)) {
@@ -95,54 +94,54 @@ public class PedidosController {
             pedidoService.savePedido(carrito);
         }
 
-        return "redirect:/carrito";
+        return "redirect:/cart";
     }
 
-    @GetMapping("/pedidos")
-    public String pedidos(Model model, Authentication authentication) {
+    @GetMapping("/orders")
+    public String orders(Model model, Authentication authentication) {
         User logged = (User) authentication.getPrincipal();
         List<Pedido> pedidos = pedidoService.getPedidosCompletados(logged);
         model.addAttribute("pedidos", pedidos);
-        return "pedidos/pedidos";
+        return "orders/pedidos";
     }
 
-    @GetMapping("/pedidos/completar")
-    public String completarPedido(Authentication authentication) {
+    @GetMapping("/orders/complete")
+    public String completeOrder(Authentication authentication) {
         User logged = (User) authentication.getPrincipal();
 
         Pedido carrito = pedidoService.carrito(logged);
 
         if (carrito == null) {
-            return "redirect:/carrito?error=No+hay+carrito";
+            return "redirect:/cart?error=No+hay+carrito";
         }
 
         carrito.setCompletado(true);
         pedidoService.savePedido(carrito);
 
-        return "redirect:/pedidos";
+        return "redirect:/orders";
     }
 
-    @GetMapping("/pedidos/details/{id}")
-    public String detailsPedido(@PathVariable Integer id, Model model) {
+    @GetMapping("/orders/details/{id}")
+    public String orderDetails(@PathVariable Integer id, Model model) {
         Pedido pedido = pedidoService.getPedidoById(id);
 
         if (pedido == null) {
-            return "redirect:/pedidos?error=Pedido+no+encontrado";
+            return "redirect:/orders?error=Pedido+no+encontrado";
         }
 
         model.addAttribute("pedido", pedido);
-        return "pedidos/details";
+        return "orders/details";
     }
 
-    @GetMapping("/pedidos/details/{id}/pagar")
-    public String pagarPedidoSimulado(@PathVariable Integer id) {
+    @GetMapping("/orders/details/{id}/pay")
+    public String payOrderSimulated(@PathVariable Integer id) {
         Pedido pedido = pedidoService.getPedidoById(id);
 
         if (pedido == null) {
-            return "redirect:/pedidos?error=Pedido+no+encontrado";
+            return "redirect:/orders?error=Pedido+no+encontrado";
         }
 
         // Flujo simulado: no persiste cambios en base de datos.
-        return "redirect:/pedidos/details/" + id + "?pago=ok";
+        return "redirect:/orders/details/" + id + "?pago=ok";
     }
 }

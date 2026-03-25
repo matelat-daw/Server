@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Plantilla</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
+<head th:replace="~{fragments/head::head}"></head>
 <body>
-    <header th:replace="~{fragments/header:: header}"></header>
+    <header th:replace="~{fragments/header::header}"></header>
 
-    <div class="container mt-5">
+    <div class="container mt-5 mb-6" style="margin-bottom: 8rem;">
+        <!-- Error si producto no existe -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>❌ Error</strong>
+            <p class="mb-0" th:text="${error}"></p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Contenido si producto existe -->
+        <th:block th:if="${producto}">
         <!-- Título de producto -->
         <h1 th:text="${producto.productName}" class="text-center mb-4"></h1>
 
@@ -55,16 +60,26 @@
 
                         <!-- Botón para agregar al carrito -->
                         <div class="d-flex justify-content-between">
-                            <a th:href="@{/carrito/add/{id}(id=${producto.productId})}" th:if="${producto.productStock > 0 and ADMIN}" class="btn btn-success">Agregar al Carrito</a>
+                            <a th:href="@{/cart/add/{id}(id=${producto.productId})}" th:if="${producto.productStock > 0 and ADMIN}" class="btn btn-success">Agregar al Carrito</a>
                             <a th:if="${producto.productStock == 0}" class="btn btn-secondary" disabled>Sin Stock</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        </th:block>
+    </div>
+
+    <footer th:replace="~{fragments/footer::footer}"></footer>
+    <th:block th:replace="~{fragments/scripts::scripts}"></th:block>
+</body>
+</html>
+
+            </div>
+        </div>
 
         <div class="mt-4">
-            <a href="/productos" class="btn btn-primary">Volver a la lista de productos</a>
+            <a href="/products" class="btn btn-primary">Volver a la lista de productos</a>
         </div>
     </div>
 

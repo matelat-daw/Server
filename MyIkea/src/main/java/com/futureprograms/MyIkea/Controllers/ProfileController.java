@@ -35,7 +35,7 @@ public class ProfileController {
         
         User user = userService.findByUsername(authentication.getName());
         model.addAttribute("user", user);
-        return "perfil/profile";
+        return "profile/profile";
     }
     
     /**

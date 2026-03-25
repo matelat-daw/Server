@@ -1,35 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil - MyIkea</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-</head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head::head}"></head>
 <body class="bg-light">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-primary bg-primary">
-        <div class="container">
-            <a href="/" class="navbar-brand text-light">MyIkea</a>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <span class="nav-link text-light">
-                            <i class="fas fa-user-circle"></i> Mi Perfil
-                        </span>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/logout" class="nav-link text-light">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <header th:replace="~{fragments/header::header}"></header>
 
-    <div class="container py-5">
+    <div class="container py-5 mb-6" style="margin-bottom: 8rem;">
         <!-- Título -->
         <div class="row mb-5">
             <div class="col-12">
@@ -53,6 +28,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
+        <!-- Validar que usuario existe -->
+        <th:block th:if="${user}">
         <!-- Contenido principal -->
         <div class="row gap-4">
             <!-- Panel lateral -->
@@ -204,6 +181,7 @@
                 </div>
             </div>
         </div>
+        </th:block>
     </div>
 
     <!-- Modal eliminar -->
@@ -236,20 +214,9 @@
         </div>
     </div>
 
-    <!-- Footer simple -->
-    <footer class="bg-light border-top mt-5 py-4">
-        <div class="container text-center text-muted">
-            <p class="mb-0">MyIkea - 2026</p>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('picInput').addEventListener('change', function() {
-            if (this.files[0]) {
-                document.getElementById('submitBtn').classList.remove('d-none');
-            }
-        });
-    </script>
+    <footer th:replace="~{fragments/footer::footer}"></footer>
+    <!-- Script para subida de foto de perfil -->
+    <th:block th:include="~{fragments/profile-picture-upload::profilePictureUpload}"></th:block>
+    <th:block th:replace="~{fragments/scripts::scripts}"></th:block>
 </body>
 </html>

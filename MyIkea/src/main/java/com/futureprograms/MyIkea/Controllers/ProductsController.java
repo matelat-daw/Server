@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Controller
-@RequestMapping("/productos")
+@RequestMapping("/products")
 public class ProductsController {
     private static final Logger LOGGER = Logger.getLogger(ProductsController.class.getName());
     private final ProductService productService;
@@ -44,7 +44,7 @@ public class ProductsController {
         model.addAttribute("ADMIN", isAdmin);
         model.addAttribute("CAN_CREATE", isManagerOrAdmin);
 
-        return "productos/index";
+        return "products/index";
     }
 
     @GetMapping("/details/{id}")
@@ -53,7 +53,7 @@ public class ProductsController {
                 product -> model.addAttribute("producto", product),
                 () -> model.addAttribute("error", "Producto no encontrado")
         );
-        return "productos/details";
+        return "products/details";
     }
 
     @GetMapping("/create")
@@ -65,7 +65,7 @@ public class ProductsController {
         
         if (!isManagerOrAdmin) {
             LOGGER.warning("Intento no autorizado de acceso a crear producto por usuario: " + authentication.getName());
-            return "redirect:/productos";
+            return "redirect:/products";
         }
 
         List<Province> provincias = locationService.getAllProvincias();
@@ -102,7 +102,7 @@ public class ProductsController {
             model.addAttribute("producto", producto);
             model.addAttribute("provincias", locationService.getAllProvincias());
             model.addAttribute("municipios", locationService.getAllMunicipios());
-            return "productos/create";
+            return "products/create";
         }
 
         // Usar el archivo de @RequestParam primero, luego el del objeto si es necesario
@@ -130,7 +130,7 @@ public class ProductsController {
             System.out.println("========== PRODUCTO CREADO EXITOSAMENTE ==========\n");
             System.out.flush();
             
-            return "redirect:/productos";
+            return "redirect:/products";
             
         } catch (IllegalArgumentException e) {
             LOGGER.warning("Validación de archivo fallida: " + e.getMessage());
@@ -140,7 +140,7 @@ public class ProductsController {
             model.addAttribute("producto", producto);
             model.addAttribute("provincias", locationService.getAllProvincias());
             model.addAttribute("municipios", locationService.getAllMunicipios());
-            return "productos/create";
+            return "products/create";
             
         } catch (Exception e) {
             LOGGER.severe("Error al guardar producto: " + e.getMessage());
@@ -151,7 +151,7 @@ public class ProductsController {
             model.addAttribute("producto", producto);
             model.addAttribute("provincias", locationService.getAllProvincias());
             model.addAttribute("municipios", locationService.getAllMunicipios());
-            return "productos/create";
+            return "products/create";
         }
     }
 }

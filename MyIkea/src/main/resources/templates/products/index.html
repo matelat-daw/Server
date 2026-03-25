@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head::head}"><title></title></head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head::head}"></head>
 <body>
-    <header th:replace="~{fragments/header:: header}"></header>
+    <header th:replace="~{fragments/header::header}"></header>
 
     <div class="container mt-4 mb-6" style="margin-bottom: 8rem;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3">Nuestros Muebles</h1>
-            <a href="/productos/create" class="btn btn-primary" th:if="${CAN_CREATE}">Nuevo Producto</a>
+            <a href="/products/create" class="btn btn-primary" th:if="${CAN_CREATE}">Nuevo Producto</a>
         </div>
         <div class="row g-4">
             <div class="col-lg-3 col-md-4 col-sm-6 col-12" th:each="producto : ${productos}">
@@ -23,9 +23,9 @@
                         <p class="card-text" th:text="'Municipio: ' + ${producto.municipio.nombre}"></p>
                         <p class="card-text" th:text="'Provincia: ' + ${producto.municipio.provincia.nombre}"></p>
                         <div class="d-flex justify-content-between">
-                            <a th:href="@{'/productos/details/' + ${producto.productId}}"
+                            <a th:href="@{'/products/details/' + ${producto.productId}}"
                                class="btn btn-success btn-sm">Detalles</a>
-                            <a th:href="@{/carrito/add/{id}(id=${producto.productId})}"
+                            <a th:href="@{/cart/add/{id}(id=${producto.productId})}"
                                class="btn btn-primary btn-sm"
                                th:if="${ADMIN}"
                                th:classappend="${producto.productStock == 0} ? 'disabled'">Comprar</a>
@@ -36,8 +36,7 @@
         </div>
     </div>
 
-    <footer th:replace="~{fragments/footer:: footer}"></footer>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js" integrity="sha512-TPh2Oxlg1zp+kz3nFA0C5vVC6leG/6mm1z9+mA81MI5eaUVqasPLO8Cuk4gMF4gUfP5etR73rgU/8PNMsSesoQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js" integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <footer th:replace="~{fragments/footer::footer}"></footer>
+    <th:block th:replace="~{fragments/scripts::scripts}"></th:block>
 </body>
 </html>

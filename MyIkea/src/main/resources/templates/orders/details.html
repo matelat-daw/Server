@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head::head}"></head>
+<body>
+    <header th:replace="~{fragments/header::header}"></header>
+
+    <div class="container mt-5 mb-6" style="margin-bottom: 8rem;">
+        <h1 class="text-center mb-4">Detalles del Pedido</h1>
+        
+        <!-- Validar que pedido existe -->
+        <th:block th:if="${pedido}">
+            <div th:if="${param.pago}" class="alert alert-success" role="alert">
+                Pago simulado completado. No se realizaron cambios en la base de datos.
+            </div>
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Pedido ID: <span th:text="${pedido.idPedido}"></span></h5>
+                    <p class="card-text">
+                        <strong>Fecha del Pedido:</strong> <span th:text="${#dates.format(pedido.fechaPedido, 'dd-MM-yyyy')}"></span><br>
+                        <strong>Total:</strong> $<span th:text="${pedido.totalPrice}"></span><br>
+                        <strong>Completado:</strong> <span th:text="${pedido.completado ? 'Sí' : 'No'}"></span>
+                    </p>
+                </div>
+            </div>
+            <h4 class="mb-3">Productos del Pedido</h4>
+            <div class="list-group">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between" th:each="producto : ${pedido.products}">
+                        <span th:text="${producto.productName}"></span>
+                        <span>$<span th:text="${producto.productPrice}"></span></span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Back Button -->
+            <div class="mt-4 text-center d-flex justify-content-center gap-2">
+                <a th:href="@{/orders/details/{id}/pay(id=${pedido.idPedido})}" class="btn btn-success">Terminar y Pagar (simulado)</a>
+                <a href="/orders" class="btn btn-secondary">Volver a la Lista de Pedidos</a>
+            </div>
+        </th:block>
+    </div>
+
+    <footer th:replace="~{fragments/footer::footer}"></footer>
+    <th:block th:replace="~{fragments/scripts::scripts}"></th:block>
+</body>
+</html>

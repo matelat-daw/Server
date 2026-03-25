@@ -1,0 +1,8 @@
+<!-- Fragment: Script para el formulario de foto de perfil -->
+<script th:fragment="profilePictureUpload" xmlns:th="http://www.thymeleaf.org">
+    document.getElementById('picInput').addEventListener('change', function() {
+        if (this.files[0]) {
+            document.getElementById('submitBtn').classList.remove('d-none');
+        }
+    });
+</script>
