@@ -1,23 +1,23 @@
 package com.futureprograms.MyIkea.Controllers;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.futureprograms.MyIkea.Models.Auth.User;
-import com.futureprograms.MyIkea.Repositories.Auth.RoleRepository;
 import com.futureprograms.MyIkea.Services.auth.UserService;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 public class AuthController {
-    @Autowired
-    UserService userService;
-    @Autowired
-    RoleRepository roleRepository;
+    private final UserService userService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/login")
     public String login() {
@@ -31,7 +31,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("user") User user) {
+    public String registerUser(@Valid @ModelAttribute("user") User user, @RequestParam("confirmPassword") String confirmPassword, Model model) {
+        // Validar que las contraseñas coincidan
+        if (!user.getPassword().equals(confirmPassword)) {
+            model.addAttribute("user", user);
+            return "redirect:/register?passwordMismatch=true";
+        }
+        
         userService.register(user);
         return "redirect:/login";
     }
@@ -48,13 +54,12 @@ public class AuthController {
     }
 
     @GetMapping("/users/delete/{id}")
-    public String deleteUser(@PathVariable Integer id, Model model) {
+    public String deleteUser(@PathVariable Integer id) {
         try {
-            userService.deleteById(id);  // Elimina el usuario
+            userService.deleteById(id);
             return "redirect:/users";
         } catch (Exception e) {
-            model.addAttribute("error", "No se pudo eliminar el usuario: " + e.getMessage());
-            return "redirect:/users";
+            return "redirect:/users?error=" + e.getMessage();
         }
     }
 }

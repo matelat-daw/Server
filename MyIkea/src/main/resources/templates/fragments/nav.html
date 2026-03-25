@@ -25,13 +25,18 @@
                     </li>&nbsp;&nbsp;
                     <li th:if="${not LOGGED}" class="nav-item">
                         <a href="/register" class="nav-link text-light">
-                            <i class="fas fa-user-plus"></i> Registrar
+                            <i class="fas fa-user-plus"></i> Regístrate
                         </a>
                     </li>
                     <li th:if="${LOGGED}" class="nav-item">
                         <span class="nav-link text-light">
                             <i class="fas fa-user-circle"></i> <span th:text="${EMAIL}"></span>
                         </span>
+                    </li>
+                    <li th:if="${LOGGED}" class="nav-item">
+                        <a href="/profile" class="nav-link text-light">
+                            <i class="fas fa-cog"></i> Mi Perfil
+                        </a>
                     </li>
                     <li th:if="${LOGGED}" class="nav-item">
                         <a href="/logout" class="nav-link text-light">

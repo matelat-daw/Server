@@ -1,6 +1,5 @@
 package com.futureprograms.MyIkea.Services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.futureprograms.MyIkea.Models.Municipality;
 import com.futureprograms.MyIkea.Models.Province;
@@ -11,36 +10,51 @@ import java.util.List;
 
 @Service
 public class LocationService {
-    @Autowired
-    private MunicipalityRepository Mr;
-    @Autowired
-    private ProvinceRepository provinciaRepository;
+    private final MunicipalityRepository municipalityRepository;
+    private final ProvinceRepository provinceRepository;
+
+    public LocationService(MunicipalityRepository municipalityRepository, ProvinceRepository provinceRepository) {
+        this.municipalityRepository = municipalityRepository;
+        this.provinceRepository = provinceRepository;
+    }
 
     public List<Municipality> getAllMunicipios() {
-        return Mr.findAll();
+        return municipalityRepository.findAll();
     }
 
     public Municipality getMunicipioById(Integer id) {
-        return Mr.findById(id).orElse(null);
+        return municipalityRepository.findById(id).orElse(null);
     }
 
     public List<Municipality> getMunicipiosByProvincia(Province provincia) {
-        return Mr.findByProvincia(provincia);
+        return municipalityRepository.findByProvincia(provincia);
+    }
+
+    public List<Municipality> getMunicipiosByProvinciaId(Integer idProvincia) {
+        return municipalityRepository.findByProvinciaIdProvincia(idProvincia);
     }
 
     public Municipality saveMunicipio(Municipality municipio) {
-        return Mr.save(municipio);
+        return municipalityRepository.save(municipio);
     }
 
     public void deleteMunicipio(Integer id) {
-        Mr.deleteById(id);
-    }
-
-    public List<Municipality> getMunicipiosByProvincia(Integer idProvincia) {
-        return Mr.findByProvinciaIdProvincia(idProvincia);
+        municipalityRepository.deleteById(id);
     }
 
     public List<Province> getAllProvincias() {
-        return provinciaRepository.findAll();
+        return provinceRepository.findAll();
+    }
+
+    public Province getProvinciaById(Integer id) {
+        return provinceRepository.findById(id).orElse(null);
+    }
+
+    public Province saveProvincia(Province provincia) {
+        return provinceRepository.save(provincia);
+    }
+
+    public void deleteProvincia(Integer id) {
+        provinceRepository.deleteById(id);
     }
 }

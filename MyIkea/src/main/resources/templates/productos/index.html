@@ -4,10 +4,10 @@
 <body>
     <header th:replace="~{fragments/header:: header}"></header>
 
-    <div class="container mt-4">
+    <div class="container mt-4 mb-6" style="margin-bottom: 8rem;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3">Nuestros Muebles</h1>
-            <a href="/productos/create" class="btn btn-primary">Nuevo Producto</a>
+            <a href="/productos/create" class="btn btn-primary" th:if="${CAN_CREATE}">Nuevo Producto</a>
         </div>
         <div class="row g-4">
             <div class="col-lg-3 col-md-4 col-sm-6 col-12" th:each="producto : ${productos}">

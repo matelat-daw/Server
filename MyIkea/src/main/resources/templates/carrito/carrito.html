@@ -40,7 +40,7 @@
     <p class="text-muted">Tu Carrito Está Vacío.</p>
   </div>
 
-  <div th:if="${carrito != null}">
+  <div th:if="${carrito != null and carrito.products != null and !carrito.products.isEmpty()}">
     <div class="d-flex justify-content-between mt-4">
       <h3>Total: </h3>
       <h3 th:text="${carrito.totalPrice}">0</h3>

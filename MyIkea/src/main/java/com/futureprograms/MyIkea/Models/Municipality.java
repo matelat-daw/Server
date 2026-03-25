@@ -1,10 +1,14 @@
 package com.futureprograms.MyIkea.Models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "municipios")
 public class Municipality {
     @Id
@@ -24,44 +28,4 @@ public class Municipality {
 
     @Column(nullable = false, length = 100, name = "nombre")
     private String nombre;
-
-    public Integer getIdMunicipio() {
-        return idMunicipio;
-    }
-
-    public void setIdMunicipio(Integer idMunicipio) {
-        this.idMunicipio = idMunicipio;
-    }
-
-    public Province getProvincia() {
-        return provincia;
-    }
-
-    public void setProvincia(Province provincia) {
-        this.provincia = provincia;
-    }
-
-    public Integer getCodMunicipio() {
-        return codMunicipio;
-    }
-
-    public void setCodMunicipio(Integer codMunicipio) {
-        this.codMunicipio = codMunicipio;
-    }
-
-    public Integer getDc() {
-        return dc;
-    }
-
-    public void setDc(Integer dc) {
-        this.dc = dc;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 }

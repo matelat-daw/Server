@@ -36,6 +36,28 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + username));
     }
 
+    public User findById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+    }
+
+    public User findByEmailIfExists(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    public void update(User user) {
+        if (!userRepository.existsById(user.getId())) {
+            throw new RuntimeException("Usuario no encontrado con ID: " + user.getId());
+        }
+        userRepository.save(user);
+    }
+
+    public void updatePassword(Integer userId, String newPassword) {
+        User user = findById(userId);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
     public void initializeRoles() {
         if (roleRepository.findByName("USER").isEmpty()) {
             Role roleUser = new Role();

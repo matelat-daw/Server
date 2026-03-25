@@ -1,28 +1,35 @@
 package com.futureprograms.MyIkea.Services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.futureprograms.MyIkea.Models.Pedido;
 import com.futureprograms.MyIkea.Models.Auth.User;
 import com.futureprograms.MyIkea.Repositories.PedidoRepository;
-import com.futureprograms.MyIkea.Repositories.ProductRepository;
 
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class PedidoService {
-    @Autowired
-    private PedidoRepository pr;
+    private final PedidoRepository pedidoRepository;
 
-    public List<Pedido> getAllPedidos(){ return pr.findAll();}
+    public PedidoService(PedidoRepository pedidoRepository) {
+        this.pedidoRepository = pedidoRepository;
+    }
 
-    public Pedido getPedidoById(Integer id){ return pr.findById(id).orElse(null);}
+    public List<Pedido> getAllPedidos() {
+        return pedidoRepository.findAll();
+    }
 
-    public Pedido savePedido(Pedido pedido) { return pr.save(pedido);}
+    public Pedido getPedidoById(Integer id) {
+        return pedidoRepository.findById(id).orElse(null);
+    }
+
+    public Pedido savePedido(Pedido pedido) {
+        return pedidoRepository.save(pedido);
+    }
 
     public Pedido carrito(User user) {
-        return pr.findByCompletadoFalseAndUser(user)
+        return pedidoRepository.findByCompletadoFalseAndUser(user)
                 .orElseGet(() -> crearCarrito(user));
     }
 
@@ -32,11 +39,11 @@ public class PedidoService {
         nuevoCarrito.setCompletado(false);
         nuevoCarrito.setTotalPrice(0.0);
         nuevoCarrito.setFechaPedido(new Date());
-        return pr.save(nuevoCarrito);
+        return pedidoRepository.save(nuevoCarrito);
     }
 
-    public List<Pedido> getPedidosCompletados(User user){
-        List<Pedido> pedidos = pr.findByCompletadoTrueAndUser(user);
+    public List<Pedido> getPedidosCompletados(User user) {
+        List<Pedido> pedidos = pedidoRepository.findByCompletadoTrueAndUser(user);
         boolean updated = false;
 
         for (Pedido pedido : pedidos) {
@@ -47,7 +54,7 @@ public class PedidoService {
         }
 
         if (updated) {
-            pr.saveAll(pedidos);
+            pedidoRepository.saveAll(pedidos);
         }
 
         return pedidos;

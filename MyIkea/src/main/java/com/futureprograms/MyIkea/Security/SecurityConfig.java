@@ -10,38 +10,50 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import com.futureprograms.MyIkea.Repositories.Auth.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Configuration
 public class SecurityConfig {
-
-    private final UserRepository ur;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
+    private final UserRepository userRepository;
 
     public SecurityConfig(UserRepository userRepository) {
-        this.ur = userRepository;
+        this.userRepository = userRepository;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Desactiva CSRF si no es necesario
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/", "/register", "/login", "/error").permitAll() // Rutas públicas
+                    .requestMatchers("/", "/register", "/login", "/error").permitAll()
                     .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-                        .requestMatchers("/productos/**").hasAnyRole("USER", "MANAGER", "ADMIN") // Acceso según roles
-                        .requestMatchers("/users/**").hasRole("ADMIN") // Solo para ADMIN
-                        .requestMatchers("/carrito/**").hasAnyRole( "ADMIN") // Acceso al carrito
-                        .anyRequest().authenticated() // Cualquier otra ruta requiere autenticación
+                    .requestMatchers("/productos/create", "/productos/create/**").hasAnyRole("MANAGER", "ADMIN")
+                    .requestMatchers("/productos/**").hasAnyRole("USER", "MANAGER", "ADMIN")
+                    .requestMatchers("/carrito/**").hasAnyRole("USER", "MANAGER", "ADMIN")
+                    .requestMatchers("/pedidos/**").hasAnyRole("USER", "MANAGER", "ADMIN")
+                    .requestMatchers("/profile/**").hasAnyRole("USER", "MANAGER", "ADMIN")
+                    .requestMatchers("/users/**").hasRole("ADMIN")
+                    .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?error=true") // En caso de error
-                        .permitAll()
+                    .loginPage("/login")
+                    .usernameParameter("username")
+                    .passwordParameter("password")
+                    .defaultSuccessUrl("/", true)
+                    .failureUrl("/login?error")
+                    .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
-                        .permitAll()
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login?logout=true")
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true)
+                    .permitAll()
+                )
+                .exceptionHandling(exception -> exception
+                    .accessDeniedPage("/error")
                 );
 
         return http.build();
@@ -49,8 +61,12 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> ur.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + username));
+        return username -> userRepository.findByEmail(username)
+                .orElseThrow(() -> {
+                    LOGGER.warn("Intento de login con usuario no encontrado: {}", username);
+                    return new org.springframework.security.core.userdetails.UsernameNotFoundException(
+                        "Usuario no encontrado: " + username);
+                });
     }
 
     @Bean

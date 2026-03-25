@@ -4,6 +4,14 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Application configuration with secrets ###
+# application-dev.properties: OK subir a Git (no tiene secretos)
+# application-prod.properties: NO subir a Git (tiene contraseña)
+src/main/resources/application-prod.properties
+.env
+.env.local
+.env.*.local
+
 ### STS ###
 .apt_generated
 .classpath

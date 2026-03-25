@@ -1,25 +1,32 @@
 package com.futureprograms.MyIkea.Services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.futureprograms.MyIkea.Models.Product;
 import com.futureprograms.MyIkea.Repositories.ProductRepository;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
-    @Autowired
-    private ProductRepository pr;
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public List<Product> getAllProducts() {
-        return pr.findAll();
+        return productRepository.findAll();
     }
 
-    public Product getProductById(Integer id) {
-        return pr.findById(id).orElse(null);
+    public Optional<Product> getProductById(Integer id) {
+        return productRepository.findById(id);
     }
 
-    public void saveProduct(Product ofertaProducto) {
-        pr.save(ofertaProducto);
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
+    }
+
+    public void deleteProduct(Integer id) {
+        productRepository.deleteById(id);
     }
 }

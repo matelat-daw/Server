@@ -1,6 +1,5 @@
 package com.futureprograms.MyIkea.Services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.futureprograms.MyIkea.Models.Province;
 import com.futureprograms.MyIkea.Repositories.ProvinceRepository;
@@ -9,22 +8,25 @@ import java.util.List;
 
 @Service
 public class ProvinciaService {
-    @Autowired
-    private ProvinceRepository pr;
+    private final ProvinceRepository provinceRepository;
+
+    public ProvinciaService(ProvinceRepository provinceRepository) {
+        this.provinceRepository = provinceRepository;
+    }
 
     public List<Province> getAllProvincias() {
-        return pr.findAll();
+        return provinceRepository.findAll();
     }
 
     public Province getProvinciaById(Integer id) {
-        return pr.findById(id).orElse(null);
+        return provinceRepository.findById(id).orElse(null);
     }
 
     public Province saveProvincia(Province provincia) {
-        return pr.save(provincia);
+        return provinceRepository.save(provincia);
     }
 
     public void deleteProvincia(Integer id) {
-        pr.deleteById(id);
+        provinceRepository.deleteById(id);
     }
 }
