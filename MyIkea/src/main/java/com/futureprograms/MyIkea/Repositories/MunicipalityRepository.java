@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MunicipalityRepository extends JpaRepository<Municipality, Integer> {
-    List<Municipality> findByProvincia(Province provincia);
-    List<Municipality> findByProvinciaIdProvincia(Integer idProvincia);
+    List<Municipality> findByProvince(Province province);
+    List<Municipality> findByProvinceProvinceId(Integer provinceId);
 }

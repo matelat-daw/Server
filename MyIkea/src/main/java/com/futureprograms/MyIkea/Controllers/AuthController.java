@@ -4,14 +4,17 @@ import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import com.futureprograms.MyIkea.Models.Auth.User;
 import com.futureprograms.MyIkea.Services.auth.UserService;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+@Slf4j
 public class AuthController {
     private final UserService userService;
 
@@ -31,15 +34,30 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("user") User user, @RequestParam("confirmPassword") String confirmPassword, Model model) {
-        // Validar que las contraseñas coincidan
+    public String registerUser(@Valid @ModelAttribute("user") User user, 
+                             BindingResult result,
+                             @RequestParam("confirmPassword") String confirmPassword, 
+                             Model model) {
+        
+        if (result.hasErrors()) {
+            log.warn("Errores de validación en el registro: {}", result.getAllErrors());
+            return "auth/register";
+        }
+
         if (!user.getPassword().equals(confirmPassword)) {
-            model.addAttribute("user", user);
-            return "redirect:/register?passwordMismatch=true";
+            model.addAttribute("passwordError", "Las contraseñas no coinciden");
+            return "auth/register";
         }
         
-        userService.register(user);
-        return "redirect:/login";
+        try {
+            userService.register(user);
+            log.info("Usuario registrado exitosamente: {}", user.getEmail());
+            return "redirect:/login?registered=true";
+        } catch (Exception e) {
+            log.error("Error al registrar usuario: ", e);
+            model.addAttribute("error", "Error al procesar el registro.");
+            return "auth/register";
+        }
     }
 
     @GetMapping("/users")
@@ -57,9 +75,11 @@ public class AuthController {
     public String deleteUser(@PathVariable Integer id) {
         try {
             userService.deleteById(id);
+            log.info("Usuario con ID {} eliminado", id);
             return "redirect:/users";
         } catch (Exception e) {
-            return "redirect:/users?error=" + e.getMessage();
+            log.error("Error al eliminar usuario {}: ", id, e);
+            return "redirect:/users?error=No se pudo eliminar el usuario";
         }
     }
 }

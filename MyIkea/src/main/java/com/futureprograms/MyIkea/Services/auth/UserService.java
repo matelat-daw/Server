@@ -2,6 +2,7 @@ package com.futureprograms.MyIkea.Services.auth;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.futureprograms.MyIkea.Models.Auth.Role;
 import com.futureprograms.MyIkea.Models.Auth.User;
 import com.futureprograms.MyIkea.Repositories.Auth.RoleRepository;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -22,6 +24,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public void register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -32,32 +35,40 @@ public class UserService {
     }
 
     public User findByUsername(String username) {
+        if (username == null) throw new IllegalArgumentException("Username cannot be null");
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + username));
     }
 
     public User findById(Integer id) {
+        if (id == null) throw new IllegalArgumentException("ID cannot be null");
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
     }
 
     public User findByEmailIfExists(String email) {
+        if (email == null) return null;
         return userRepository.findByEmail(email).orElse(null);
     }
 
+    @Transactional
     public void update(User user) {
+        if (user == null || user.getId() == null) throw new IllegalArgumentException("User and ID cannot be null");
         if (!userRepository.existsById(user.getId())) {
             throw new RuntimeException("Usuario no encontrado con ID: " + user.getId());
         }
         userRepository.save(user);
     }
 
+    @Transactional
     public void updatePassword(Integer userId, String newPassword) {
+        if (userId == null) throw new IllegalArgumentException("User ID cannot be null");
         User user = findById(userId);
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
+    @Transactional
     public void initializeRoles() {
         if (roleRepository.findByName("USER").isEmpty()) {
             Role roleUser = new Role();
@@ -83,6 +94,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    @Transactional
     public void deleteById(Integer id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));

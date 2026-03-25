@@ -1,147 +1,96 @@
 package com.futureprograms.MyIkea.Controllers;
 
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.futureprograms.MyIkea.Models.Pedido;
-import com.futureprograms.MyIkea.Models.Product;
+import com.futureprograms.MyIkea.Models.Order;
 import com.futureprograms.MyIkea.Models.Auth.User;
-import com.futureprograms.MyIkea.Services.PedidoService;
+import com.futureprograms.MyIkea.Services.OrderService;
 import com.futureprograms.MyIkea.Services.ProductService;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Controller
 @RequestMapping("/")
+@Slf4j
 public class OrdersController {
     private final ProductService productService;
-    private final PedidoService pedidoService;
+    private final OrderService orderService;
 
-    public OrdersController(ProductService productService, PedidoService pedidoService) {
+    public OrdersController(ProductService productService, OrderService orderService) {
         this.productService = productService;
-        this.pedidoService = pedidoService;
+        this.orderService = orderService;
     }
 
     @GetMapping("/cart")
-    public String cart(Model model, Authentication authentication) {
-        User logged = (User) authentication.getPrincipal();
-        Pedido carrito = pedidoService.carrito(logged);
-
-        if (carrito == null) {
-            model.addAttribute("error", "No hay productos en el carrito.");
-        } else {
-            model.addAttribute("carrito", carrito);
-        }
+    public String cart(Model model, @AuthenticationPrincipal User user) {
+        Order cart = orderService.getCart(user);
+        model.addAttribute("carrito", cart);
         return "cart/carrito";
     }
 
     @GetMapping("/cart/add/{id}")
-    public String addCart(@PathVariable Integer id, Model model, Authentication authentication) {
-        User logged = (User) authentication.getPrincipal();
-        Integer idUser = logged.getId();
+    public String addCart(@PathVariable Integer id, @AuthenticationPrincipal User user) {
+        if (user == null) return "redirect:/login";
         
-        Pedido carrito = pedidoService.getAllPedidos()
-                .stream()
-                .filter(c -> Objects.equals(c.getUser().getId(), idUser) && !c.getCompletado())
-                .findFirst()
-                .orElseGet(() -> {
-                    Pedido carritoNuevo = new Pedido();
-                    carritoNuevo.setFechaPedido(new Date());
-                    carritoNuevo.setCompletado(false);
-                    carritoNuevo.setTotalPrice(0.0);
-                    carritoNuevo.setUser(logged);
-                    return pedidoService.savePedido(carritoNuevo);
-                });
-
-        Product producto = productService.getProductById(id).orElse(null);
-        if (producto == null) {
-            return "redirect:/error?message=Producto+no+encontrado";
-        }
-        
-        carrito.setTotalPrice(
-                (carrito.getTotalPrice() == null ? 0.0 : carrito.getTotalPrice()) + producto.getProductPrice()
+        productService.getProductById(id).ifPresentOrElse(
+                product -> {
+                    orderService.addProductToCart(user, product);
+                    log.info("Producto {} añadido al carrito del usuario {}", id, user.getEmail());
+                },
+                () -> log.warn("Intento de añadir producto inexistente {} al carrito", id)
         );
-        carrito.getProducts().add(producto);
-
-        pedidoService.savePedido(carrito);
-        productService.saveProduct(producto);
-
         return "redirect:/cart";
     }
 
     @GetMapping("/cart/remove/{id}")
-    public String removeFromCart(@PathVariable Integer id, Authentication authentication) {
-        User logged = (User) authentication.getPrincipal();
+    public String removeFromCart(@PathVariable Integer id, @AuthenticationPrincipal User user) {
+        if (user == null) return "redirect:/login";
 
-        Pedido carrito = pedidoService.carrito(logged);
-
-        if (carrito == null) {
-            return "redirect:/cart?error=No+hay+compra+pendiente";
-        }
-
-        Product producto = productService.getProductById(id).orElse(null);
-        if (producto == null) {
-            return "redirect:/cart?error=Producto+no+encontrado";
-        }
-
-        if (carrito.getProducts().remove(producto)) {
-            carrito.setTotalPrice(carrito.getTotalPrice() - producto.getProductPrice());
-            pedidoService.savePedido(carrito);
-        }
-
+        productService.getProductById(id).ifPresentOrElse(
+                product -> {
+                    orderService.removeProductFromCart(user, product);
+                    log.info("Producto {} eliminado del carrito del usuario {}", id, user.getEmail());
+                },
+                () -> log.warn("Intento de eliminar producto inexistente {} del carrito", id)
+        );
         return "redirect:/cart";
     }
 
     @GetMapping("/orders")
-    public String orders(Model model, Authentication authentication) {
-        User logged = (User) authentication.getPrincipal();
-        List<Pedido> pedidos = pedidoService.getPedidosCompletados(logged);
-        model.addAttribute("pedidos", pedidos);
+    public String orders(Model model, @AuthenticationPrincipal User user) {
+        if (user == null) return "redirect:/login";
+
+        List<Order> orders = orderService.getCompletedOrders(user);
+        model.addAttribute("pedidos", orders);
         return "orders/pedidos";
     }
 
     @GetMapping("/orders/complete")
-    public String completeOrder(Authentication authentication) {
-        User logged = (User) authentication.getPrincipal();
+    public String completeOrder(@AuthenticationPrincipal User user) {
+        if (user == null) return "redirect:/login";
 
-        Pedido carrito = pedidoService.carrito(logged);
-
-        if (carrito == null) {
-            return "redirect:/cart?error=No+hay+carrito";
-        }
-
-        carrito.setCompletado(true);
-        pedidoService.savePedido(carrito);
-
+        orderService.completeOrder(user);
+        log.info("Pedido completado para el usuario {}", user.getEmail());
         return "redirect:/orders";
     }
 
     @GetMapping("/orders/details/{id}")
     public String orderDetails(@PathVariable Integer id, Model model) {
-        Pedido pedido = pedidoService.getPedidoById(id);
-
-        if (pedido == null) {
-            return "redirect:/orders?error=Pedido+no+encontrado";
-        }
-
-        model.addAttribute("pedido", pedido);
+        orderService.getOrderById(id).ifPresentOrElse(
+                order -> model.addAttribute("pedido", order),
+                () -> model.addAttribute("error", "Pedido no encontrado")
+        );
         return "orders/details";
     }
 
     @GetMapping("/orders/details/{id}/pay")
     public String payOrderSimulated(@PathVariable Integer id) {
-        Pedido pedido = pedidoService.getPedidoById(id);
-
-        if (pedido == null) {
-            return "redirect:/orders?error=Pedido+no+encontrado";
-        }
-
-        // Flujo simulado: no persiste cambios en base de datos.
+        // Simulación de pago
         return "redirect:/orders/details/" + id + "?pago=ok";
     }
 }

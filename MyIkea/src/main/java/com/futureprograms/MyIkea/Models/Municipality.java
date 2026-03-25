@@ -14,18 +14,18 @@ public class Municipality {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_municipio")
-    private Integer idMunicipio;
+    private Integer municipalityId;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_provincia", referencedColumnName = "id_provincia", nullable = false)
-    private Province provincia;
+    private Province province;
 
     @Column(nullable = false, name = "cod_municipio")
-    private Integer codMunicipio;
+    private Integer municipalityCode;
 
     @Column(nullable = false, name = "DC")
     private Integer dc;
 
     @Column(nullable = false, length = 100, name = "nombre")
-    private String nombre;
+    private String name;
 }

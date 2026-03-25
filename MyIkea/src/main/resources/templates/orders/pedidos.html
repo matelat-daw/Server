@@ -22,7 +22,7 @@
             </thead>
             <tbody>
             <tr th:each="pedido : ${pedidos}">
-                <td th:text="${#dates.format(pedido.fechaPedido, 'dd-MM-yyyy')}"></td>
+                <td th:text="${#temporals.format(pedido.orderDate, 'dd-MM-yyyy HH:mm')}"></td>
                 <td th:text="${pedido.totalPrice}"></td>
                 <td>
                     <ul>
@@ -30,7 +30,7 @@
                     </ul>
                 </td>
                 <td>
-                    <a th:href="@{/orders/details/{id}(id=${pedido.idPedido})}" class="btn btn-info">Detalles del Pedido</a>
+                    <a th:href="@{/orders/details/{id}(id=${pedido.orderId})}" class="btn btn-info">Detalles del Pedido</a>
                 </td>
             </tr>
             </tbody>

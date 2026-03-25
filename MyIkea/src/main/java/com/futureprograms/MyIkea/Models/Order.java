@@ -1,13 +1,15 @@
 package com.futureprograms.MyIkea.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.futureprograms.MyIkea.Models.Auth.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -15,21 +17,22 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pedido {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_pedido")
-    private Integer idPedido;
+    private Integer orderId;
 
+    @NotNull(message = "El precio total es obligatorio")
+    @PositiveOrZero(message = "El precio total no puede ser negativo")
     @Column(name = "total_Price")
     private Double totalPrice;
 
-    @Column
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaPedido;
+    @Column(name = "fecha_pedido")
+    private LocalDateTime orderDate;
 
     @Column
-    private Boolean completado;
+    private Boolean completed;
 
     @ManyToMany
     @JoinTable(
@@ -39,15 +42,16 @@ public class Pedido {
     )
     private List<Product> products = new ArrayList<>();
 
+    @NotNull(message = "El usuario es obligatorio")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id", referencedColumnName = "id", nullable = false)
     private User user;
 
     @PrePersist
     @PreUpdate
-    private void ensureFechaPedido() {
-        if (fechaPedido == null) {
-            fechaPedido = new Date();
+    private void ensureOrderDate() {
+        if (orderDate == null) {
+            orderDate = LocalDateTime.now();
         }
     }
 }

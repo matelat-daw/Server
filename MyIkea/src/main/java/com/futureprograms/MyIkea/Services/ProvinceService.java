@@ -3,30 +3,32 @@ package com.futureprograms.MyIkea.Services;
 import org.springframework.stereotype.Service;
 import com.futureprograms.MyIkea.Models.Province;
 import com.futureprograms.MyIkea.Repositories.ProvinceRepository;
-
 import java.util.List;
 
 @Service
-public class ProvinciaService {
+public class ProvinceService {
     private final ProvinceRepository provinceRepository;
 
-    public ProvinciaService(ProvinceRepository provinceRepository) {
+    public ProvinceService(ProvinceRepository provinceRepository) {
         this.provinceRepository = provinceRepository;
     }
 
-    public List<Province> getAllProvincias() {
+    public List<Province> getAllProvinces() {
         return provinceRepository.findAll();
     }
 
-    public Province getProvinciaById(Integer id) {
+    public Province getProvinceById(Integer id) {
+        if (id == null) return null;
         return provinceRepository.findById(id).orElse(null);
     }
 
-    public Province saveProvincia(Province provincia) {
-        return provinceRepository.save(provincia);
+    public Province saveProvince(Province province) {
+        return provinceRepository.save(province);
     }
 
-    public void deleteProvincia(Integer id) {
-        provinceRepository.deleteById(id);
+    public void deleteProvince(Integer id) {
+        if (id != null) {
+            provinceRepository.deleteById(id);
+        }
     }
 }

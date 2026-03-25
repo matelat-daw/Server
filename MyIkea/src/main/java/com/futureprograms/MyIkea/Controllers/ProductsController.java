@@ -4,22 +4,23 @@ import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import com.futureprograms.MyIkea.Models.Municipality;
 import com.futureprograms.MyIkea.Models.Product;
-import com.futureprograms.MyIkea.Models.Province;
 import com.futureprograms.MyIkea.Services.FileUploadService;
 import com.futureprograms.MyIkea.Services.LocationService;
 import com.futureprograms.MyIkea.Services.ProductService;
+import com.futureprograms.MyIkea.Constants.AppConstants;
+import com.futureprograms.MyIkea.Utils.AuthUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/products")
+@Slf4j
 public class ProductsController {
-    private static final Logger LOGGER = Logger.getLogger(ProductsController.class.getName());
     private final ProductService productService;
     private final LocationService locationService;
     private final FileUploadService fileUploadService;
@@ -32,12 +33,8 @@ public class ProductsController {
 
     @GetMapping
     public String listProducts(Model model, Authentication authentication) {
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
-        
-        boolean isManagerOrAdmin = authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_MANAGER") 
-                        || authority.getAuthority().equals("ROLE_ADMIN"));
+        boolean isAdmin = AuthUtils.hasRole(authentication, AppConstants.ROLE_ADMIN);
+        boolean isManagerOrAdmin = AuthUtils.hasAnyRole(authentication, AppConstants.ROLE_MANAGER, AppConstants.ROLE_ADMIN);
 
         List<Product> productos = productService.getAllProducts();
         model.addAttribute("productos", productos);
@@ -58,100 +55,68 @@ public class ProductsController {
 
     @GetMapping("/create")
     public String createProduct(Model model, Authentication authentication) {
-        // Verificar que el usuario tiene rol MANAGER o ADMIN
-        boolean isManagerOrAdmin = authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_MANAGER") 
-                        || authority.getAuthority().equals("ROLE_ADMIN"));
-        
-        if (!isManagerOrAdmin) {
-            LOGGER.warning("Intento no autorizado de acceso a crear producto por usuario: " + authentication.getName());
+        if (!AuthUtils.hasAnyRole(authentication, AppConstants.ROLE_MANAGER, AppConstants.ROLE_ADMIN)) {
+            log.warn("Intento no autorizado de acceso a crear producto por usuario: {}", authentication.getName());
             return "redirect:/products";
         }
 
-        List<Province> provincias = locationService.getAllProvincias();
-        List<Municipality> municipios = locationService.getAllMunicipios();
-
-        model.addAttribute("producto", new Product());
-        model.addAttribute("provincias", provincias);
-        model.addAttribute("municipios", municipios);
-
-        return "productos/create";
+        prepareModelForProduct(model, new Product());
+        return "products/create";
     }
 
     @PostMapping("/create")
     public String createProduct(
             @Valid @ModelAttribute Product producto, 
+            BindingResult result,
             @RequestParam(value = "productPictureFile", required = false) MultipartFile file,
             Model model, 
             Authentication authentication) {
         
-        System.out.println("\n========== PROCESANDO CREACIÓN DE PRODUCTO ==========");
-        System.out.println("Nombre del producto: " + producto.getProductName());
-        System.out.println("Archivo recibido en @RequestParam: " + (file != null ? file.getOriginalFilename() : "NULL"));
-        System.out.println("Archivo en objeto producto: " + (producto.getProductPictureFile() != null ? producto.getProductPictureFile().getOriginalFilename() : "NULL"));
-        System.out.flush();
+        log.info("Procesando creación de producto: {}", producto.getProductName());
         
-        // Verificar que el usuario tiene rol MANAGER o ADMIN
-        boolean isManagerOrAdmin = authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_MANAGER") 
-                        || authority.getAuthority().equals("ROLE_ADMIN"));
-        
-        if (!isManagerOrAdmin) {
-            LOGGER.warning("Intento no autorizado de crear producto por usuario: " + authentication.getName());
-            model.addAttribute("error", "No tienes permiso para crear productos. Solo MANAGER o ADMIN pueden hacerlo.");
-            model.addAttribute("producto", producto);
-            model.addAttribute("provincias", locationService.getAllProvincias());
-            model.addAttribute("municipios", locationService.getAllMunicipios());
+        if (!AuthUtils.hasAnyRole(authentication, AppConstants.ROLE_MANAGER, AppConstants.ROLE_ADMIN)) {
+            log.warn("Intento no autorizado de crear producto por usuario: {}", authentication.getName());
+            model.addAttribute("error", "No tienes permiso para crear productos.");
+            prepareModelForProduct(model, producto);
             return "products/create";
         }
 
-        // Usar el archivo de @RequestParam primero, luego el del objeto si es necesario
+        if (result.hasErrors()) {
+            log.warn("Errores de validación al crear producto: {}", result.getAllErrors());
+            prepareModelForProduct(model, producto);
+            return "products/create";
+        }
+
         MultipartFile fileToProcess = (file != null && !file.isEmpty()) ? file : producto.getProductPictureFile();
 
         try {
-            // Guardar imagen si existe
             if (fileToProcess != null && !fileToProcess.isEmpty()) {
-                System.out.println("Tipo de archivo: " + fileToProcess.getContentType());
-                System.out.println("Tamaño: " + fileToProcess.getSize() + " bytes");
-                System.out.flush();
-                
                 String fileName = fileUploadService.saveImage(fileToProcess);
                 producto.setProductPicture(fileName);
-                System.out.println("✓ Imagen guardada exitosamente: " + fileName);
-            } else {
-                System.out.println("⚠️ No se seleccionó imagen");
-                producto.setProductPicture(null);
+                log.info("Imagen guardada exitosamente: {}", fileName);
             }
-            System.out.flush();
 
-            // Guardar producto en la base de datos
             productService.saveProduct(producto);
-            LOGGER.info("Producto creado exitosamente por " + authentication.getName() + ": " + producto.getProductName());
-            System.out.println("========== PRODUCTO CREADO EXITOSAMENTE ==========\n");
-            System.out.flush();
-            
+            log.info("Producto creado exitosamente por {}: {}", authentication.getName(), producto.getProductName());
             return "redirect:/products";
             
         } catch (IllegalArgumentException e) {
-            LOGGER.warning("Validación de archivo fallida: " + e.getMessage());
-            System.out.println("❌ Error: " + e.getMessage());
-            System.out.flush();
+            log.warn("Validación de archivo fallida: {}", e.getMessage());
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("producto", producto);
-            model.addAttribute("provincias", locationService.getAllProvincias());
-            model.addAttribute("municipios", locationService.getAllMunicipios());
+            prepareModelForProduct(model, producto);
             return "products/create";
             
         } catch (Exception e) {
-            LOGGER.severe("Error al guardar producto: " + e.getMessage());
-            System.out.println("❌ Error al guardar producto: " + e.getMessage());
-            e.printStackTrace();
-            System.out.flush();
-            model.addAttribute("error", "Error al guardar el producto. Por favor, intente de nuevo.");
-            model.addAttribute("producto", producto);
-            model.addAttribute("provincias", locationService.getAllProvincias());
-            model.addAttribute("municipios", locationService.getAllMunicipios());
+            log.error("Error al guardar producto: ", e);
+            model.addAttribute("error", "Error al guardar el producto.");
+            prepareModelForProduct(model, producto);
             return "products/create";
         }
+    }
+
+    private void prepareModelForProduct(Model model, Product product) {
+        model.addAttribute("producto", product);
+        model.addAttribute("provincias", locationService.getAllProvinces());
+        model.addAttribute("municipios", locationService.getAllMunicipalities());
     }
 }

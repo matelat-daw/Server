@@ -14,11 +14,11 @@
             </div>
             <div class="card mb-4 shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">Pedido ID: <span th:text="${pedido.idPedido}"></span></h5>
+                    <h5 class="card-title">Pedido ID: <span th:text="${pedido.orderId}"></span></h5>
                     <p class="card-text">
-                        <strong>Fecha del Pedido:</strong> <span th:text="${#dates.format(pedido.fechaPedido, 'dd-MM-yyyy')}"></span><br>
+                        <strong>Fecha del Pedido:</strong> <span th:text="${#temporals.format(pedido.orderDate, 'dd-MM-yyyy HH:mm')}"></span><br>
                         <strong>Total:</strong> $<span th:text="${pedido.totalPrice}"></span><br>
-                        <strong>Completado:</strong> <span th:text="${pedido.completado ? 'Sí' : 'No'}"></span>
+                        <strong>Completado:</strong> <span th:text="${pedido.completed ? 'Sí' : 'No'}"></span>
                     </p>
                 </div>
             </div>
@@ -34,7 +34,7 @@
 
             <!-- Back Button -->
             <div class="mt-4 text-center d-flex justify-content-center gap-2">
-                <a th:href="@{/orders/details/{id}/pay(id=${pedido.idPedido})}" class="btn btn-success">Terminar y Pagar (simulado)</a>
+                <a th:href="@{/orders/details/{id}/pay(id=${pedido.orderId})}" class="btn btn-success">Terminar y Pagar (simulado)</a>
                 <a href="/orders" class="btn btn-secondary">Volver a la Lista de Pedidos</a>
             </div>
         </th:block>

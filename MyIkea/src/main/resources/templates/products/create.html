@@ -34,16 +34,16 @@
             </div>
             <div class="mb-3">
                 <label for="provincia" class="form-label">Provincia</label>
-                <select class="form-select" id="provincia" th:field="*{municipio.provincia}" onchange="updateMunicipios()" required>
+                <select class="form-select" id="provincia" th:field="*{municipality.province}" onchange="updateMunicipios()" required>
                     <option value="" disabled selected>Selecciona una Provincia</option>
-                    <option th:each="provincia : ${provincias}" th:value="${provincia.idProvincia}" th:text="${provincia.nombre}"></option>
+                    <option th:each="provincia : ${provincias}" th:value="${provincia.provinceId}" th:text="${provincia.name}"></option>
                 </select>
             </div>
             <div class="mb-3">
                 <label for="municipio" class="form-label">Municipio</label>
-                <select class="form-select" id="municipio" th:field="*{municipio}" required>
+                <select class="form-select" id="municipio" th:field="*{municipality}" required>
                     <option value="" disabled selected>Selecciona un Municipio</option>
-                    <option th:each="municipio : ${municipios}" th:value="${municipio.idMunicipio}" th:text="${municipio.nombre}" th:data-provincia="${municipio.provincia.idProvincia}"></option>
+                    <option th:each="municipio : ${municipios}" th:value="${municipio.municipalityId}" th:text="${municipio.name}" th:data-provincia="${municipio.province.provinceId}"></option>
                 </select>
             </div>
             <div class="d-flex justify-content-between mt-5">

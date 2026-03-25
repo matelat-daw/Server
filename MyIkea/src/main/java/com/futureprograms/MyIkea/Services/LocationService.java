@@ -4,57 +4,62 @@ import org.springframework.stereotype.Service;
 import com.futureprograms.MyIkea.Models.Municipality;
 import com.futureprograms.MyIkea.Models.Province;
 import com.futureprograms.MyIkea.Repositories.MunicipalityRepository;
-import com.futureprograms.MyIkea.Repositories.ProvinceRepository;
 
 import java.util.List;
 
 @Service
 public class LocationService {
     private final MunicipalityRepository municipalityRepository;
-    private final ProvinceRepository provinceRepository;
+    private final ProvinceService provinceService;
 
-    public LocationService(MunicipalityRepository municipalityRepository, ProvinceRepository provinceRepository) {
+    public LocationService(MunicipalityRepository municipalityRepository, ProvinceService provinceService) {
         this.municipalityRepository = municipalityRepository;
-        this.provinceRepository = provinceRepository;
+        this.provinceService = provinceService;
     }
 
-    public List<Municipality> getAllMunicipios() {
+    public List<Municipality> getAllMunicipalities() {
         return municipalityRepository.findAll();
     }
 
-    public Municipality getMunicipioById(Integer id) {
+    public Municipality getMunicipalityById(Integer id) {
+        if (id == null) return null;
         return municipalityRepository.findById(id).orElse(null);
     }
 
-    public List<Municipality> getMunicipiosByProvincia(Province provincia) {
-        return municipalityRepository.findByProvincia(provincia);
+    public List<Municipality> getMunicipalitiesByProvince(Province province) {
+        if (province == null) return List.of();
+        return municipalityRepository.findByProvince(province);
     }
 
-    public List<Municipality> getMunicipiosByProvinciaId(Integer idProvincia) {
-        return municipalityRepository.findByProvinciaIdProvincia(idProvincia);
+    public List<Municipality> getMunicipalitiesByProvinceId(Integer provinceId) {
+        if (provinceId == null) return List.of();
+        return municipalityRepository.findByProvinceProvinceId(provinceId);
     }
 
-    public Municipality saveMunicipio(Municipality municipio) {
-        return municipalityRepository.save(municipio);
+    public Municipality saveMunicipality(Municipality municipality) {
+        if (municipality == null) throw new IllegalArgumentException("Municipality cannot be null");
+        return municipalityRepository.save(municipality);
     }
 
-    public void deleteMunicipio(Integer id) {
-        municipalityRepository.deleteById(id);
+    public void deleteMunicipality(Integer id) {
+        if (id != null) {
+            municipalityRepository.deleteById(id);
+        }
     }
 
-    public List<Province> getAllProvincias() {
-        return provinceRepository.findAll();
+    public List<Province> getAllProvinces() {
+        return provinceService.getAllProvinces();
     }
 
-    public Province getProvinciaById(Integer id) {
-        return provinceRepository.findById(id).orElse(null);
+    public Province getProvinceById(Integer id) {
+        return provinceService.getProvinceById(id);
     }
 
-    public Province saveProvincia(Province provincia) {
-        return provinceRepository.save(provincia);
+    public Province saveProvince(Province province) {
+        return provinceService.saveProvince(province);
     }
 
-    public void deleteProvincia(Integer id) {
-        provinceRepository.deleteById(id);
+    public void deleteProvince(Integer id) {
+        provinceService.deleteProvince(id);
     }
 }

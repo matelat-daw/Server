@@ -20,8 +20,8 @@
                         <h5 class="card-title" th:text="${producto.productName}"></h5>
                         <p class="card-text" th:text="'$' + ${producto.productPrice}"></p>
                         <p class="card-text" th:text="'Stock: ' + ${producto.productStock}"></p>
-                        <p class="card-text" th:text="'Municipio: ' + ${producto.municipio.nombre}"></p>
-                        <p class="card-text" th:text="'Provincia: ' + ${producto.municipio.provincia.nombre}"></p>
+                        <p class="card-text" th:text="'Municipio: ' + ${producto.municipality.name}"></p>
+                        <p class="card-text" th:text="'Provincia: ' + ${producto.municipality.province.name}"></p>
                         <div class="d-flex justify-content-between">
                             <a th:href="@{'/products/details/' + ${producto.productId}}"
                                class="btn btn-success btn-sm">Detalles</a>

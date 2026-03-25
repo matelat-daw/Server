@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Interfaz contrato para operaciones de Productos
+ * Interface contract for Product operations
  */
-public interface ProductoInterface {
+public interface ProductInterface {
     List<Product> getAllProducts();
     Optional<Product> getProductById(Integer id);
     Product saveProduct(Product product);
