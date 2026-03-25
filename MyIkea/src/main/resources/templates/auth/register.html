@@ -15,7 +15,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             
-            <form th:action="@{/register}" th:object="${user}" method="post" id="registerForm">
+            <form th:action="@{/register}" th:object="${user}" method="post" id="registerForm" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" th:field="*{username}" required>
@@ -36,6 +36,37 @@
                         Las contraseñas no coinciden
                     </small>
                 </div>
+                
+                <!-- Género -->
+                <div class="mb-3">
+                    <label class="form-label">Género</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="genderFemale" name="gender" value="female" th:field="*{gender}" checked>
+                        <label class="form-check-label" for="genderFemale">
+                            Mujer
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="genderMale" name="gender" value="male" th:field="*{gender}">
+                        <label class="form-check-label" for="genderMale">
+                            Varón
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="genderOther" name="gender" value="other" th:field="*{gender}">
+                        <label class="form-check-label" for="genderOther">
+                            Otro
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Imagen de Perfil -->
+                <div class="mb-3">
+                    <label for="profilePictureFile" class="form-label">Imagen de Perfil (Opcional)</label>
+                    <input type="file" class="form-control" id="profilePictureFile" name="profilePictureFile" accept="image/*">
+                    <small class="form-text text-muted">Formatos permitidos: JPG, PNG, GIF, WebP. Tamaño máximo: 10MB</small>
+                </div>
+
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-success">Regístrate</button>
                     <a href="/login" class="btn btn-primary">Iniciar Sesión</a>

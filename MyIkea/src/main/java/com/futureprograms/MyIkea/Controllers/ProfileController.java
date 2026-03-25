@@ -1,6 +1,7 @@
 package com.futureprograms.MyIkea.Controllers;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,8 @@ import com.futureprograms.MyIkea.Models.Auth.User;
 import com.futureprograms.MyIkea.Services.auth.UserService;
 import com.futureprograms.MyIkea.Services.FileUploadService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Controller
@@ -182,6 +185,8 @@ public class ProfileController {
     public String deleteAccount(
             @RequestParam String password,
             Authentication authentication,
+            HttpServletRequest request,
+            HttpServletResponse response,
             RedirectAttributes redirectAttributes) {
         
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -212,12 +217,69 @@ public class ProfileController {
             // Eliminar usuario
             userService.deleteById(user.getId());
             
-            // Redirigir a logout
-            return "redirect:/logout";
+            // Cerrar sesión después de eliminar cuenta
+            SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+            logoutHandler.logout(request, response, authentication);
+            
+            // Redirigir a página de confirmación
+            return "redirect:/account-deleted";
             
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("deleteError", "Error al eliminar cuenta: " + e.getMessage());
             return "redirect:/profile";
+        }
+    }
+
+    /**
+     * Eliminar cuenta vía AJAX (REST endpoint)
+     */
+    @PostMapping(value = "/delete-ajax", consumes = "application/json", produces = "application/json")
+    public org.springframework.http.ResponseEntity<?> deleteAccountAjax(
+            @org.springframework.web.bind.annotation.RequestBody java.util.Map<String, String> request,
+            Authentication authentication,
+            HttpServletRequest httpRequest,
+            HttpServletResponse response) {
+        
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return org.springframework.http.ResponseEntity.status(401)
+                    .body(java.util.Map.of("success", false, "message", "No autenticado"));
+        }
+        
+        try {
+            String password = request.get("password");
+            User user = userService.findByUsername(authentication.getName());
+            
+            // Validar contraseña
+            org.springframework.security.crypto.password.PasswordEncoder encoder = 
+                new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+            
+            if (!encoder.matches(password, user.getPassword())) {
+                return org.springframework.http.ResponseEntity.badRequest()
+                        .body(java.util.Map.of("success", false, "message", "Contraseña incorrecta"));
+            }
+            
+            // Eliminar foto de perfil si existe
+            if (user.getProfilePicture() != null && !user.getProfilePicture().isEmpty()) {
+                try {
+                    fileUploadService.deleteImage(user.getProfilePicture());
+                } catch (Exception e) {
+                    System.out.println("Error eliminando foto de perfil: " + e.getMessage());
+                }
+            }
+            
+            // Eliminar usuario
+            userService.deleteById(user.getId());
+            
+            // Cerrar sesión después de eliminar cuenta
+            SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+            logoutHandler.logout(httpRequest, response, authentication);
+            
+            return org.springframework.http.ResponseEntity.ok()
+                    .body(java.util.Map.of("success", true, "message", "Cuenta eliminada correctamente"));
+            
+        } catch (Exception e) {
+            return org.springframework.http.ResponseEntity.status(500)
+                    .body(java.util.Map.of("success", false, "message", "Error al eliminar cuenta: " + e.getMessage()));
         }
     }
 }

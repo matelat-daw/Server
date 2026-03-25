@@ -39,7 +39,7 @@
                         <!-- Foto -->
                         <div class="mb-4">
                             <img th:if="${user.profilePicture}" 
-                                 th:src="'/images/' + ${user.profilePicture}"
+                                 th:src="${user.profilePicture?.startsWith('/') ? user.profilePicture : '/images/' + user.profilePicture}"
                                  alt="Foto"
                                  class="rounded-circle img-fluid"
                                  style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #e9ecef;">
@@ -198,7 +198,7 @@
                         <li>Tu perfil será eliminado permanentemente</li>
                         <li>No podrás recuperar tu cuenta</li>
                     </ul>
-                    <form id="deleteForm" method="post" action="/profile/delete">
+                    <form id="deleteForm">
                         <input type="hidden" name="_csrf" th:value="${_csrf?.token}">
                         <label class="form-label">Ingresa tu contraseña:</label>
                         <input type="password" id="delPassword" name="password" class="form-control" required>
@@ -206,8 +206,30 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" onclick="document.getElementById('deleteForm').submit()">
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
                         Sí, eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de despedida -->
+    <div class="modal fade" id="goodbyeModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-body p-5">
+                    <div style="font-size: 60px; margin-bottom: 20px;">👋</div>
+                    <h4 class="mb-3 fw-bold">¡Hasta pronto!</h4>
+                    <p class="text-muted mb-4">
+                        Tu cuenta ha sido eliminada correctamente.<br>
+                        <strong>Todos tus datos han sido borrados permanentemente.</strong>
+                    </p>
+                    <p class="small text-muted mb-4">
+                        Gracias por usar MyIkea. Esperamos verte de nuevo en el futuro.
+                    </p>
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='/login'">
+                        Ir a Iniciar Sesión
                     </button>
                 </div>
             </div>
@@ -218,5 +240,56 @@
     <!-- Script para subida de foto de perfil -->
     <th:block th:insert="~{fragments/profile-picture-upload::profilePictureUpload}"></th:block>
     <th:block th:replace="~{fragments/scripts::scripts}"></th:block>
-</body>
-</html>
+
+    <script>
+        // Script para eliminar cuenta con AJAX
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            const password = document.getElementById('delPassword').value;
+            
+            if (!password) {
+                alert('Por favor ingresa tu contraseña');
+                return;
+            }
+            
+            // Enviar petición AJAX
+            fetch('/profile/delete-ajax', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                },
+                body: JSON.stringify({ password: password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Cerrar el modal de confirmación
+                    const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                    if (deleteModal) {
+                        deleteModal.hide();
+                    }
+                    
+                    // Limpiar el formulario
+                    document.getElementById('deleteForm').reset();
+                    
+                    // Mostrar modal de despedida
+                    setTimeout(() => {
+                        const goodbyeModal = new bootstrap.Modal(document.getElementById('goodbyeModal'));
+                        goodbyeModal.show();
+                        
+                        // Redirigir después de 3 segundos
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 3000);
+                    }, 500);
+                } else {
+                    alert('Error: ' + data.message);
+                    document.getElementById('delPassword').value = '';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar la cuenta');
+            });
+        });
+    </script>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Exitoso - MyIkea</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de Éxito -->
+    <div class="modal fade show" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" style="display: block; background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-success" style="border-width: 3px;">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="successModalLabel">
+                        <i class="fas fa-check-circle"></i> ¡Cuenta Creada Exitosamente!
+                    </h5>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div style="font-size: 3rem; color: #28a745; margin-bottom: 1rem; animation: pulse 0.6s ease-in-out;">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <h6 style="font-size: 1.25rem; margin-bottom: 1rem; color: #333;">
+                        ¡Bienvenido a MyIkea!
+                    </h6>
+                    <p class="text-muted mb-0">
+                        Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión con tus credenciales.
+                    </p>
+                </div>
+                <div class="modal-footer justify-content-center border-top-0">
+                    <button type="button" class="btn btn-success btn-lg px-4" id="acceptBtn">
+                        Aceptar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agregar animación al icono
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.1); }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Manejar el botón Aceptar
+            document.getElementById('acceptBtn').addEventListener('click', function() {
+                // Redirigir a la página de login
+                window.location.href = '/login';
+            });
+
+            // También redirigir si se presiona Enter
+            document.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    window.location.href = '/login';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

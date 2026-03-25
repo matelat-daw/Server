@@ -8,6 +8,7 @@ import com.futureprograms.MyIkea.Models.Auth.User;
 import com.futureprograms.MyIkea.Repositories.Auth.RoleRepository;
 import com.futureprograms.MyIkea.Repositories.Auth.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -43,10 +44,15 @@ public class DataSeeder implements CommandLineRunner {
         });
 
         if (userRepository.count() == 0) {
+            LocalDateTime now = LocalDateTime.now();
+            
             User user = new User();
             user.setUsername("user");
             user.setEmail("user@myikea.com");
             user.setPassword(passwordEncoder.encode("Qwer123!"));
+            user.setGender("female");
+            user.setProfilePicture("female.png");
+            user.setCreatedAt(now);
             user.setRoles(List.of(userRole));
             userRepository.save(user);
 
@@ -54,6 +60,9 @@ public class DataSeeder implements CommandLineRunner {
             manager.setUsername("manager");
             manager.setEmail("manager@myikea.com");
             manager.setPassword(passwordEncoder.encode("Qwer123!"));
+            manager.setGender("male");
+            manager.setProfilePicture("male.png");
+            manager.setCreatedAt(now);
             manager.setRoles(List.of(managerRole));
             userRepository.save(manager);
 
@@ -61,6 +70,9 @@ public class DataSeeder implements CommandLineRunner {
             admin1.setUsername("admin1");
             admin1.setEmail("admin1@myikea.com");
             admin1.setPassword(passwordEncoder.encode("Qwer123!"));
+            admin1.setGender("male");
+            admin1.setProfilePicture("male.png");
+            admin1.setCreatedAt(now);
             admin1.setRoles(List.of(adminRole));
             userRepository.save(admin1);
 
@@ -68,6 +80,9 @@ public class DataSeeder implements CommandLineRunner {
             admin2.setUsername("admin2");
             admin2.setEmail("admin2@myikea.com");
             admin2.setPassword(passwordEncoder.encode("Qwer123!"));
+            admin2.setGender("other");
+            admin2.setProfilePicture("other.png");
+            admin2.setCreatedAt(now);
             admin2.setRoles(List.of(adminRole, managerRole));
             userRepository.save(admin2);
         }

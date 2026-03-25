@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,8 +48,12 @@ public class User implements UserDetails {
     @Column(name = "profile_picture")
     private String profilePicture;
 
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private java.time.LocalDateTime createdAt;
+    @Column(name = "gender", length = 20)
+    private String gender = "female"; // Valor por defecto: female (female, male, other)
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

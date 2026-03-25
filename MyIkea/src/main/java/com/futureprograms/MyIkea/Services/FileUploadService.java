@@ -198,12 +198,24 @@ public class FileUploadService {
 
     /**
      * Elimina un archivo de imagen del servidor
+     * PROTEGE las imágenes por defecto de ser eliminadas
      * @param fileName nombre del archivo a eliminar
      * @return true si se eliminó correctamente, false en caso contrario
      */
     public boolean deleteImage(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
             return false;
+        }
+
+        // Proteger las imágenes por defecto - NUNCA ELIMINARLAS
+        String[] protectedImages = {"female.png", "male.png", "other.png", "default.jpg"};
+        for (String protectedImage : protectedImages) {
+            if (fileName.equalsIgnoreCase(protectedImage)) {
+                System.out.println("⚠️  Intento de eliminar imagen protegida: " + fileName);
+                System.out.println("    Esta es una imagen por defecto y no se elimina");
+                System.out.flush();
+                return false; // No eliminar, pero retornar false (no es error, simplemente no se hace)
+            }
         }
 
         try {
