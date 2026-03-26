@@ -1,83 +1,78 @@
-<!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head::head}"></head>
-<body>
+<div class="spa-fragment" xmlns:th="http://www.thymeleaf.org">
     <header th:replace="~{fragments/header::header}"></header>
-
-    <div class="mb-6" style="margin-bottom: 8rem;">
-        <div class="mx-5 mt-3">
-            <h1>Registro de Usuario</h1>
-            
-            <!-- Mostrar mensaje de error si las contraseñas no coinciden -->
-            <div th:if="${param.passwordMismatch}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>❌ Error en el registro</strong>
-                <p class="mb-0">Las contraseñas no coinciden. Por favor, inténtalo de nuevo.</p>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            
-            <form th:action="@{/register}" th:object="${user}" method="post" id="registerForm" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" th:field="*{username}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Contraseña</label>
-                    <input type="password" class="form-control" id="password" th:field="*{password}" required minlength="8">
-                    <small class="form-text text-muted">Mínimo 8 caracteres</small>
-                </div>
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">Repetir Contraseña</label>
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required minlength="8">
-                    <small id="passwordError" class="form-text text-danger" style="display: none;">
-                        Las contraseñas no coinciden
-                    </small>
+    <div class="spa-content">
+        <div class="mb-6" style="margin-bottom: 8rem;">
+            <div class="mx-5 mt-3">
+                <h1>Registro de Usuario</h1>
+                
+                <!-- Mostrar mensaje de error si las contraseñas no coinciden -->
+                <div th:if="${param.passwordMismatch}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>❌ Error en el registro</strong>
+                    <p class="mb-0">Las contraseñas no coinciden. Por favor, inténtalo de nuevo.</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 
-                <!-- Género -->
-                <div class="mb-3">
-                    <label class="form-label">Género</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" id="genderFemale" name="gender" value="female" th:field="*{gender}" checked>
-                        <label class="form-check-label" for="genderFemale">
-                            Mujer
-                        </label>
+                <form th:action="@{/register}" th:object="${user}" method="post" id="registerForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" th:field="*{username}" required>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" id="genderMale" name="gender" value="male" th:field="*{gender}">
-                        <label class="form-check-label" for="genderMale">
-                            Varón
-                        </label>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" id="genderOther" name="gender" value="other" th:field="*{gender}">
-                        <label class="form-check-label" for="genderOther">
-                            Otro
-                        </label>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password" th:field="*{password}" required minlength="8">
+                        <small class="form-text text-muted">Mínimo 8 caracteres</small>
                     </div>
-                </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Repetir Contraseña</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required minlength="8">
+                        <small id="passwordError" class="form-text text-danger" style="display: none;">
+                            Las contraseñas no coinciden
+                        </small>
+                    </div>
+                    
+                    <!-- Género -->
+                    <div class="mb-3">
+                        <label class="form-label">Género</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="genderFemale" name="gender" value="female" th:field="*{gender}" checked>
+                            <label class="form-check-label" for="genderFemale">
+                                Mujer
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="genderMale" name="gender" value="male" th:field="*{gender}">
+                            <label class="form-check-label" for="genderMale">
+                                Varón
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="genderOther" name="gender" value="other" th:field="*{gender}">
+                            <label class="form-check-label" for="genderOther">
+                                Otro
+                            </label>
+                        </div>
+                    </div>
 
-                <!-- Imagen de Perfil -->
-                <div class="mb-3">
-                    <label for="profilePictureFile" class="form-label">Imagen de Perfil (Opcional)</label>
-                    <input type="file" class="form-control" id="profilePictureFile" name="profilePictureFile" accept="image/*">
-                    <small class="form-text text-muted">Formatos permitidos: JPG, PNG, GIF, WebP. Tamaño máximo: 10MB</small>
-                </div>
+                    <!-- Imagen de Perfil -->
+                    <div class="mb-3">
+                        <label for="profilePictureFile" class="form-label">Imagen de Perfil (Opcional)</label>
+                        <input type="file" class="form-control" id="profilePictureFile" name="profilePictureFile" accept="image/*">
+                        <small class="form-text text-muted">Formatos permitidos: JPG, PNG, GIF, WebP. Tamaño máximo: 10MB</small>
+                    </div>
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-success">Regístrate</button>
-                    <a href="/login" class="btn btn-primary">Iniciar Sesión</a>
-                </div>
-            </form>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">Regístrate</button>
+                        <a href="/login" class="btn btn-primary">Iniciar Sesión</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Script para validación de contraseñas -->
+            <th:block th:replace="~{fragments/password-validation::passwordValidation}"></th:block>
         </div>
     </div>
-
-    <footer th:replace="~{fragments/footer::footer}"></footer>
-    <!-- Script para validación de contraseñas -->
-    <th:block th:replace="~{fragments/password-validation::passwordValidation}"></th:block>
-    <th:block th:replace="~{fragments/scripts::scripts}"></th:block>
-</body>
-</html>
+</div>

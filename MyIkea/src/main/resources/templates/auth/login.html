@@ -1,48 +1,42 @@
-<!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head::head}"></head>
-<body>
+<div class="spa-fragment" xmlns:th="http://www.thymeleaf.org">
     <header th:replace="~{fragments/header::header}"></header>
-
-    <div class="container-sm mb-6" style="margin-top: 50px; margin-bottom: 8rem;">
-        <!-- Mostrar mensaje de error si hay problema de autenticación -->
-        <div th:if="${param.error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>❌ Error de Autenticación</strong>
-            <p class="mb-0">Email o contraseña incorrectos. Por favor, intenta nuevamente.</p>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-        <!-- Mostrar mensaje de logout si se cerró sesión correctamente -->
-        <div th:if="${param.logout != null}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>✅ Sesión cerrada</strong>
-            <p class="mb-0">Has cerrado sesión correctamente. ¡Hasta pronto!</p>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-        <!-- Mostrar mensaje de contraseña no coinciden en registro -->
-        <div th:if="${param.passwordMismatch != null}" class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>⚠️ Contraseñas no coinciden</strong>
-            <p class="mb-0">Las contraseñas ingresadas no son iguales. Por favor, intenta de nuevo.</p>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-        <form th:action="@{/login}" method="post" id="loginForm">
-            <div class="mb-3">
-                <label for="username" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="username" name="username" placeholder="Introduce tu correo" required>
+    <div class="spa-content">
+        <div class="container-sm mb-6" style="margin-top: 50px; margin-bottom: 8rem;">
+            <!-- Mostrar mensaje de error si hay problema de autenticación -->
+            <div th:if="${param.error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>❌ Error de Autenticación</strong>
+                <p class="mb-0">Email o contraseña incorrectos. Por favor, intenta nuevamente.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Introduce tu contraseña" required>
+
+            <!-- Mostrar mensaje de logout si se cerró sesión correctamente -->
+            <div th:if="${param.logout != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>✅ Sesión cerrada</strong>
+                <p class="mb-0">Has cerrado sesión correctamente. ¡Hasta pronto!</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="d-flex justify-content-start gap-2">
-                <button type="submit" class="btn btn-primary">Entrar</button>
-                <a href="/register" class="btn btn-success">Regístrate</a>
+
+            <!-- Mostrar mensaje de contraseña no coinciden en registro -->
+            <div th:if="${param.passwordMismatch != null}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>⚠️ Contraseñas no coinciden</strong>
+                <p class="mb-0">Las contraseñas ingresadas no son iguales. Por favor, intenta de nuevo.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        </form>
+
+            <form th:action="@{/login}" method="post" id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">E-mail</label>
+                    <input type="email" class="form-control" id="username" name="username" placeholder="Introduce tu correo" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Introduce tu contraseña" required>
+                </div>
+                <div class="d-flex justify-content-start gap-2">
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                    <a href="/register" class="btn btn-success">Regístrate</a>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <footer th:replace="~{fragments/footer::footer}"></footer>
-    <th:block th:replace="~{fragments/scripts::scripts}"></th:block>
-</body>
-</html>
+</div>
