@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import com.futureprograms.MyIkea.Models.Auth.User;
 import com.futureprograms.MyIkea.Services.auth.UserService;
 import com.futureprograms.MyIkea.Services.FileUploadService;
@@ -14,6 +16,7 @@ import com.futureprograms.MyIkea.Services.FileUploadService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/profile")
@@ -177,56 +180,55 @@ public class ProfileController {
         
         return "redirect:/profile";
     }
-    
+
     /**
-     * Eliminar la cuenta del usuario (requiere confirmación con contraseña)
+     * Actualizar foto de perfil vía AJAX (REST endpoint)
      */
-    @PostMapping("/delete")
-    public String deleteAccount(
-            @RequestParam String password,
-            Authentication authentication,
-            HttpServletRequest request,
-            HttpServletResponse response,
-            RedirectAttributes redirectAttributes) {
+    @PostMapping(value = "/update-picture-ajax", produces = "application/json")
+    public ResponseEntity<?> updateProfilePictureAjax(
+            @RequestParam("profilePicture") MultipartFile file,
+            Authentication authentication) {
         
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
+            return ResponseEntity.status(401)
+                    .body(Map.of("success", false, "message", "No autenticado"));
         }
         
         try {
             User user = userService.findByUsername(authentication.getName());
             
-            // Validar contraseña
-            org.springframework.security.crypto.password.PasswordEncoder encoder = 
-                new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
-            
-            if (!encoder.matches(password, user.getPassword())) {
-                redirectAttributes.addFlashAttribute("deleteError", "Contraseña incorrecta. No se pudo eliminar la cuenta");
-                return "redirect:/profile";
+            // Validar que se proporcionó un archivo
+            if (file.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "Por favor selecciona una imagen"));
             }
             
-            // Eliminar foto de perfil si existe
+            // Eliminar imagen anterior si existe
             if (user.getProfilePicture() != null && !user.getProfilePicture().isEmpty()) {
                 try {
                     fileUploadService.deleteImage(user.getProfilePicture());
                 } catch (Exception e) {
-                    System.out.println("Error eliminando foto de perfil: " + e.getMessage());
+                    System.out.println("Error eliminando imagen anterior: " + e.getMessage());
                 }
             }
             
-            // Eliminar usuario
-            userService.deleteById(user.getId());
+            // Guardar nueva imagen
+            String filename = fileUploadService.saveImage(file);
+            user.setProfilePicture(filename);
+            userService.update(user);
             
-            // Cerrar sesión después de eliminar cuenta
-            SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-            logoutHandler.logout(request, response, authentication);
-            
-            // Redirigir a página de confirmación
-            return "redirect:/account-deleted";
-            
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Foto de perfil actualizada correctamente",
+                    "filename", filename,
+                    "imageUrl", "/images/" + filename
+            ));
+        } catch (IOException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", "Error al subir imagen: " + e.getMessage()));
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("deleteError", "Error al eliminar cuenta: " + e.getMessage());
-            return "redirect:/profile";
+            return ResponseEntity.status(500)
+                    .body(Map.of("success", false, "message", "Error al actualizar foto: " + e.getMessage()));
         }
     }
 
@@ -246,8 +248,25 @@ public class ProfileController {
         }
         
         try {
-            String password = request.get("password");
+            // Validar que la contraseña se envió
+            if (request == null || request.get("password") == null) {
+                return org.springframework.http.ResponseEntity.badRequest()
+                        .body(java.util.Map.of("success", false, "message", "Debes proporcionar tu contraseña"));
+            }
+            
+            String password = request.get("password").trim();
+            
+            if (password.isEmpty()) {
+                return org.springframework.http.ResponseEntity.badRequest()
+                        .body(java.util.Map.of("success", false, "message", "La contraseña no puede estar vacía"));
+            }
+            
+            // Obtener el usuario
             User user = userService.findByUsername(authentication.getName());
+            if (user == null) {
+                return org.springframework.http.ResponseEntity.status(404)
+                        .body(java.util.Map.of("success", false, "message", "Usuario no encontrado"));
+            }
             
             // Validar contraseña
             org.springframework.security.crypto.password.PasswordEncoder encoder = 
@@ -278,6 +297,8 @@ public class ProfileController {
                     .body(java.util.Map.of("success", true, "message", "Cuenta eliminada correctamente"));
             
         } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error al eliminar cuenta: " + e.getMessage());
             return org.springframework.http.ResponseEntity.status(500)
                     .body(java.util.Map.of("success", false, "message", "Error al eliminar cuenta: " + e.getMessage()));
         }

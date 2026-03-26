@@ -194,7 +194,7 @@
                                 <li>Tu perfil será eliminado permanentemente</li>
                                 <li>No podrás recuperar tu cuenta</li>
                             </ul>
-                            <form id="deleteForm">
+                            <form id="deleteForm" method="post" action="/profile/delete">
                                 <input type="hidden" name="_csrf" th:value="${_csrf?.token}">
                                 <label class="form-label">Ingresa tu contraseña:</label>
                                 <input type="password" id="delPassword" name="password" class="form-control" required>
@@ -231,9 +231,119 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Modal: Contraseña vacía -->
+            <div class="modal fade" id="emptyPasswordModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning bg-opacity-10 border-warning">
+                            <h5 class="modal-title fw-bold text-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Campo requerido
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-0">Por favor ingresa tu contraseña para confirmar la eliminación.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Confirmación adicional -->
+            <div class="modal fade" id="confirmationModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger bg-opacity-10 border-danger">
+                            <h5 class="modal-title fw-bold text-danger">
+                                <i class="fas fa-exclamation-circle me-2"></i>Última confirmación
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-0"><strong>⚠️ Esta acción es irreversible</strong></p>
+                            <p class="mt-3 text-danger">
+                                ¿Estás completamente seguro de que deseas eliminar tu cuenta y todos tus datos permanentemente?
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, cancelar</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteFinalBtn">
+                                <i class="fas fa-trash-alt me-2"></i>Sí, eliminar permanentemente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Error de credenciales -->
+            <div class="modal fade" id="credentialsErrorModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger bg-opacity-10 border-danger">
+                            <h5 class="modal-title fw-bold text-danger">
+                                <i class="fas fa-times-circle me-2"></i>Contraseña incorrecta
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-0">La contraseña que ingresaste es incorrecta. Por favor verifica e intenta de nuevo.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Error de respuesta inválida -->
+            <div class="modal fade" id="invalidResponseModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger bg-opacity-10 border-danger">
+                            <h5 class="modal-title fw-bold text-danger">
+                                <i class="fas fa-server me-2"></i>Error del servidor
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-0">La respuesta del servidor no es válida. Por favor intenta de nuevo más tarde.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Error de conexión -->
+            <div class="modal fade" id="connectionErrorModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger bg-opacity-10 border-danger">
+                            <h5 class="modal-title fw-bold text-danger">
+                                <i class="fas fa-wifi-off me-2"></i>Error de conexión
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-1">Hubo un problema al conectar con el servidor.</p>
+                            <p class="text-muted small mb-0" id="connectionErrorDetails"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <!-- Script para subida de foto de perfil -->
             <th:block th:insert="~{fragments/profile-picture-upload::profilePictureUpload}"></th:block>
+
+            <!-- Script para manejo del modal de eliminación de cuenta -->
+            <script src="/js/delete-account-modal.js"></script>
         </div>
     </div>
 </div>
